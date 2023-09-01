@@ -58,3 +58,4 @@ Here we will list the important twikis for the analysis:
  * Lumi Recommendation: [twiki](https://twiki.cern.ch/twiki/bin/view/CMS/LumiRecommendationsRun3).
  * EGamma SFs: [twiki](https://twiki.cern.ch/twiki/bin/view/CMS/EgammSFandSSRun3).
  * BTV POG: [web](https://btv-wiki.docs.cern.ch/ScaleFactors/).
+ * JSON LUMI (PU): [twiki](https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupJSONFileforData).
