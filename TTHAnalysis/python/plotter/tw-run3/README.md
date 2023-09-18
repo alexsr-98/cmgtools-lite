@@ -14,53 +14,80 @@ Last updated: **18 Sept 2023**
 <a name="setup"></a>
 ## Framework setup
 Three commands:
+```bash
 source /cms/cmsset_default.sh
 cmsenv
 alias python=python3
+```
 
-To run the commands in this readme that need combine, you need to setup combine in its respective release.
+Some commands in this readme need combine, you have to setup combine in its appropiate release.
 
 
 <a name="ftrees"></a>
 ## Friend trees
 With prepareEventVariablesFriendTree.py we create the neccesary friend trees for the analysis. 
 
-We have created a helper to automatise the friend tree creation process: . You should always follow these four steps:
+We have created a helper to automatise the friend tree creation process. You should always follow these four steps:
 
-  * Create the friend trees chunks: `python produceFriendTrees_TopRun3.py -y 2022 -s 0 -d all -q batch -n 8`
-  * Check if all chunks are created: `python produceFriendTrees_TopRun3.py -y 2022 -s 0 -d all -c`
-  * Merge all chunks: `python produceFriendTrees_TopRun3.py -y 2022 -s 0 -d all -m`
-  * Check if the merged chunks are ok: `python produceFriendTrees_TopRun3.py -y 2022 -s 0 -d all -m -c`
+  * **Create** the friend trees chunks: `python produceFriendTrees_TopRun3.py -y 2022PostEE -s 0 -d all -q batch -n 8`
+  * **Check** if all chunks are created: `python produceFriendTrees_TopRun3.py -y 2022PostEE -s 0 -d all -c`
+  * **Merge** all chunks: `python produceFriendTrees_TopRun3.py -y 2022PostEE -s 0 -d all -m`
+  * **Check** if the merged chunks are ok: `python produceFriendTrees_TopRun3.py -y 2022PostEE -s 0 -d all -m -c`
 
 <a name="inclusive"></a>
 ## tW Inclusive cross section measurement
  
  * To produce plots:
-    python tw-run3/plotterHelper.py -P 2023-06-02 -y 2022PostEE -o ./temp_Run3_plots/2023_06_08 -r nojets -u -q batch -j 32
+   ```bash
+    python tw-run3/plotterHelper.py -P 2023-06-02 -y 2022PostEE -o ./temp_Run3_plots/2023_06_08 -r nojets -u -q batch -j 16
+   ```
  * To produce cards:
+   ```bash
     python tw-run3/cardsHelper.py -P 2023-06-02 -y 2022PostEE -o ./temp_Run3_cards/2023-06-02_Test -r all -v all -a -q batch -j 16
+   ```
     * Validate cards:
+      ```bash
        ValidateDatacards.py temp_Run3_cards/2023-07-10_newSFs/2022PostEE/1j1t/cuts-tw-1j1t.txt
+      ```
  * To make the fit:
+   ```bash
     python tw-run3/fitsHelper.py -y 2022PostEE -i temp_Run3_cards/2023-06-02_Test/ -r 1j1t,2j1t,2j2t
+   ```
  * To make impacts:
+   ```bash
     python tw-run3/getInclusiveImpacts.py -y 2022PostEE -i temp_Run3_cards/2023-06-02_Test/ -r 1j1t,2j1t,2j2t -j 12
+   ```
+ * To run GOF test:
+   * Create the cards for the input variables:
+   * Run the combine command: 
 
  * To compute btag eff:
+   ```bash
     python mcEfficiencies.py --tree NanoAOD  -P /beegfs/data/nanoAODv11/tw-run3/productions/2023-06-02/2022PostEE/ --split-factor=-1 --year 2022 --FMCs {P}/x_btageff  tw-run3/mca-tw-includes/mca-2022PostEE-tw-btageff.txt tw-run3/cuts-tw-btageff.txt  tw-run3/plots-tw/plots-tw-nojets_btageffsels.txt tw-run3/plots-tw/plots-tw-nojets_btageffvars.txt  -o temp_Run3_plots/2022_11_22_addedLeptonSFs_correctedJson_addedUnc/2022/eff/output.root -j 12
-
+   ```
  * To produce 2D SFs plots:
+   ```bash
     python tw-run3/plotSFhistograms.py ./temp_Run3_plots/2023_01_21_Plots_de_SFs_ttbarRun3
+   ```
  * To produce uncertainty variations plots:
+   ```bash
     python tw-run3/plotUncsVariations.py temp_Run3_cards/2023-06-28_newSFsBarbara/2022PostEE/2j2t/ -j 8
+   ```
  * To produce the electron and jet veto maps:
+   ```bash
     python tw-run3/utils/checkVetoMaps.py
+   ```
  
  * To produce trigger SFs:
+   ```bash
     python tw-run3/plotterHelper.py -P 2023-06-02 -y 2022PostEE -o ./temp_Run3_plots/2023_06_05_trigger -r trigger_METandLeptonTrig -q batch -j 64
-    python tw-run3/plotterHelper.py -P 2023-06-02 -y 2022PostEE -o ./temp_Run3_plots/2023_06_05_trigger -r trigger_METTrig -q batch -j 64
-
-    python tw-run3/triggerSFs/makeEffandSF.py -i temp_Run3_plots/2023_06_07_Trigger/2022PostEE/ -o tw-run3/triggerSFs/SFs-plots/ -c trigger
+   ```
+   ```bash
+   python tw-run3/plotterHelper.py -P 2023-06-02 -y 2022PostEE -o ./temp_Run3_plots/2023_06_05_trigger -r trigger_METTrig -q batch -j 64
+   ```
+   ```bash
+   python tw-run3/triggerSFs/makeEffandSF.py -i temp_Run3_plots/2023_06_07_Trigger/2022PostEE/ -o tw-run3/triggerSFs/SFs-plots/ -c trigger
+   ```
 
  ## Train MVA
 
@@ -74,15 +101,25 @@ The script to train is under `MVA-training` folder. To use your model in the ana
 ## tW differential cross section measurement (bkg. substraction)
 
  * Create the cards:
+   ```bash
     python tw-run3/differential/cardsForDifferentialStudies.py -P 2023-06-02 -y 2022PostEE -q batch -j 32 -o ./temp_cards_diff/2023-06-09 -v 'Lep1_Pt' -a
+   ```
  * Compute response matrices:
+   ```bash
     python tw-run3/differential/getMatrices.py -i ./temp_cards_diff/2023-06-09 -y 2022PostEE -j 8
+   ```
  * Extract signal:
+   ```bash
     python tw-run3/differential/signalExtracter.py -i ./temp_cards_diff/2023-06-09 -y 2022PostEE -j 8
+   ```
  * Unfold:
+   ```bash
     python tw-run3/differential/unfoldHelper.py -i ./temp_cards_diff/2023-06-09 -y 2022PostEE -j 8
+   ```
  * Normalise:
+   ```bash
     python tw-run3/differential/doFiducial.py -i ./temp_cards_diff/2023-06-09 -y 2022PostEE -j 8
+   ```
 
 There is a subfolder under tw-run3 called utils. It contains several scripts useful for different tasks, they are:
  * copyTo_www.py: copy a folder to your website and adds .php files for visualisation in the browser.
@@ -90,11 +127,11 @@ There is a subfolder under tw-run3 called utils. It contains several scripts use
 
 <a name="differentialfit"></a>
 ## tW differential cross section measurement (combine fit)
-WIP
+**WIP**
 
  <a name="samples"></a>
 ## Samples
- [link](https://docs.google.com/spreadsheets/d/1ajj4HEToMIxzCNrgyGBdPO0e-UniPjZSXWibZdBAO00/edit#gid=0)
+ [GoogleSpreadSheet](https://docs.google.com/spreadsheets/d/1ajj4HEToMIxzCNrgyGBdPO0e-UniPjZSXWibZdBAO00/edit#gid=0)
 
  <a name="twikis"></a>
 ## Important twikis
