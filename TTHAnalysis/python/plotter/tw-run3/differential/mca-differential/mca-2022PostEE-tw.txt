@@ -1,17 +1,17 @@
-tw+      : TbarWplus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_*      : xsec ; FillColor=798
-tw+      : TWminus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_*  : xsec ; FillColor=798
+tw+      : TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis_*      : xsec * 2 ; FillColor=798
+tw+      : TWminusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis_*  : xsec * 2 ; FillColor=798
 
 
-#twds     : ST_tW_antitop_5f_DS_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8*central* : xsec ;
-#twds     : ST_tW_top_5f_DS_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8*central*     : xsec ;
+twds     : TWminusto2L2Nu_DS_TuneCP5_13p6TeV_powheg_pythia8_* : xsec ;
+twds     : TbarWplusto2L2Nu_DS_TuneCP5_13p6TeV_powheg_pythia8_*     : xsec ;
 
-#twherwig : ST_tW_top_5f_NoFullyHadronicDecays_TuneCH3_13TeV-powheg-herwig7_central_*       : xsec ; FillColor=798,genSumWeightName="genEventSumw"
-#twherwig : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCH3_13TeV-powheg-herwig7_central_*   : xsec ; FillColor=798,genSumWeightName="genEventSumw"
+#twherwig : ST_tW_top_5f_NoFullyHadronicDecays_TuneCH3_13TeV-powheg-herwig7_central_*       : xsec ; FillColor=798
+#twherwig : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCH3_13TeV-powheg-herwig7_central_*   : xsec ; FillColor=798
 
 ### tW aMC@NLO comparison samples
-#twamcatnlo_dr              : ST_tW_Dilept_5f_DR_TuneCP5_13TeV-amcatnlo-pythia8_central_*    : xsec ; genSumWeightName="genEventSumw"
-#twamcatnlo_dr2             : ST_tW_Dilept_5f_DR2_TuneCP5_13TeV-amcatnlo-pythia8_central_*   : xsec ; genSumWeightName="genEventSumw"
-#twamcatnlo_ds              : ST_tW_Dilept_5f_DS_TuneCP5_13TeV-amcatnlo-pythia8_central_*    : xsec ; genSumWeightName="genEventSumw"
-#twamcatnlo_ds_is           : ST_tW_Dilept_5f_DS_IS_TuneCP5_13TeV-amcatnlo-pythia8_central_* : xsec ; genSumWeightName="genEventSumw"
-#twamcatnlo_ds_runningBW    : ST_tW_Dilept_5f_DS_runningBW_TuneCP5_13TeV-amcatnlo-pythia8_central_* : xsec ; genSumWeightName="genEventSumw"
-#twamcatnlo_ds_is_runningBW : ST_tW_Dilept_5f_DS_IS_runningBW_TuneCP5_13TeV-amcatnlo-pythia8_central_* : xsec ; genSumWeightName="genEventSumw"
+twamcatnlo_dr              : TWto2L2Nu_DR1_TuneCP5_13p6TeV_amcatnlo_pythia8_*    : xsec ; 
+twamcatnlo_dr2             : TWto2L2Nu_DR2_TuneCP5_13p6TeV_amcatnlo_pythia8_*   : xsec ; 
+twamcatnlo_ds              : TWto2L2Nu_DS_FS_TuneCP5_13p6TeV_amcatnlo_pythia8_*    : xsec ; 
+twamcatnlo_ds_is           : TWto2L2Nu_DS_IS_TuneCP5_13p6TeV_amcatnlo_pythia8_* : xsec ; 
+twamcatnlo_ds_runningBW    : TWto2L2Nu_DS_FS_BW_TuneCP5_13p6TeV_amcatnlo_pythia8_* : xsec ; 
+twamcatnlo_ds_is_runningBW : TWto2L2Nu_DS_IS_BW_TuneCP5_13p6TeV_amcatnlo_pythia8_* : xsec ; 

@@ -1,2 +1,2 @@
-nonworz : WJetsToLNu_TuneCP5_13p6TeV_madgraphMLM_pythia8_*      : xsec ; FillColor=413
-nonworz : TTTo2J1L1Nu_CP5_13p6TeV_powheg_pythia8_analysis_* : xsec * 2; FillColor=413
+nonworz : WtoLNu_2Jets_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_*      : xsec ; FillColor=413
+nonworz : TTtoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8_analysis_* : xsec * 2; FillColor=413

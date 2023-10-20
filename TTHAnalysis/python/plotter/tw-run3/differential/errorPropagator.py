@@ -1,6 +1,6 @@
 import ROOT as r
 import math, sys
-from copy import deepcopy
+from copy  import deepcopy
 from array import array
 import varList as vl
 ###############################################################################
@@ -95,7 +95,7 @@ def propagateHisto(varDict, doSym = False):
     outDown = deepcopy(varDict[""].Clone(varDict[""].GetName() + 'uncDown'))
 
     for bin in range(1, varDict[""].GetNbinsX() + 1):
-        err     = outUp.GetBinError(bin)    # <==  Fit unc. taken here
+        err     = outUp.GetBinError(bin)    # <==  Fit unc. taken here or statistical unc. taken here
         cont    = outUp.GetBinContent(bin)
         tmpDict = dict([(key, histo.GetBinContent(bin)) for (key, histo) in varDict.items() if key != ""])
 
@@ -503,47 +503,47 @@ def SetTheStatsUncs(histo):
     return
 
 
-def SetTheUncsFromHere(histo, hlist, SetStatUncs = False):
-    ''' Function that returns to you a histogram with the quadratic sum
-    of the uncertainties corresponding to the bin uncertainties of the 
-    histograms that are given in a list, in addition to the ones from the
-    given histogram.'''
-    
-    tmperr = 0
-    for i in range(1, histo.GetNbinsX() + 1):
-        if SetStatUncs: tmperr = quadSum([math.sqrt(hel.GetBinContent(bin)) for hel in hlist] + math.sqrt(histo.GetBinContent(bin)))
-        else:           tmperr = quadSum([hel.GetBinError(bin) for hel in hlist] + histo.GetBinError(bin))
-        
-        histo.SetBinError(bin, tmperr)
-    
-    return
+##def SetTheUncsFromHere(histo, hlist, SetStatUncs = False):
+##    ''' Function that returns to you a histogram with the quadratic sum
+##    of the uncertainties corresponding to the bin uncertainties of the 
+##    histograms that are given in a list, in addition to the ones from the
+##    given histogram.'''
+##    
+##    tmperr = 0
+##    for i in range(1, histo.GetNbinsX() + 1):
+##        if SetStatUncs: tmperr = quadSum([math.sqrt(hel.GetBinContent(bin)) for hel in hlist] + math.sqrt(histo.GetBinContent(bin)))
+##        else:           tmperr = quadSum([hel.GetBinError(bin) for hel in hlist] + histo.GetBinError(bin))
+##        
+##        histo.SetBinError(bin, tmperr)
+##    
+##    return
 
 
-def getCovarianceFromVar(nom, var, name, year = "2016", ty = "detector", doCorr = False):
-    nbins   = nom.GetXaxis().GetNbins()
-    binning = array('f', vl.varList[name]['bins_detector'] if ty == "detector" else vl.varList[name]['bins_particle'])
-    if ty == "detector" and vl.doxsec:
-        thelumi = vl.TotalLumi if year == "run2" else vl.LumiDict[int(year)]
-        scaleval = 1/thelumi/1000 if vl.doxsec else 1
-        var.Scale(scaleval)
-    cov     = r.TH2D(var.GetName().replace("data_", "").replace(name+"_", ''), '', nbins, binning, nbins, binning)
-    for x in range(nbins):
-        for y in range(nbins):
-            bin = cov.GetBin(x + 1, y + 1)
-            cov.SetBinContent(bin, (nom.GetBinContent(x + 1) - var.GetBinContent(x + 1)) * (nom.GetBinContent(y + 1) - var.GetBinContent(y + 1)))
-
-    return cov
-
-def getCovarianceFromVarv2(nom, var, name):
-    nbins   = nom.GetXaxis().GetNbins()
-    binning = array('f', vl.varList[name]['bins_particle'])
-    cov     = r.TH2D(var.GetName().replace("data_", "").replace(name+"_", ''), '', nbins, binning, nbins, binning)
-    for x in range(nbins):
-        for y in range(nbins):
-            bin = cov.GetBin(x + 1, y + 1)
-            cov.SetBinContent(bin, (nom.GetBinContent(x + 1) - var.GetBinContent(x + 1)) * (nom.GetBinContent(y + 1) - var.GetBinContent(y + 1)))
-
-    return cov
+##def getCovarianceFromVar(nom, var, name, year = "2016", ty = "detector", doCorr = False):
+##    nbins   = nom.GetXaxis().GetNbins()
+##    binning = array('f', vl.varList[name]['bins_detector'] if ty == "detector" else vl.varList[name]['bins_particle'])
+##    if ty == "detector" and vl.doxsec:
+##        thelumi = vl.TotalLumi if year == "run3" else vl.LumiDict[int(year)]
+##        scaleval = 1/thelumi/1000 if vl.doxsec else 1
+##        var.Scale(scaleval)
+##    cov     = r.TH2D(var.GetName().replace("data_", "").replace(name+"_", ''), '', nbins, binning, nbins, binning)
+##    for x in range(nbins):
+##        for y in range(nbins):
+##            bin = cov.GetBin(x + 1, y + 1)
+##            cov.SetBinContent(bin, (nom.GetBinContent(x + 1) - var.GetBinContent(x + 1)) * (nom.GetBinContent(y + 1) - var.GetBinContent(y + 1)))
+##
+##    return cov
+##
+##def getCovarianceFromVarv2(nom, var, name):
+##    nbins   = nom.GetXaxis().GetNbins()
+##    binning = array('f', vl.varList[name]['bins_particle'])
+##    cov     = r.TH2D(var.GetName().replace("data_", "").replace(name+"_", ''), '', nbins, binning, nbins, binning)
+##    for x in range(nbins):
+##        for y in range(nbins):
+##            bin = cov.GetBin(x + 1, y + 1)
+##            cov.SetBinContent(bin, (nom.GetBinContent(x + 1) - var.GetBinContent(x + 1)) * (nom.GetBinContent(y + 1) - var.GetBinContent(y + 1)))
+##
+##    return cov
 
 def drawTheRelUncPlot(listWithHistos, thedict, thePlot, yaxismax = "auto", doSym = False, doFit = False):
     # Calculate the order
@@ -619,9 +619,10 @@ def drawTheRelUncPlot(listWithHistos, thedict, thePlot, yaxismax = "auto", doSym
         thePlot.addHisto(hincsyst, 'hist,same', 'Systematic' if not doFit else "Not fit", 'L')
 
         for i in range(len(uncList)):
-            if "Stat" in uncList[i][0]:
+            if "Stat" in uncList[i][0]: # The zero element is the name, the 1st is the histogram
                 uncList[i][1].SetLineColor(r.kBlack)
                 uncList[i][1].SetLineStyle( 2 )
+                uncList[i][1].SetLineWidth( 2 )
 
                 hincstat = deepcopy(uncList[i][1].Clone("hincstat"))
 
@@ -658,7 +659,6 @@ def drawTheRelUncPlot(listWithHistos, thedict, thePlot, yaxismax = "auto", doSym
 
             uncList[iS][1].SetFillColorAlpha(r.kBlue, 0.)
             thePlot.addHisto(uncList[iS][1], 'H,same', vl.SysNameTranslator[uncList[iS][0].lower().replace("resp_", "")] + (" (resp.)" if "resp" in uncList[iS][0].lower() else ""), 'L')
-            #thePlot.addHisto(uncList[iS][1], 'H,same', uncList[iS][0], 'L')
             plottedsysts += 1
 
             #print iS, uncList[iS][0]
@@ -668,7 +668,7 @@ def drawTheRelUncPlot(listWithHistos, thedict, thePlot, yaxismax = "auto", doSym
     return (uncList, hincstat, hincsyst, hincmax)
 
 
-
+# For the differential with combine 
 def drawTheRelUncPlotv2(listWithHistos, thedict, thePlot, yaxismax = "auto", doSym = False):
     # Calculate the order
     subdict = deepcopy(thedict)

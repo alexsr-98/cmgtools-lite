@@ -8,20 +8,20 @@ r.PyConfig.IgnoreCommandLineOptions = True
 r.gROOT.SetBatch(True)
 
 #### Settings
-friendspath  = "/beegfs/data/nanoAODv11/tw-run3/productions"
+friendspath  = "/lustrefs/hdd_pool_dir/nanoAODv11/tw-run3/productions"
 
 logpath      = friendspath + "/{p}/{y}/logs/cards_inclusive"
 
 lumidict     = {"2022"       : 7.78,
                 "2022PostEE" : 20.67}
 
-friendsscaff = "--FMCs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors --Fs {P}/6_mvas_new_multiClass_withSameFlav" # --Fs {P}/5_mvas
+friendsscaff = "--Fs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors --Fs {P}/6_mvasRF" # --Fs {P}/5_mvas
 
-commandscaff = '''python3 makeShapeCards_TopRun2.py --tree NanoAOD {mcafile} {cutsfile} "{variable}" "{bins}" {samplespaths} {friends} --od {outpath} -l {lumi} {nth} -f -L tw-run3/functions_tw.cc --neg --threshold 0.01 -W "MuonIDSF * ElecIDSF * TrigSF * bTagWeight" --year {year} {asimovornot} {pseudodataorNot} {uncs} {extra} --AP --storeAll'''
+commandscaff = '''python3 makeShapeCards_TopRun2.py --tree NanoAOD {mcafile} {cutsfile} "{variable}" "{bins}" {samplespaths} {friends} --od {outpath} -l {lumi} {nth} -f -L tw-run3/functions_tw.cc --neg --threshold 0.01 -W "MuonIDSF * MuonISOSF * ElecIDSF * ElecRECOSF * TrigSF * bTagWeight * puWeight" --year {year} {asimovornot} {pseudodataorNot} {uncs} {extra} --AP --storeAll'''
 
 slurmscaff   = "sbatch -c {nth} -p {queue} -J {jobname} -e {logpath}/log.%j.%x.err -o {logpath}/log.%j.%x.out --wrap '{command}'"
 
-listofforcedshape = "btagging_2016,btagging_2017,btagging_2018,btagging_corr,elecidsf,elecrecosf,fsr,isr_ttbar,isr_tw,jer_2016,jer_2017,jer_2018,jes_Absolute,jes_Absolute_2016,jes_Absolute_2017,jes_Absolute_2018,jes_BBEC1,jes_BBEC1_2016,jes_BBEC1_2017,jes_BBEC1_2018,jes_EC2,jes_EC2_2016,jes_EC2_2017,jes_EC2_2018,jes_FlavorQCD,jes_HF,jes_HF_2016,jes_HF_2017,jes_HF_2018,jes_RelativeBal,jes_RelativeSample_2016,jes_RelativeSample_2017,jes_RelativeSample_2018,lumi_2016,lumi_2017,lumi_2018,lumi_corr,lumi_corr1718,mistagging_2016,mistagging_2017,mistagging_2018,mistagging_corr,mtop,muonen_2016,muonen_2017,muonen_2018,muonidsf_stat_2016,muonidsf_stat_2017,muonidsf_stat_2018,muonidsf_syst,muonisosf_stat_2016,muonisosf_stat_2017,muonisosf_stat_2018,muonisosf_syst,pdfhessian,pileup,prefiring_2016,prefiring_2017,topptrew,triggereff_2016,triggereff_2017,triggereff_2018,ttbar_scales,tw_scales,ds,colour_rec_erdon,colour_rec_cr1,colour_rec_cr2"
+listofforcedshape = "btagging_2022PostEE,btagging_2022,btagging_corr,elecidsf,elecrecosf,fsr,isr_ttbar,isr_tw,jer,jes_Absolute,jes_Absolute_2022PostEE,jes_Absolute_2022,jes_BBEC1,jes_BBEC1_2022PostEE,jes_EC2,jes_EC2_2022PostEE,jes_EC2_2022,jes_FlavorQCD,jes_HF,jes_HF_2022PostEE,jes_HF_2022,jes_RelativeBal,jes_RelativeSample_2022PostEE,jes_RelativeSample_2022,lumi,mistagging_2022PostEE,mistagging_2022,mistagging_corr,mtop,muonidsf,pdfhessian,pileup,topptrew,triggereff,ttbar_scales,tw_scales,ds,colour_rec_erdon,colour_rec_cr1,colour_rec_cr2"
 
 
 
@@ -191,16 +191,47 @@ if __name__ == "__main__":
     #            "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.,160.,170.,180.,190.]"]         
 
     ##### Attempt with SF channels also
-    ##theregs  = ["1j1t", "2j1t", "2j2t", "1j1t-mm", "1j1t-ee"]
-    ##thevars  = ["getRFtW(mvaRF_1j1b)", "getRFtWOther(mvaRF_2j1b)", "min(max(Jet2_Pt, 30.), 189.)", "getRFtW_mm(mvaRF_1j1b_mm)", "getRFtW_ee(mvaRF_1j1b_ee)"] #With RF
+    theregs  = ["1j1t", "2j1t", "2j2t", "1j1t-mm", "1j1t-ee"]
+    thevars  = ["getRFtW(mvaRF_1j1b)", "getRFtWOther(mvaRF_2j1b)", "min(max(Jet2_Pt, 30.), 189.)", "getRFtW_mm(mvaRF_1j1b_mm)", "getRFtW_ee(mvaRF_1j1b_ee)"] #With RF
+    thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
+                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5]",
+                "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.,160.,170.,180.,190.]",
+                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
+                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]"]              
+    theyears = ["2022", "2022PostEE"]
+    tasks    = []
+
+    ##### Attempt with extra emu regions
+    theregs  = ["1j1t", "2j1t", "2j2t", "1j0t","3j1t","3j2t"]
+    thevars  = ["getRFtW(mvaRF_1j1b)", "getRFtWOther(mvaRF_2j1b)", "min(max(Jet2_Pt, 30.), 189.)", "getRFtW1j0b(mvaRF_1j1b)", "min(max(Jet_pt_nom[iJetSel30_Recl[1]], 30.), 149.)", "min(max(Jet_pt_nom[iJetSel30_Recl[2]], 30.), 149.)"] #With RF
+    thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
+                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5]",
+                "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.,160.,170.,180.,190.]",
+                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
+                "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.]",
+                "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.]"]              
+    theyears = ["2022", "2022PostEE"]
+    tasks    = []
+
+    ##### Attempt with extra emu regions
+    theregs  = ["1j1t", "2j1t", "2j2t","3j2t"]
+    thevars  = ["getRF1j1b_opt_20bins(mvaRF_1j1b)", "getRF2j1b_opt_12bins(mvaRF_2j1b)", "min(max(minimax, 0.), 449.)", "min(max(Jet_pt_nom[iJetSel30_Recl[1]], 30.), 149.)"] #With RF
+    thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5]",
+                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5]",
+                "[0.0, 32.142857142857146, 64.28571428571429, 96.42857142857144, 128.57142857142858, 160.71428571428572, 192.8571428571429, 225.00000000000003, 257.14285714285717, 289.28571428571433, 321.42857142857144, 353.5714285714286, 385.7142857142858, 417.8571428571429, 450.0]",
+                "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.]"]              
+    theyears = ["2022", "2022PostEE"]
+    tasks    = []
+
+
+    ##### Attempt with SF channels also  (only SF)
+    ##theregs  = ["1j1t-mm", "1j1t-ee"]
+    ##thevars  = ["getRFtW_mm(mvaRF_1j1b_mm)", "getRFtW_ee(mvaRF_1j1b_ee)"] #With RF
     ##thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
-    ##            "[0.5,1.5,2.5,3.5,4.5,5.5,6.5]",
-    ##            "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.,160.,170.,180.,190.]",
-    ##            "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
     ##            "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]"]              
     ##theyears = ["2022", "2022PostEE"]
     ##tasks    = []
- 
+    
     if variable.lower() != "all":
         if "," in variable:
             thevars = variable.split(",")

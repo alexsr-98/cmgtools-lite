@@ -19,7 +19,7 @@ verbose = True
 
 class DataContainer:
     ''' Class to store all the needed inputs: response matrices and varied input distributions'''
-    def __init__(self, var_, folderpath_, inputsfilename_ = "detectorsignal_bs.root", matricesfilename_ = "UnfoldingInfo.root", year_ = "2022"):
+    def __init__(self, var_, folderpath_, inputsfilename_ = "detectorsignal_bs.root", matricesfilename_ = "UnfoldingInfo.root", year_ = 2022):
         self.var              = var_
         self.year             = year_
         self.folderpath       = folderpath_
@@ -41,6 +41,11 @@ class DataContainer:
 
         tfile = r.TFile.Open(self.fileName)
         for key in tfile.GetListOfKeys():
+            """
+            #### ===========================================================
+            if "pdf" in key.GetName() or "scales" in key.GetName(): continue
+            #### ===========================================================
+            """
             if 'data_' in key.GetName():
                 sysName = key.GetName().replace('data_', '')
                 self.unfoldingInputs[sysName] = deepcopy(key.ReadObj())
@@ -58,6 +63,11 @@ class DataContainer:
         # Getting uncertainties in the response matrix
         tfile = r.TFile.Open(self.fileNameResponse)
         for key in tfile.GetListOfKeys():
+            """
+            #### ===========================================================
+            if "pdf" in key.GetName() or "scales" in key.GetName(): continue
+            #### ===========================================================
+            """
             #print key.GetName()
             if key.GetName()[0] != 'R': continue
             if vl.varList[self.var]['var_response'] not in key.GetName() and self.var not in key.GetName(): continue
@@ -74,6 +84,11 @@ class DataContainer:
         if self.year == "run3":
             scalevalone = thelumi/3.
         for key in tfile.GetListOfKeys():
+            """
+            #### ===========================================================
+            if "pdf" in key.GetName() or "scales" in key.GetName(): continue
+            #### ===========================================================
+            """
             if key.GetName()[0] != 'F': continue
             if vl.varList[self.var]['var_response'] not in key.GetName(): continue
             if key.GetName() == 'F' + vl.varList[self.var]['var_response'] + "_":
@@ -109,30 +124,30 @@ class DataContainer:
         #sys.exit()
 
 
-        if "fit" in self.fileName:
-            wr.warn("WARNING: a fit input has been added. Therefore, we will add in quadrature additional uncertainties per internalised ones to consider the effects on the response matrices, neglecting its possible correlations with the effects on the variables. This is not statistically correct.")
-
-            for iU,el in vl.ModifiedProfileSystsThatAreNotPresentAllYears.items():
-                if self.year != "run3":
-                    if self.year not in el:
-                        continue
-                if not "lumi" in iU.lower():
-                    if isinstance(vl.systMap[iU], dict): #### OJIIIISIMO QUE ESTI YE EL SYSTMAP NO EL MODIFIEEEEEEEEED!!!!!!!!!!!
-                        if not vl.systMap[iU]["tw"]:
-                            continue
-                    elif not vl.systMap[iU]:
-                        continue
-
-                self.listOfSysts.append("resp_" + iU + "Up")
-                self.listOfSysts.append("resp_" + iU + "Down")
-                self.unfoldingInputs["resp_" + iU + "Up"]    = deepcopy(self.unfoldingInputs[""].Clone("data_resp_" + iU + "Up"))
-                self.unfoldingInputs["resp_" + iU + "Down"]  = deepcopy(self.unfoldingInputs[""].Clone("data_resp_" + iU + "Down"))
-                self.responseMatrices["resp_" + iU + "Up"]   = deepcopy(self.responseMatrices[iU + "Up"].Clone("resp_" + iU + "Up"))
-                self.responseMatrices["resp_" + iU + "Down"] = deepcopy(self.responseMatrices[iU + "Down"].Clone("resp_" + iU + "Down"))
-                self.covmatInput["resp_" + iU + "Up"]        = deepcopy(self.covmatInput[""].Clone("resp_" + iU + "Up"))
-                self.covmatInput["resp_" + iU + "Down"]      = deepcopy(self.covmatInput[""].Clone("resp_" + iU + "Down"))
-                self.bkgs["resp_" + iU + "Up"]               = deepcopy(self.bkgs[iU + "Up"].Clone("resp_" + iU + "Up"))
-                self.bkgs["resp_" + iU + "Down"]             = deepcopy(self.bkgs[iU + "Down"].Clone("resp_" + iU + "Down"))
+#        if "fit" in self.fileName:
+#            wr.warn("WARNING: a fit input has been added. Therefore, we will add in quadrature additional uncertainties per internalised ones to consider the effects on the response matrices, neglecting its possible correlations with the effects on the variables. This is not statistically correct.")
+#
+#            for iU,el in vl.ModifiedProfileSystsThatAreNotPresentAllYears.items():
+#                if self.year != "run3":
+#                    if self.year not in el:
+#                        continue
+#                if not "lumi" in iU.lower():
+#                    if isinstance(vl.systMap[iU], dict): #### OJIIIISIMO QUE ESTI YE EL SYSTMAP NO EL MODIFIEEEEEEEEED!!!!!!!!!!!
+#                        if not vl.systMap[iU]["tw"]:
+#                            continue
+#                    elif not vl.systMap[iU]:
+#                        continue
+#
+#                self.listOfSysts.append("resp_" + iU + "Up")
+#                self.listOfSysts.append("resp_" + iU + "Down")
+#                self.unfoldingInputs["resp_" + iU + "Up"]    = deepcopy(self.unfoldingInputs[""].Clone("data_resp_" + iU + "Up"))
+#                self.unfoldingInputs["resp_" + iU + "Down"]  = deepcopy(self.unfoldingInputs[""].Clone("data_resp_" + iU + "Down"))
+#                self.responseMatrices["resp_" + iU + "Up"]   = deepcopy(self.responseMatrices[iU + "Up"].Clone("resp_" + iU + "Up"))
+#                self.responseMatrices["resp_" + iU + "Down"] = deepcopy(self.responseMatrices[iU + "Down"].Clone("resp_" + iU + "Down"))
+#                self.covmatInput["resp_" + iU + "Up"]        = deepcopy(self.covmatInput[""].Clone("resp_" + iU + "Up"))
+#                self.covmatInput["resp_" + iU + "Down"]      = deepcopy(self.covmatInput[""].Clone("resp_" + iU + "Down"))
+#                self.bkgs["resp_" + iU + "Up"]               = deepcopy(self.bkgs[iU + "Up"].Clone("resp_" + iU + "Up"))
+#                self.bkgs["resp_" + iU + "Down"]             = deepcopy(self.bkgs[iU + "Down"].Clone("resp_" + iU + "Down"))
 
             #### NOTE: esto esta muy bien, pero no es del todo correcto, es una gochada, es mejor hacer un unf. cada vez con cada incertidumbre y sus fondos y luego sumar cuadraticamente.
             #### A ver, gochada ser, ye igual, pero es menos gochada (polos fondos). Este codigo queda aqui pa por si acaso.
@@ -356,7 +371,7 @@ class UnfolderHelper:
 
         plot.addTLatex(0.75, 0.85, "#tau = {taupar}".format(taupar = round(self.tau, 10)))
         #plot.addTLatex(0.75, 0.9, "#tau = {taupar}".format(taupar = self.tau))
-        plot.saveCanvas('TR', leg = False)
+        plot.saveCanvasv2('TR', leg = False)
         del plot, grph
         
         #for iP in range(self.logTauCurv.GetNp()):
@@ -435,7 +450,7 @@ class UnfolderHelper:
         #self.logTauCurv.GetXaxis().SetTitle('log(#tau)')
         #self.logTauCurv.GetYaxis().SetTitle('\\mathcal{C}')
         #self.logTauCurv.Draw("AL")
-        plot.saveCanvas('TR')
+        plot.saveCanvasv2('TR')
         del plot
         return
     
@@ -458,7 +473,7 @@ class UnfolderHelper:
 
 
 class Unfolder():
-    def __init__(self, var, folderpath_, year = 2016, inputsfilename_ = "detectorsignal_bs.root", matricesfilename_ = "UnfoldingInfo.root"):
+    def __init__(self, var, folderpath_, year = 2022, inputsfilename_ = "detectorsignal_bs.root", matricesfilename_ = "UnfoldingInfo.root"):
         self.var              = var
         self.folderpath       = folderpath_
         self.year             = year
@@ -524,43 +539,43 @@ class Unfolder():
             self.helpers[''].DoUnfold(tau)
 
 
-    def doNominalPlot(self, tau = None):
-        if tau:
-            self.helpers[''].tunfolder.DoUnfold(tau)
-        data = self.helpers[''].tunfolder.GetOutput('forPlot')
-
-        print('Unfolded distribution integral', data.Integral())
-        plot = bp.beautifulUnfPlot(self.var)
-        data.SetMarkerStyle(r.kFullCircle)
-        data.GetXaxis().SetNdivisions(510,True)
-        plot.plotspath       = self.plotspath
-        plot.doPreliminary   = vl.doPre
-        plot.doSupplementary = False
-        plot.displayedLumi   = vl.TotalLumi if self.year == "run3" else vl.LumiDict[self.year]
-        
-        if not os.path.isfile('temp/{var}_/ClosureTest_{var}.root'.format(var = self.var)):
-            raise RuntimeError('The rootfile with the generated information does not exist')
-        tmptfile = r.TFile.Open('temp/{var}_/ClosureTest_{var}.root'.format(var = self.var))
-        tru = deepcopy(tmptfile.Get('tW'))
-        tru.SetLineWidth(2)
-        tru.SetLineColor(bp.colorMap[0])
-        if not os.path.isfile('temp/{var}_/ClosureTest_aMCatNLO_{var}.root'.format(var = self.var)):
-            raise RuntimeError('The rootfile with the generated information from an aMCatNLO sample does not exist')
-        tmptfile2 = r.TFile.Open('temp/{var}_/ClosureTest_aMCatNLO_{var}.root'.format(var = self.var))
-        aMCatNLO = deepcopy(tmptfile2.Get('tW'))
-        aMCatNLO.SetLineWidth(2)
-        aMCatNLO.SetLineColor(bp.colorMap[1])
-        aMCatNLO.SetLineStyle(2)
-        for bin in range(1, tru.GetNbinsX()):
-            tru.SetBinError(bin, 0.)
-            aMCatNLO.SetBinError(bin, 0.)
-        plot.addHisto(tru,      'L,same', 'tW Powheg DR + Pythia8',   'L', 'mc')
-        plot.addHisto(aMCatNLO, 'L,same', 'tW aMC@NLO DR + Pythia8',  'L', 'mc')
-        plot.addHisto(data,     'P,E,same{s}'.format(s = ",X0" if "equalbinsunf" in vl.varList[self.var] else ""), vl.labellegend, 'PE')
-        plot.saveCanvas('TR')
-        tmptfile.Close()
-        tmptfile2.Close()
-        return
+#    def doNominalPlot(self, tau = None):
+#        if tau:
+#            self.helpers[''].tunfolder.DoUnfold(tau)
+#        data = self.helpers[''].tunfolder.GetOutput('forPlot')
+#
+#        print('Unfolded distribution integral', data.Integral())
+#        plot = bp.beautifulUnfPlot(self.var)
+#        data.SetMarkerStyle(r.kFullCircle)
+#        data.GetXaxis().SetNdivisions(510,True)
+#        plot.plotspath       = self.plotspath
+#        plot.doPreliminary   = vl.doPre
+#        plot.doSupplementary = False
+#        plot.displayedLumi   = vl.TotalLumi if self.year == "run3" else vl.LumiDict[self.year]
+#        
+#        if not os.path.isfile('temp/{var}_/ClosureTest_{var}.root'.format(var = self.var)):
+#            raise RuntimeError('The rootfile with the generated information does not exist')
+#        tmptfile = r.TFile.Open('temp/{var}_/ClosureTest_{var}.root'.format(var = self.var))
+#        tru = deepcopy(tmptfile.Get('tW'))
+#        tru.SetLineWidth(2)
+#        tru.SetLineColor(bp.colorMap[0])
+#        if not os.path.isfile('temp/{var}_/ClosureTest_aMCatNLO_{var}.root'.format(var = self.var)):
+#            raise RuntimeError('The rootfile with the generated information from an aMCatNLO sample does not exist')
+#        tmptfile2 = r.TFile.Open('temp/{var}_/ClosureTest_aMCatNLO_{var}.root'.format(var = self.var))
+#        aMCatNLO = deepcopy(tmptfile2.Get('tW'))
+#        aMCatNLO.SetLineWidth(2)
+#        aMCatNLO.SetLineColor(bp.colorMap[1])
+#        aMCatNLO.SetLineStyle(2)
+#        for bin in range(1, tru.GetNbinsX()):
+#            tru.SetBinError(bin, 0.)
+#            aMCatNLO.SetBinError(bin, 0.)
+#        plot.addHisto(tru,      'L,same', 'tW Powheg DR + Pythia8',   'L', 'mc')
+#        plot.addHisto(aMCatNLO, 'L,same', 'tW aMC@NLO DR + Pythia8',  'L', 'mc')
+#        plot.addHisto(data,     'P,E,same{s}'.format(s = ",X0" if "equalbinsunf" in vl.varList[self.var] else ""), vl.labellegend, 'PE')
+#        plot.saveCanvasv2('TR')
+#        tmptfile.Close()
+#        tmptfile2.Close()
+#        return
 
 
     def doRegularizationComparison(self):
@@ -591,7 +606,7 @@ class Unfolder():
 #        plot.addHisto(unregularized,'hist,same','UnRegularized','L')
         plot.plotspath = self.plotspath
         plot.doPreliminary = vl.doPre
-        plot.saveCanvas('BR', '', False)
+        plot.saveCanvasv2('BR', '', False)
         return
 
 
@@ -630,7 +645,7 @@ class Unfolder():
         plot.addHisto(withareaconst, 'hist', 'areacomp', 'L')
         plot.plotspath     = self.plotspath
         plot.doPreliminary = vl.doPre
-        plot.saveCanvas('BR', '', False)
+        plot.saveCanvasv2('BR', '', False)
         return
 
 
@@ -732,34 +747,10 @@ class Unfolder():
                 del tmpcov
                 
         
-        scaleval = 1/thelumi/1000 if vl.doxsec else 1
+        scaleval = 1/thelumi/1000
         for key in allHistos:
             allHistos[key].Scale(scaleval)
         
-
-        #if not self.wearedoingasimov:
-        #if not os.path.isfile('temp/{var}_/ClosureTest_{var}.root'.format(var = self.var)):
-            #raise RuntimeError('The rootfile with the generated information does not exist')
-        #tmptfile = r.TFile.Open('temp/{var}_/ClosureTest_{var}.root'.format(var = self.var))
-        ##tmptfile2 = r.TFile.Open('temp/{var}_/ClosureTest_recobinning_{var}.root'.format(var = self.var))
-        #tru = deepcopy(tmptfile.Get('tW'))
-        ##tru2 = deepcopy(tmptfile2.Get('tW'))
-        ##tru2.Scale(thelumi*1000)
-        #for bin in range(1, allHistos['asimov'].GetNbinsX() + 1):
-            ##print "\nasimov:", allHistos['asimov'].GetBinContent(bin)
-            ##print "verdad:", tru.GetBinContent(bin)
-            #allHistos['asimov'].SetBinError(bin,   abs(allHistos['asimov'].GetBinContent(bin) - tru.GetBinContent(bin)))
-            ##allHistos['asimov'].SetBinContent(bin, nominal.GetBinContent(bin))
-            ##print "errorin:", allHistos['asimov'].GetBinError(bin)
-            ##print "nominal:", nominal.GetBinContent(bin)
-            ##print "relativo", round(allHistos['asimov'].GetBinError(bin)/allHistos['asimov'].GetBinContent(bin)*100, 1)
-            ##print "ratio:", allHistos['asimov'].GetBinContent(bin)/tru.GetBinContent(bin)
-        ##for bin in range(1, tru2.GetNbinsX() + 1):
-            ##print "verdad2:", tru2.GetBinContent(bin)
-        ##tmptfile2.Close()
-        #tmptfile.Close()
-        #del tru
-
         savetfile = r.TFile(self.folderpath + "/particleOutput.root", "recreate")
         for key in allHistos:
             allHistos[key].Write()
@@ -800,29 +791,29 @@ class Unfolder():
         statOnlyList[0].SetFillColorAlpha(r.kGray + 1, 1.0)
         statOnlyList[0].SetLineColor(0)
         statOnlyList[0].SetFillStyle(1001)
-        
+
         if "yaxisuplimitunf" in vl.varList[self.var]:
             plot.yaxisuplimit = vl.varList[self.var]["yaxisuplimitunf"]
 
-        if not self.wearedoingasimov:
-            savetfile2 = r.TFile(self.folderpath + "/particleOutput.root", "update")
-            nom0 = deepcopy(nominal_withErrors[0].Clone("nom0"))
-            nom1 = deepcopy(nominal_withErrors[1].Clone("nom1"))
-            nom0.Write()
-            nom1.Write()
-            savetfile2.Close()
-            del nom0,nom1
+#        if not self.wearedoingasimov:
+#            savetfile2 = r.TFile(self.folderpath + "/particleOutput.root", "update")
+#            nom0 = deepcopy(nominal_withErrors[0].Clone("nom0"))
+#            nom1 = deepcopy(nominal_withErrors[1].Clone("nom1"))
+#            nom0.Write()
+#            nom1.Write()
+#            savetfile2.Close()
+#            del nom0,nom1
         
-        #############################
-        print("\nLOS RESULTAOS - {uno} - {dos}".format(uno = "ASIMOV" if self.wearedoingasimov else "DATOS", dos = self.var))
-        for bin in range(1, nominal_withErrors[0].GetNbinsX() + 1):
-            print("Bin", bin, "(abs.): (", round(allHistos[""].GetBinContent(bin), 4), "+", round(nominal_withErrors[0].GetBinError(bin), 4), "-", round(nominal_withErrors[1].GetBinError(bin), 4), ") pb")
-            print("Bin", bin, "(rel.): (", round(allHistos[""].GetBinContent(bin), 4), "+", round(nominal_withErrors[0].GetBinError(bin)/allHistos[""].GetBinContent(bin)*100, 4), "-", round(nominal_withErrors[1].GetBinError(bin)/allHistos[""].GetBinContent(bin)*100, 4), ") pb\n")
-        print("\n")
-        #############################
+        ##############################
+        #print "\nLOS RESULTAOS - {uno} - {dos}".format(uno = "ASIMOV" if self.wearedoingasimov else "DATOS", dos = self.var)
+        #for bin in range(1, nominal_withErrors[0].GetNbinsX() + 1):
+            #print "Bin", bin, "(abs.): (", round(allHistos[""].GetBinContent(bin), 4), "+", round(nominal_withErrors[0].GetBinError(bin), 4), "-", round(nominal_withErrors[1].GetBinError(bin), 4), ") pb"
+            #print "Bin", bin, "(rel.): (", round(allHistos[""].GetBinContent(bin), 4), "+", round(nominal_withErrors[0].GetBinError(bin)/allHistos[""].GetBinContent(bin)*100, 4), "-", round(nominal_withErrors[1].GetBinError(bin)/allHistos[""].GetBinContent(bin)*100, 4), ") pb\n"
+        #print "\n"
+        ##############################
         
-        ####if self.var != "Fiducial":
-        ####    tex.saveLaTeXfromhisto(allHistos[""], self.var, path = self.tablespath, errhisto = nominal_withErrors[0], ty = "particle")
+        #if self.var != "Fiducial":
+            #tex.saveLaTeXfromhisto(allHistos[""], self.var, path = self.tablespath, errhisto = nominal_withErrors[0], ty = "particle")
 
         if   "legpos_particle"   in vl.varList[self.var] and not self.wearedoingasimov:
             legloc = vl.varList[self.var]["legpos_particle"]
@@ -837,34 +828,48 @@ class Unfolder():
         tmptfile = r.TFile.Open(self.folderpath + '/particle.root')
 
         tru                        = vl.giveMeOneComparison(tmptfile, "tw",                       scaleval, self.var, part = True)
-        #twttbardr                  = vl.giveMeOneComparison(tmptfile, "twttbardr",                  scaleval, self.var, part = True)
-        #twttbards                  = vl.giveMeOneComparison(tmptfile, "twttbards",                  scaleval, self.var, part = True)
-        ##twttbarherwig              = vl.giveMeOneComparison(tmptfile, "twttbarherwig",              scaleval, self.var, part = True)
-        #twttbaramc_dr              = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr",              scaleval, self.var, part = True)
-        #twttbaramc_dr2             = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr2",             scaleval, self.var, part = True)
-        #twttbaramc_ds              = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds",              scaleval, self.var, part = True)
-        #twttbaramc_ds_runningBW    = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_runningBW",    scaleval, self.var, part = True)
-        #twttbaramc_ds_is           = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is",           scaleval, self.var, part = True)
-        #twttbaramc_ds_is_runningBW = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is_runningBW", scaleval, self.var, part = True)
-
+        twds                  = vl.giveMeOneComparison(tmptfile, "twds",                  scaleval, self.var, part = True)
+        #twttbarherwig              = vl.giveMeOneComparison(tmptfile, "twttbarherwig",              scaleval, self.var, part = True)
+        twamc_dr              = vl.giveMeOneComparison(tmptfile, "twamcatnlo_dr",              scaleval, self.var, part = True)
+        twamc_dr2             = vl.giveMeOneComparison(tmptfile, "twamcatnlo_dr2",             scaleval, self.var, part = True)
+        twamc_ds              = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds",              scaleval, self.var, part = True)
+        twamc_ds_runningBW    = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_runningBW",    scaleval, self.var, part = True)
+        twamc_ds_is              = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is",           scaleval, self.var, part = True)
+        twamc_ds_is_runningBW = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is_runningBW", scaleval, self.var, part = True)        
+        """
+        tru                        = vl.giveMeOneComparison(tmptfile, "bb4l",                       scaleval, self.var, part = True)
+        twttbardr                  = vl.giveMeOneComparison(tmptfile, "twttbardr",                  scaleval, self.var, part = True)
+        twttbards                  = vl.giveMeOneComparison(tmptfile, "twttbards",                  scaleval, self.var, part = True)
+        #twttbarherwig              = vl.giveMeOneComparison(tmptfile, "twttbarherwig",              scaleval, self.var, part = True)
+        twttbaramc_dr              = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr",              scaleval, self.var, part = True)
+        twttbaramc_dr2             = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr2",             scaleval, self.var, part = True)
+        twttbaramc_ds              = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds",              scaleval, self.var, part = True)
+        twttbaramc_ds_runningBW    = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_runningBW",    scaleval, self.var, part = True)
+        twttbaramc_ds_is           = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is",           scaleval, self.var, part = True)
+        twttbaramc_ds_is_runningBW = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is_runningBW", scaleval, self.var, part = True)
+        """
         tmptfile.Close()
 
         savetfile3 = r.TFile(self.folderpath + "/particleOutput.root", "update")
         tru.Write()
-        #twttbardr.Write()
-        #twttbards.Write()
-        ##twttbarherwig.Write()
-        #twttbaramc_dr.Write()
-        #twttbaramc_dr2.Write()
-        #twttbaramc_ds.Write()
-        #twttbaramc_ds_runningBW.Write()
-        #twttbaramc_ds_is.Write()
-        #twttbaramc_ds_is_runningBW.Write()
+        twds.Write()
+        #twttbarherwig.Write()
+        twamc_dr.Write()
+        twamc_dr2.Write()
+        twamc_ds.Write()
+        twamc_ds_runningBW.Write()
+        twamc_ds_is.Write()
+        twamc_ds_is_runningBW.Write()
+
         savetfile3.Close()
 
         themaxs = []
         #for el in [tru, twttbardr, twttbards, twttbarherwig, twttbaramc_dr, twttbaramc_dr2, twttbaramc_ds, twttbaramc_ds_runningBW,
-        for el in [tru, #twttbardr, twttbards, twttbaramc_dr, twttbaramc_dr2, twttbaramc_ds, twttbaramc_ds_runningBW,
+        """
+        for el in [tru, twttbardr, twttbards, twttbaramc_dr, twttbaramc_dr2, twttbaramc_ds, twttbaramc_ds_runningBW,
+                allHistos[""], nominal_withErrors[0], nominal_withErrors[1]]:
+        """
+        for el in [tru, twamc_dr, twamc_dr2, twamc_ds, twamc_ds_runningBW,twamc_ds_is_runningBW,
                 allHistos[""], nominal_withErrors[0], nominal_withErrors[1]]:
             themaxs.append(vl.getAConservativeMaximum(el))
         tmpval = max(themaxs)
@@ -876,14 +881,25 @@ class Unfolder():
         plot.addHisto(nominal_withErrors,      'A2',     'Total unc.',                     'F', 'total')
         plot.addHisto(statOnlyList,            '2',      'Stat unc.',                      'F', "stat")
         plot.addHisto(tru,                     'P,same', 'tW PH + P8','P', 'mc')
-        #plot.addHisto(twttbardr,               'P,same', 'tW DR + t#bar{t} PH + P8',       'P', 'mc')
-        #plot.addHisto(twttbards,               'P,same', 'tW DS + t#bar{t} PH + P8',       'P', 'mc')
-        ##plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
-        #plot.addHisto(twttbaramc_dr,           'P,same', 'tW DR + t#bar{t} aMC + P8',      'P', 'mc')
-        #plot.addHisto(twttbaramc_dr2,          'P,same', 'tW DR2 + t#bar{t} aMC + P8',     'P', 'mc')
-        #plot.addHisto(twttbaramc_ds,           'P,same', 'tW DS + t#bar{t} aMC + P8',      'P', 'mc')
-        #plot.addHisto(twttbaramc_ds_runningBW, 'P,same', 'tW DS dyn. + t#bar{t} aMC + P8', 'P', 'mc')
-
+        plot.addHisto(twds,               'P,same', 'tW DS + t#bar{t} PH + P8',       'P', 'mc')
+        #plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
+        plot.addHisto(twamc_dr,                'P,same', 'tW DR aMC + P8',      'P', 'mc')
+        plot.addHisto(twamc_dr2,               'P,same', 'tW DR2 aMC + P8',     'P', 'mc')
+        plot.addHisto(twamc_ds,                'P,same', 'tW DS aMC + P8',      'P', 'mc')
+        plot.addHisto(twamc_ds_runningBW,      'P,same', 'tW DS dyn. aMC + P8', 'P', 'mc')
+        plot.addHisto(twamc_ds_is,        'P,same', 'tW DS + t#bar{t} aMC + P8',      'P', 'mc')
+        plot.addHisto(twamc_ds_is_runningBW,   'P,same', 'tW DS dyn. aMC + P8', 'P', 'mc')
+        """
+        plot.addHisto(tru,                     'P,same', 'b#bar{b}l^{+}#nu l^{-}#nu PH + P8','P', 'mc')
+        plot.addHisto(twttbardr,               'P,same', 'tW DR + t#bar{t} PH + P8',       'P', 'mc')
+        plot.addHisto(twttbards,               'P,same', 'tW DS + t#bar{t} PH + P8',       'P', 'mc')
+        #plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
+        plot.addHisto(twttbaramc_dr,           'P,same', 'tW DR + t#bar{t} aMC + P8',      'P', 'mc')
+        plot.addHisto(twttbaramc_dr2,          'P,same', 'tW DR2 + t#bar{t} aMC + P8',     'P', 'mc')
+        plot.addHisto(twttbaramc_ds,           'P,same', 'tW DS + t#bar{t} aMC + P8',      'P', 'mc')
+        plot.addHisto(twttbaramc_ds_runningBW, 'P,same', 'tW DS dyn. + t#bar{t} aMC + P8', 'P', 'mc')
+        """
+        
         plot.addHisto(allHistos[""],           'P,E,same{s}'.format(s = ",X0" if "equalbinsunf" in vl.varList[self.var] else ""),  vl.labellegend,                   'PE', 'data')
 
         #plot.saveCanvas(legloc)
@@ -900,7 +916,7 @@ class Unfolder():
         yaxismax_detectorunc = 2
         if "yaxismax_detectorunc" in vl.varList[self.var]: yaxismax_detectorunc = vl.varList[self.var]["yaxismax_detectorunc"]
 
-        uncListorig, hincstat, hincsyst, hincmax = ep.drawTheRelUncPlot(nominal_withErrors, allHistos, plot2, yaxismax_detectorunc, doFit = self.usingFitInput, doSym = vl.doSym)
+        uncListorig, hincstat, hincsyst, hincmax = ep.drawTheRelUncPlot(nominal_withErrors, allHistos, plot2, yaxismax_detectorunc, doSym = vl.doSym)
         
         if   "legpos_particleunc"   in vl.varList[self.var] and not self.wearedoingasimov:
             unclegpos = vl.varList[self.var]["legpos_particleunc"]
@@ -912,80 +928,6 @@ class Unfolder():
         plot2.saveCanvas(unclegpos)
         del plot2
         return
-####        tmptfile = r.TFile.Open(self.folderpath + '/particle.root')
-####        tru = deepcopy(tmptfile.Get('x_tw').Clone('tru'))
-####        tmptfile.Close()
-####        #tru.Scale(0.001)
-####        #if self.year == "run2":
-####            #tru.Scale(1./3.)
-####        tru.Scale(scaleval)
-####        tru.SetMarkerSize(0)
-####        tru.SetLineWidth(2)
-####        tru.SetLineColor(bp.colorMap[0])
-####        #if self.var == "Fiducial":
-####            #print "JEJE:", tru.GetBinContent(1)
-####
-####        #for iB in range(1, allHistos[""].GetNbinsX() + 1):
-####            #print allHistos[""].GetBinContent(iB), tru.GetBinContent(iB),  (allHistos[""].GetBinContent(iB) - tru.GetBinContent(iB)) / tru.GetBinContent(iB) * 100
-####
-####        #sys.exit()
-####        ##print "tW DR", tru.GetBinContent(1)
-####
-####        #if not os.path.isfile('temp/{var}_/ClosureTest_aMCatNLO_{var}.root'.format(var = self.var)):
-####            #raise RuntimeError('The rootfile with the generated information from an aMCatNLO sample does not exist.')
-####        #tmptfile2 = r.TFile.Open('temp/{var}_/ClosureTest_aMCatNLO_{var}.root'.format(var = self.var))
-####        #aMCatNLO = deepcopy(tmptfile2.Get('tW').Clone('aMCatNLO'))
-####        #tmptfile2.Close()
-####        #aMCatNLO.SetLineWidth(2)
-####        #aMCatNLO.SetLineColor(r.kAzure)
-####        #aMCatNLO.SetLineStyle(2)
-####
-####        ##print "tW aMCatNLO DR", aMCatNLO.GetBinContent(1)
-####
-####        #if not os.path.isfile('temp/{var}_/ClosureTest_DS_{var}.root'.format(var = self.var)):
-####            #raise RuntimeError('The rootfile with the generated information with the DS variation does not exist.')
-####        #tmptfile3 = r.TFile.Open('temp/{var}_/ClosureTest_DS_{var}.root'.format(var = self.var))
-####        #hDS = deepcopy(tmptfile3.Get('tW').Clone('hDS'))
-####        #tmptfile3.Close()
-####        #hDS.SetLineWidth(2)
-####        #hDS.SetLineColor(r.kGreen)
-####
-####        ##print "tW DS", hDS.GetBinContent(1)
-####
-####        plot.addHisto(nominal_withErrors, 'E2',     'Uncertainty',            'F', 'unc')
-####        plot.addHisto(tru,                'L,same', 'tW Powheg DR + Pythia8', 'L', 'mc')
-####        #plot.addHisto(hDS,                'L,same', 'tW Powheg DS + Pythia8',   'L', 'mc')
-####        #plot.addHisto(aMCatNLO,           'L,same', 'tW aMC@NLO DR + Pythia8',  'L', 'mc')
-####        if self.wearedoingasimov:
-####            plot.addHisto(allHistos[""], 'P,same{s}'.format(s = ",X0" if "equalbinsunf" in vl.varList[self.var] else ""), "Asimov dataset", 'PE{s}'.format(s = "L" if not "equalbinsunf" in vl.varList[self.var] else ""), 'data')
-####        else:
-####            plot.addHisto(allHistos[""], 'P,same{s}'.format(s = ",X0" if "equalbinsunf" in vl.varList[self.var] else ""), vl.labellegend,   'PE{s}'.format(s = "L" if not "equalbinsunf" in vl.varList[self.var] else ""), 'data')
-####        plot.saveCanvas(legloc)
-####
-####        del plot
-####
-####        plot2 = bp.beautifulUnfPlot(self.var + 'uncs_asimov' if self.wearedoingasimov else self.var + 'uncs', self.var)
-####        plot2.displayedLumi   = vl.TotalLumi if self.year == "run3" else vl.LumiDict[self.year]
-####        plot2.doFit           = self.usingFitInput
-####        plot2.plotspath       = self.plotspath
-####        plot2.doPreliminary   = vl.doPre
-####        plot2.doSupplementary = False
-####
-####        yaxismax_detectorunc = 2
-####        if "yaxismax_detectorunc" in vl.varList[self.var]: yaxismax_detectorunc = vl.varList[self.var]["yaxismax_detectorunc"]
-####
-####        uncListorig, hincstat, hincsyst, hincmax = ep.drawTheRelUncPlot(nominal_withErrors, allHistos, plot2, yaxismax_detectorunc, doFit = self.usingFitInput, doSym = vl.doSym)
-####        
-####        if   "legpos_particleunc"   in vl.varList[self.var] and not self.wearedoingasimov:
-####            unclegpos = vl.varList[self.var]["legpos_particleunc"]
-####        elif "legpos_particleuncas" in vl.varList[self.var]:
-####            unclegpos = vl.varList[self.var]["legpos_particleuncas"]
-####        else:
-####            unclegpos = "TR"
-####        
-####        plot2.saveCanvas(unclegpos)
-####        del plot2
-####        return
 
 
     def getConditionNumber(self, nuis):
@@ -1040,8 +982,6 @@ def UnfoldVariable(tsk):
     a.plotspath        = outplotspath
     a.tablespath       = inpath + "/" + iY + "/tables"
     a.doSanityCheck    = True
-    if "fit" in signalextr:
-        a.usingFitInput    = True
     a.doRegularisation = vl.varList[iV]["doReg"]  if "doReg"  in vl.varList[iV] else vl.doReg
     a.doAreaConstraint = vl.varList[iV]["doArea"] if "doArea" in vl.varList[iV] else vl.doArea
     a.doRegularisation = False
@@ -1106,11 +1046,7 @@ if __name__ == "__main__":
             raise RuntimeError("FATAL: the variable requested is not in the provided input folder.")
 
         for iV in thevars:
-            if "plots" in iV or "table" in iV or "control" in iV: continue
-            #if "Fiducial" in iV: continue
-            #if "Lep1_Pt" not in iV: continue
-            #if "Lep1Lep2_DPhi" not in iV: continue
-            #if iY not in ["2016", "2017"]: continue
+            if any( [el in iV for el in vl.vetolist] ): continue
             tasks.append( (inpath, iY, iV, signalextr) )
 
 

@@ -6,7 +6,7 @@ notpart : (! ((Dresschannel == 1) && (nDressSelLep >= 2) && (DressLep1_Pt > 25) 
 
 # DETECTOR
 
-lumijson:   $DATA{(isThisInTheJSON == 1)} $MC{(1)}
+#lumijson:   $DATA{(isThisInTheJSON == 1)} $MC{(1)}
 trigger    : pass_trigger
 metfilters: $DATA{Flag_eeBadScFilter && Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_ecalBadCalibFilter} $MC{Flag_eeBadScFilter && Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_ecalBadCalibFilter}
 emu        : channel == 1

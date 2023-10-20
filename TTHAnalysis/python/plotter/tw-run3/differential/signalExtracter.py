@@ -3,19 +3,20 @@ import warnings as wr
 import sys, os, math, argparse
 from copy import deepcopy
 from multiprocessing import Pool
+from array import array
 
 sys.path.append('{cmsswpath}/src/CMGTools/TTHAnalysis/python/plotter/tw-run3/differential/'.format(cmsswpath = os.environ['CMSSW_BASE']))
 import errorPropagator as ep
 import beautifulUnfoldingPlots as bp
 import varList as vl
-import getLaTeXtable as tex
+#import getLaTeXtable as tex
 
 r.gROOT.SetBatch(True)
 
 #===================================
 def getXsecForSys(syst, thedict):
     data = deepcopy(thedict["data_obs"][""].Clone('data_%s'%syst))
-    
+
     ttbar     = thedict['ttbar'  ][""]
     dy        = thedict['dy'     ][""]
     nonworz   = thedict['nonworz'][""]
@@ -47,7 +48,9 @@ def SubtractBackgroundToData(pathtofile):
     histodict = {}; unclist = [ "" ]
     for key in tfile.GetListOfKeys():
         tmpnam = key.GetName()
-
+        # In Asimov the stat. unc. is not included in the data_obs histogram
+        if "data_obs" in key.GetName():
+            ep.SetTheStatsUncs(tfile.Get(tmpnam))
         if "Up" not in tmpnam and "Down" not in tmpnam: # It is the nominal value of a process
             histodict[tmpnam.replace("x_", "")] = {}
             histodict[tmpnam.replace("x_", "")][""] = deepcopy(tfile.Get(tmpnam).Clone(tmpnam.replace("x_", "") + "_"))
@@ -88,7 +91,6 @@ def ExtractSignalAndPlotIt(tsk):
     PlotDetectorLevelResults(inpath, iY, iV, dictofvars)
     return
 
-
 def PlotDetectorLevelResults(inpath, iY, iV, thedict):
     #scaleval = 1
     thelumi = vl.TotalLumi if iY == "run3" else vl.LumiDict[iY]
@@ -98,15 +100,15 @@ def PlotDetectorLevelResults(inpath, iY, iV, thedict):
         thedict[key].Scale(scaleval)
 
     #### 1) Plot result plot
-    nominal_withErrors  = ep.propagateHisto(thedict, doSym = vl.doSym)
+    nominal_withErrors  = ep.propagateHisto(thedict, doSym = vl.doSym) # Up and down variations with all the systematics
 
     #for iB in range(1, nominal_withErrors[0].GetNbinsX() + 1):
         #print nominal_withErrors[0].GetBinContent(iB), nominal_withErrors[0].GetBinError(iB)
         #print nominal_withErrors[1].GetBinContent(iB), nominal_withErrors[1].GetBinError(iB)
-
+    
     statOnlyList = [deepcopy(thedict[""]),  deepcopy(thedict[""])]
-    for iB in range(1, thedict[""].GetNbinsX() + 1):
-        thedict[""].SetBinError(iB, 1e-5)
+    #for iB in range(1, thedict[""].GetNbinsX() + 1):
+    #    thedict[""].SetBinError(iB, 1e-5)
 
     #sys.exit()
 
@@ -142,21 +144,34 @@ def PlotDetectorLevelResults(inpath, iY, iV, thedict):
     
     tmptfile = r.TFile.Open(inpath + "/" + iY + "/" + iV + "/detector.root")
     tru                         = vl.giveMeOneComparison(tmptfile, "tw", scaleval, iV)
-    ##twttbardr                   = vl.giveMeOneComparison(tmptfile, "twttbardr", scaleval, iV)
-    ##twttbards                   = vl.giveMeOneComparison(tmptfile, "twttbards", scaleval, iV)
-    ##twttbarherwig               = vl.giveMeOneComparison(tmptfile, "twttbarherwig", scaleval, iV)
-    ##twttbaramc_dr               = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr", scaleval, iV)
-    ##twttbaramc_dr2              = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr2", scaleval, iV)
-    ##twttbaramc_ds               = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds", scaleval, iV)
-    ##twttbaramc_ds_runningBW     = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_runningBW", scaleval, iV)
-    ##twttbaramc_ds_is            = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is", scaleval, iV)
-    ##twttbaramc_ds_is_runningBW  = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is_runningBW", scaleval, iV)
-
+    twds                        = vl.giveMeOneComparison(tmptfile, "twds", scaleval, iV)
+    #twttbarherwig               = vl.giveMeOneComparison(tmptfile, "twttbarherwig", scaleval, iV)
+    twamc_dr               = vl.giveMeOneComparison(tmptfile, "twamcatnlo_dr", scaleval, iV)
+    twamc_dr2              = vl.giveMeOneComparison(tmptfile, "twamcatnlo_dr2", scaleval, iV)
+    twamc_ds               = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds", scaleval, iV)
+    twamc_ds_runningBW     = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_runningBW", scaleval, iV)
+    twamc_ds_is            = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is", scaleval, iV)
+    twamc_ds_is_runningBW  = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is_runningBW", scaleval, iV)
+    """
+    tru                         = vl.giveMeOneComparison(tmptfile, "bb4l", scaleval, iV)
+    twttbardr                   = vl.giveMeOneComparison(tmptfile, "twttbardr", scaleval, iV)
+    twttbards                   = vl.giveMeOneComparison(tmptfile, "twttbards", scaleval, iV)
+    twttbarherwig               = vl.giveMeOneComparison(tmptfile, "twttbarherwig", scaleval, iV)
+    twttbaramc_dr               = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr", scaleval, iV)
+    twttbaramc_dr2              = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr2", scaleval, iV)
+    twttbaramc_ds               = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds", scaleval, iV)
+    twttbaramc_ds_runningBW     = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_runningBW", scaleval, iV)
+    twttbaramc_ds_is            = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is", scaleval, iV)
+    twttbaramc_ds_is_runningBW  = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is_runningBW", scaleval, iV)
+    """
     tmptfile.Close()
 
 
     themaxs = []
-    for el in [tru, #twttbardr, twttbards, twttbarherwig, twttbaramc_dr, twttbaramc_dr2, twttbaramc_ds, twttbaramc_ds_runningBW, 
+#    for el in [tru, twttbardr, twttbards, twttbarherwig, twttbaramc_dr, twttbaramc_dr2, twttbaramc_ds, twttbaramc_ds_runningBW, 
+#               thedict[""], nominal_withErrors[0], nominal_withErrors[1]]:
+    # Add here the additional samples
+    for el in [tru, twds, twamc_dr, twamc_dr2, twamc_ds, twamc_ds_runningBW, twamc_ds_is, twamc_ds_is_runningBW,
                thedict[""], nominal_withErrors[0], nominal_withErrors[1]]:
         themaxs.append(vl.getAConservativeMaximum(el))
     tmpval = max(themaxs)
@@ -169,50 +184,65 @@ def PlotDetectorLevelResults(inpath, iY, iV, thedict):
         plot.yaxisuplimit = vl.varList[iV]["yaxismax_detector"]
 
     plot.addHisto(nominal_withErrors,      'A2',     'Total unc.',                     'F', "total")
-    plot.addHisto(statOnlyList,            '2',      'Stat unc.',                      'F', "stat")
-    plot.addHisto(tru,                     'P,same', 'tW PH + P8','P', 'mc')
-    ##plot.addHisto(twttbardr,               'P,same', 'tW DR + t#bar{t} PH + P8',       'P', 'mc')
-    ##plot.addHisto(twttbards,               'P,same', 'tW DS + t#bar{t} PH + P8',       'P', 'mc')
-    ##plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
-    ##plot.addHisto(twttbaramc_dr,           'P,same', 'tW DR + t#bar{t} aMC + P8',      'P', 'mc')
-    ##plot.addHisto(twttbaramc_dr2,          'P,same', 'tW DR2 + t#bar{t} aMC + P8',     'P', 'mc')
-    ##plot.addHisto(twttbaramc_ds,           'P,same', 'tW DS + t#bar{t} aMC + P8',      'P', 'mc')
-    ##plot.addHisto(twttbaramc_ds_runningBW, 'P,same', 'tW DS dyn. + t#bar{t} aMC + P8', 'P', 'mc')
-
-    plot.addHisto(thedict[""],             'P,E,same{s}'.format(s = ",X0" if "equalbinsunf" in vl.varList[iV] else ""),  vl.labellegend,                   'PE', 'data')
+    plot.addHisto(statOnlyList,            '2,same', 'Stat unc.',                      'F', "stat")
+    plot.addHisto(tru,                     'P,same', 'tW PH + P8',                     'P', 'mc')
+    plot.addHisto(twds,                    'P,same', 'tW DS PH + P8',       'P', 'mc')
+    #plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
+    plot.addHisto(twamc_dr,                'P,same', 'tW DR aMC + P8',      'P', 'mc')
+    plot.addHisto(twamc_dr2,               'P,same', 'tW DR2 aMC + P8',     'P', 'mc')
+    plot.addHisto(twamc_ds,                'P,same', 'tW DS aMC + P8',      'P', 'mc')
+    plot.addHisto(twamc_ds_runningBW,      'P,same', 'tW DS dyn. aMC + P8', 'P', 'mc')
+    plot.addHisto(twamc_ds_is,                 'P,same', 'tW DS aMC + P8',      'P', 'mc')
+    plot.addHisto(twamc_ds_is_runningBW,   'P,same', 'tW DS dyn. aMC + P8', 'P', 'mc')
+    
+    """
+    plot.addHisto(tru,                     'P,same', 'b#bar{b}l^{+}#nu l^{-}#nu PH + P8','P', 'mc')
+    plot.addHisto(twttbardr,               'P,same', 'tW DR + t#bar{t} PH + P8',       'P', 'mc')
+    plot.addHisto(twttbards,               'P,same', 'tW DS + t#bar{t} PH + P8',       'P', 'mc')
+    plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
+    plot.addHisto(twttbaramc_dr,           'P,same', 'tW DR + t#bar{t} aMC + P8',      'P', 'mc')
+    plot.addHisto(twttbaramc_dr2,          'P,same', 'tW DR2 + t#bar{t} aMC + P8',     'P', 'mc')
+    plot.addHisto(twttbaramc_ds,           'P,same', 'tW DS + t#bar{t} aMC + P8',      'P', 'mc')
+    plot.addHisto(twttbaramc_ds_runningBW, 'P,same', 'tW DS dyn. + t#bar{t} aMC + P8', 'P', 'mc')
+    """
+    
+    plot.addHisto(thedict[""], 'P,E,same{s}'.format(s = ",X0" if "equalbinsunf" in vl.varList[iV] else ""), vl.labellegend, 'PE', 'data', redrawaxis = True)
     #plot.saveCanvas(legloc)
     plot.saveCanvasv2(legloc)
     del plot
 
+    #for iB in range(1, nominal_withErrors[0].GetNbinsX() + 1):
+    #    print(thedict[""].GetBinContent(iB), tru.GetBinContent(iB))
+    
     #### 2) Plot relative uncertainty plot
-    plot               = bp.beautifulUnfPlot('{var}uncs_detector'.format(var = iV), iV)
-    plot.doFit         = False
-    plot.doPreliminary = vl.doPre
-    plot.plotspath     = inpath + "/" + iY + "/detectorplots/"
-    plot.displayedLumi = vl.TotalLumi if iY == "run2" else vl.LumiDict[iY]
+    plot2               = bp.beautifulUnfPlot('{var}uncs_detector'.format(var = iV), iV)
+    plot2.doFit         = False
+    plot2.doPreliminary = vl.doPre
+    plot2.plotspath     = inpath + "/" + iY + "/detectorplots/"
+    plot2.displayedLumi = vl.TotalLumi if iY == "run3" else vl.LumiDict[iY]
 
     yaxismax_detectorunc = 1
     if "yaxismax_detectorunc" in vl.varList[iV]:
         yaxismax_detectorunc = vl.varList[iV]["yaxismax_detectorunc"]
 
-    uncListorig, hincstat, hincsyst, hincmax = ep.drawTheRelUncPlot(nominal_withErrors, thedict, plot, yaxismax_detectorunc)
-
+    uncListorig, hincstat, hincsyst, hincmax = ep.drawTheRelUncPlot(nominal_withErrors, thedict, plot2, yaxismax_detectorunc, doSym = vl.doSym)
     #uncListorig, hincstat, hincsyst, hincmax = ep.drawTheRelUncPlotv2(nominal_withErrors, thedict, plot, yaxismax_detectorunc)
 
     if "legpos_detectorunc" in vl.varList[iV]: unclegpos = vl.varList[iV]["legpos_detectorunc"]
     else:                                      unclegpos = "TR"
 
-    plot.saveCanvas(unclegpos)
+    plot2.saveCanvas(unclegpos) # Cuidado porque el png no sale bien pero el canvas rootfile si
 
-    out2 = r.TFile.Open(inpath + "/" + iY + "/" + iV + "/detectorsignal_bs.root", 'update')
-    nom0 = deepcopy(nominal_withErrors[0].Clone("nom0"))
-    nom1 = deepcopy(nominal_withErrors[1].Clone("nom1"))
-    nom0.Write()
-    nom1.Write()
-    hincmax.Write()
-    hincsyst.Write()
-    out2.Close(); del out2
+    ######out2 = r.TFile.Open(inpath + "/" + iY + "/" + iV + "/detectorsignal_bs.root", 'update')
+    ######nom0 = deepcopy(nominal_withErrors[0].Clone("nom0"))
+    ######nom1 = deepcopy(nominal_withErrors[1].Clone("nom1"))
+    ######nom0.Write()
+    ######nom1.Write()
+    ######hincmax.Write()
+    ######hincsyst.Write()
+    ######out2.Close(); del out2
     return
+
 
 
 if __name__=="__main__":

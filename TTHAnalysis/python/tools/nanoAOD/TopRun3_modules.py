@@ -213,16 +213,24 @@ addJECs_2022_data = lambda : JetEnergyCorrector(
 )
 
 addJECs_2022EE_mc = lambda : JetEnergyCorrector(
-    year = 2022, era = "E", jec = "Winter22Run3", isMC = True,
+    year = 2022, era = "E", jec = "Summer22EEPrompt22", isMC = True,
     algo = "AK4PFPuppi", metbranchname = "PuppiMET", rhoBranchName = "Rho_fixedGridRhoFastjetAll",
     hjetvetomap = "jetvetomap",
     unc = "Total", saveMETUncs = ["T1", "T1Smear"], 
     splitJers = False, applyVetoMaps = True
 )
+## For UL samples
+#addJECs_2022EE_mc = lambda : JetEnergyCorrector(
+#    year = 2022, era = "E", jec = "Winter22Run3", isMC = True,
+#    algo = "AK4PFPuppi", metbranchname = "PuppiMET", rhoBranchName = "fixedGridRhoFastjetAll",
+#    hjetvetomap = "jetvetomap",
+#    unc = "Total", saveMETUncs = ["T1", "T1Smear"], 
+#    splitJers = False, applyVetoMaps = True
+#)
 
 # + In reality this only runs the jet vetos
 addJECs_2022EE_data = lambda : JetEnergyCorrector(
-    year = 2022, era = "E", jec = "Winter22Run3", isMC = False,
+    year = 2022, era = "E", jec = "Summer22EEPrompt22", isMC = False,
     algo = "AK4PFPuppi", metbranchname = "PuppiMET", rhoBranchName = "Rho_fixedGridRhoFastjetAll",
     hjetvetomap = "jetvetomap",
     unc = "Total", saveMETUncs = ["T1", "T1Smear"],
@@ -246,7 +254,7 @@ cleaning_mc_2022 = lambda : pythonCleaningTopRun2UL(label  = "Recl",
                                              jetPts = [IDDict["jets"]["pt"], IDDict["jets"]["pt2"]],
                                              jetPtNoisyFwd = IDDict["jets"]["ptfwdnoise"],
                                              jecvars   = ['jesTotal', 'jer'] + ['jes' + v for v in groups],
-                                             lepenvars = ["mu"],
+                                             lepenvars = ["mu","elscale","elsigma"],
                                              isMC      = True,
                                              year_     = "2022",
                                              #debug     = True,
@@ -256,7 +264,7 @@ cleaning_mc_2022PostEE = lambda : pythonCleaningTopRun2UL(label  = "Recl",
                                              jetPts = [IDDict["jets"]["pt"], IDDict["jets"]["pt2"]],
                                              jetPtNoisyFwd = IDDict["jets"]["ptfwdnoise"],
                                              jecvars   = ['jesTotal', 'jer'] + ['jes' + v for v in groups],
-                                             lepenvars = ["mu"],
+                                             lepenvars = ["mu","elscale","elsigma"],
                                              isMC      = True,
                                              year_     = "2022",
                                              #debug     = True,
@@ -281,8 +289,8 @@ cleaning_data_2022PostEE = lambda : pythonCleaningTopRun2UL(label = "Recl",
 #### Add Rochester corrections
 from CMGTools.TTHAnalysis.tools.addExtraLepVarsForLepUncs import addExtraLepVarsForLepUncs
 # from CMGTools.TTHAnalysis.tools.nanoAOD.jetMetGrouper_TopRun2UL import jetMetCorrelate_TopRun2
-addLepUncsVars_mc   = lambda : addExtraLepVarsForLepUncs(elSigmaOrScale = False)
-addLepUncsVars_data = lambda : addExtraLepVarsForLepUncs(isMC = False, elSigmaOrScale = False)
+addLepUncsVars_mc   = lambda : addExtraLepVarsForLepUncs(elSigmaOrScale = True)
+addLepUncsVars_data = lambda : addExtraLepVarsForLepUncs(isMC = False, elSigmaOrScale = True)
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.selectParticleAndPartonInfo import selectParticleAndPartonInfo
 theDressAndPartInfo = lambda : selectParticleAndPartonInfo(dresslepSel_         = dresslepID,
@@ -299,7 +307,7 @@ lepsuncsAndParticle_data = [addLepUncsVars_data]
 from CMGTools.TTHAnalysis.tools.eventVars_TopRun3 import EventVars_TopRun2UL
 eventVars_mc_2022   = lambda : EventVars_TopRun2UL('', 'Recl',
                                               jecvars = ['jesTotal', 'jer'] + ['jes' + v for v in groups] + ["unclustEn"],
-                                              lepvars = ['mu'], metBranchName='PuppiMET')
+                                              lepvars = ["mu","elscale","elsigma"], metBranchName='PuppiMET')
 eventVars_data = lambda : EventVars_TopRun2UL('', 'Recl', isMC = False,
                                               jecvars = [],
                                               lepvars = [""], metBranchName='PuppiMET')
@@ -316,6 +324,18 @@ varstrigger_data            = [eventVars_data] + triggerSeq
 from CMGTools.TTHAnalysis.tools.nanoAOD.TopPtWeight import TopPtWeight
 addTopPtWeight = lambda : TopPtWeight()
 
+## PU weights
+#from CMGTools.TTHAnalysis.tools.nanoAOD.applyPuWeights import puWeighter
+#puweight_file = os.path.join( os.environ["CMSSW_BASE"], "src/CMGTools/TTHAnalysis/data/pileup/puWeights_UL_2022.root")
+#puweighter = lambda : puWeighter(filename = puweight_file)
+
+###### PU weights producer (I think this is another way of computing the weights starting from only the data PU profile)
+from PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer import puWeightProducer
+pufile_data2022PostEE = "%s/src/PhysicsTools/NanoAODTools/python/postprocessing/data/pileup/MyDataPileupHistogram_2022PostEE.root" % os.environ[
+    'CMSSW_BASE']
+puweighter = lambda : puWeightProducer(
+    "auto", pufile_data2022PostEE, "pu_mc", "pileup", verbose=False)
+
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.btag_weighterRun3 import btag_weighterRun3
 ## b-tagging
@@ -324,16 +344,16 @@ btagWeights_2022 = lambda : btag_weighterRun3(btagpath + "/" + "btagging.json.gz
                                             btagpath + "/" + "btagEffs_2023_06_06.root",
                                             'deepJet',
                                             jecvars   = ['jesTotal', 'jer'] + ['jes' + v for v in groups],
-                                            lepenvars = ["mu"],
+                                            lepenvars = ["mu","elscale","elsigma"],
                                             splitCorrelations = True,
                                             year = "2022")
 
 # Lepton & trigger SF
 from CMGTools.TTHAnalysis.tools.nanoAOD.lepScaleFactors_TopRun3 import lepScaleFactors_TopRun3
-leptrigSFs_2022    = lambda : lepScaleFactors_TopRun3(year_ = "2018",    lepenvars = ["mu"])
-leptrigSFs_2022_ttbarRun3    = lambda : lepScaleFactors_TopRun3(year_ = "2022",    lepenvars = ["mu"])
+leptrigSFs_2022    = lambda : lepScaleFactors_TopRun3(year_ = "2018",    lepenvars = ["mu","elscale","elsigma"])
+leptrigSFs_2022_ttbarRun3    = lambda : lepScaleFactors_TopRun3(year_ = "2022",    lepenvars = ["mu","elscale","elsigma"])
 
-sfSeq_2022      = [leptrigSFs_2022_ttbarRun3, btagWeights_2022]
+sfSeq_2022      = [leptrigSFs_2022_ttbarRun3, btagWeights_2022, puweighter]
 sfSeq_2022PostEE      = sfSeq_2022
 
 

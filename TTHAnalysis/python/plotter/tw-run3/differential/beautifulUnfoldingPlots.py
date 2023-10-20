@@ -41,12 +41,11 @@ class beautifulUnfPlot:
         self.yaxisuplimit   = 0
         # self.yaxis_unclabel = 'Relative uncertainty (adim.)'
         self.yaxis_unclabel = 'Relative uncertainty'
-        #self.yaxistitleoffset = 1.9
-        #self.yaxistitleoffset = 1.7
-        self.yaxistitleoffset = 1.4
+        self.yaxistitleoffset = 1.5
         self.yaxistitleoffset_wide = 0.5
         self.yaxistitleoffset_noratio = 1.8
         self.maxdigits = 3
+        self.doLogY = False
 
 
     def initCanvasAndAll(self):
@@ -83,8 +82,13 @@ class beautifulUnfPlot:
             self.canvas.GetPad(2).SetBottomMargin(0.375)
             self.canvas.GetPad(2).SetRightMargin(0.03)
             self.canvas.GetPad(2).SetLeftMargin(0.16)
+
+            if self.doLogY: self.canvas.GetPad(1).SetLogy()
+
         else:
             self.canvas.SetBottomMargin(0.1)
+
+            if self.doLogY: self.canvas.SetLogy()
         return
     
     
@@ -99,12 +103,14 @@ class beautifulUnfPlot:
             for bin in range(asymhisto.GetN()):
                 asymhisto.SetPointEYhigh(bin, histo.GetBinError(bin + 1))
                 asymhisto.SetPointEYlow(bin,  histos[1].GetBinError(bin + 1))
+                asymhisto.SetPointEXhigh(bin, abs(histo.GetXaxis().GetBinUpEdge(bin + 1) - histo.GetXaxis().GetBinLowEdge(bin + 1))/2)
+                asymhisto.SetPointEXlow(bin,  abs(histo.GetXaxis().GetBinUpEdge(bin + 1) - histo.GetXaxis().GetBinLowEdge(bin + 1))/2)
             
             if self.var in vl.varList:
                 asymhisto.GetXaxis().SetTitle( vl.varList[self.var]['xaxis'] )
                 if self.isUncPlot:
                     asymhisto.GetYaxis().SetTitle( self.yaxis_unclabel )
-                elif not vl.doxsec or "detector" in self.name:
+                elif "detector" in self.name:
                     asymhisto.GetYaxis().SetTitle( 'Events' )
                 elif "fid" in self.name and not "bin" in self.name:
                     asymhisto.GetYaxis().SetTitle( vl.varList[self.var]['yaxisfid'] )
@@ -117,6 +123,7 @@ class beautifulUnfPlot:
             
             asymhisto.GetXaxis().SetRangeUser(histo.GetXaxis().GetBinLowEdge(1),
                                               histo.GetXaxis().GetBinUpEdge(histo.GetNbinsX()))
+            #print histo.GetXaxis().GetBinUpEdge(histo.GetNbinsX())
             
             asymhisto.GetXaxis().SetTitleFont(43)
             asymhisto.GetXaxis().SetTitleSize(22)
@@ -138,7 +145,7 @@ class beautifulUnfPlot:
             asymhisto.GetYaxis().SetMaxDigits(self.maxdigits)
             
             if 'nomin' not in options:
-                asymhisto.SetMinimum(0.)
+                asymhisto.SetMinimum(0. if not self.doLogY else 5e-6)
             else:
                 options = options.replace('nomin', '')
             
@@ -177,7 +184,7 @@ class beautifulUnfPlot:
             histo.GetXaxis().SetLabelFont(43)
             histo.GetXaxis().SetLabelSize(13 if self.isLCurve else 22)
             histo.GetXaxis().SetLabelOffset(0.033 if self.isLCurve else 0.007)
-            histo.GetXaxis().SetNdivisions(310 if self.isLCurve else 510, True* ("DPhi" not in self.var))
+            histo.GetXaxis().SetNdivisions(0o10 if self.isLCurve else 510, True* ("DPhi" not in self.var))
             #histo.GetXaxis().SetNdivisions(010 if self.isLCurve else 505, False)
             
             histo.GetYaxis().SetTitleFont(43)
@@ -191,7 +198,7 @@ class beautifulUnfPlot:
             #histo.GetYaxis().SetNdivisions(310 if self.isLCurve else 505, False)
             
             if 'nomin' not in options:
-                histo.SetMinimum(0.)
+                histo.SetMinimum(0. if not self.doLogY else 5e-6)
             else:
                 options = options.replace('nomin', '')
             
@@ -236,7 +243,7 @@ class beautifulUnfPlot:
             histo.GetXaxis().SetTitle( vl.varList[self.var]['xaxis'] )
             if self.isUncPlot:
                 histo.GetYaxis().SetTitle( self.yaxis_unclabel )
-            elif not vl.doxsec or "detector" in self.name:
+            elif "detector" in self.name:
                 histo.GetYaxis().SetTitle( 'Events' )
             elif "fid" in self.var and not "bin" in self.var:
                 histo.GetYaxis().SetTitle( vl.varList[self.var]['yaxisfid'] )
@@ -355,7 +362,7 @@ class beautifulUnfPlot:
             #if self.doSupplementary: CMS_lumi.extraText  += 'Supplementary'
             CMS_lumi.lumi_sqrtS = '#sqrt{s} = 13 TeV'
             CMS_lumi.CMS_lumi(r.gPad, 4, 10, -0.005 if self.doWide and self.doRatio else 0.01 if self.doWide else 0.05)
-        
+                
         # Draw ratio if needed
         if self.doRatio:
             woUnc = False
@@ -426,17 +433,15 @@ class beautifulUnfPlot:
             if "DPhi"      in self.var: totalunc.GetXaxis().SetMaxDigits(self.maxdigits)     ### RESTAURARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
             if "MT_LLMETB" in self.var: totalunc.GetXaxis().SetNdivisions(515, True)
             
-            if   "yaxismax_ratio_fidnorm" in vl.varList[self.var] and "fiducialnorm" in self.var:
-                if "yaxismin_ratio_fidnorm" in vl.varList[self.var]:
-                    totalunc.GetYaxis().SetRangeUser(vl.varList[self.var]["yaxismin_ratio_fidnorm"], vl.varList[self.var]["yaxismax_ratio_fidnorm"])
-                else:
-                    totalunc.GetYaxis().SetRangeUser(0.5, vl.varList[self.var]["yaxismax_ratio_fidnorm"])
-            elif "yaxismax_ratio_norm" in vl.varList[self.var] and "norm" in self.var:
-                totalunc.GetYaxis().SetRangeUser(0.5, vl.varList[self.var]["yaxismax_ratio_norm"])
+            if   "yaxismax_ratio_fidbin" in vl.varList[self.var] and "fidbin" in self.name:
+                totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_fidbin"], 0.), vl.varList[self.var]["yaxismax_ratio_fidbin"])
+            elif "yaxismax_ratio_bin" in vl.varList[self.var] and "bin" in self.name:
+                totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_bin"], 0.), vl.varList[self.var]["yaxismax_ratio_bin"])
             else:
-                totalunc.GetYaxis().SetRangeUser(0.5, 1.5)
+                #totalunc.GetYaxis().SetRangeUser(0.5, 1.5)
+                totalunc.GetYaxis().SetRangeUser(0.8, 1.2)
 
-            totalunc.GetYaxis().SetTitle('Pred. / Data   ')
+            totalunc.GetYaxis().SetTitle('Pred./Data')
             totalunc.GetYaxis().SetTitleFont(43)
             totalunc.GetYaxis().SetTitleSize(22)
             totalunc.GetYaxis().SetTitleOffset(self.yaxistitleoffset_wide if self.doWide else self.yaxistitleoffset)
@@ -558,9 +563,9 @@ class beautifulUnfPlot:
             totalunc   = None
             
             datavalues = copy.deepcopy([it[0] for it in self.objectsInLeg if it[3] == 'data'][0])
-            fitunc     = copy.deepcopy(datavalues.Clone('fitunc'))
+            #fitunc     = copy.deepcopy(datavalues.Clone('fitunc'))
             #print self.objectsInLeg
-            #fitunc     = copy.deepcopy([it[0] for it in self.objectsInLeg if it[3] == 'stat'][0].Clone(it[1]))
+            fitunc     = copy.deepcopy([it[0] for it in self.objectsInLeg if it[3] == 'stat'][0])
             
             for bin in range(1, datavalues.GetNbinsX() + 1):
                 datavalues.SetBinError(bin, 0.)
@@ -581,10 +586,10 @@ class beautifulUnfPlot:
                     totalunc.SetPointEYlow(bin - 1,  totalunc.GetErrorYlow(bin - 1)/ytemp.value)
                     totalunc.SetPoint(bin - 1, xtemp, 1.)
 
-                    #fitunc.GetPoint(bin - 1, xtemp, ytemp)
-                    #fitunc.SetPointEYhigh(bin - 1, fitunc.GetErrorYhigh(bin - 1)/ytemp.value)
-                    #fitunc.SetPointEYlow(bin - 1,  fitunc.GetErrorYlow(bin - 1)/ytemp.value)
-                    #fitunc.SetPoint(bin - 1, xtemp, 1.)
+                    fitunc.GetPoint(bin - 1, xtemp, ytemp)
+                    fitunc.SetPointEYhigh(bin - 1, fitunc.GetErrorYhigh(bin - 1)/ytemp.value)
+                    fitunc.SetPointEYlow(bin - 1,  fitunc.GetErrorYlow(bin - 1)/ytemp.value)
+                    fitunc.SetPoint(bin - 1, xtemp, 1.)
                 else:
                     totalunc.SetBinContent(bin, 1.)
                     totalunc.SetBinError(bin, fitunc.GetBinError(bin)/fitunc.GetBinContent(bin))
@@ -607,10 +612,14 @@ class beautifulUnfPlot:
             totalunc.SetFillStyle(1001)
             totalunc.SetLineWidth(1)
             
-            #if self.doFit: totalunc.GetXaxis().SetRangeUser(fitunc.GetXaxis().GetBinLowEdge(1), fitunc.GetXaxis().GetBinUpEdge(fitunc.GetNbinsX()))
             totalunc.GetXaxis().SetRangeUser(datavalues.GetXaxis().GetBinLowEdge(1), datavalues.GetXaxis().GetBinUpEdge(datavalues.GetNbinsX()))
             fitunc.GetXaxis().SetRangeUser(datavalues.GetXaxis().GetBinLowEdge(1), datavalues.GetXaxis().GetBinUpEdge(datavalues.GetNbinsX()))
-            #else:          totalunc.GetXaxis().SetRangeUser(datavalues.GetXaxis().GetBinLowEdge(1), datavalues.GetXaxis().GetBinUpEdge(datavalues.GetNbinsX()))
+            datavalues.GetXaxis().SetRangeUser(datavalues.GetXaxis().GetBinLowEdge(1), datavalues.GetXaxis().GetBinUpEdge(datavalues.GetNbinsX()))
+
+            #totalunc.GetXaxis().SetRange(1, datavalues.GetNbinsX())
+            #fitunc.GetXaxis().SetRange(1, datavalues.GetNbinsX())
+
+            #print datavalues.GetXaxis().GetBinUpEdge(datavalues.GetNbinsX())
             
             totalunc.GetXaxis().SetTitle(vl.varList[self.var]['xaxis'])
             totalunc.GetXaxis().SetTitleFont(43)
@@ -625,18 +634,16 @@ class beautifulUnfPlot:
             if "DPhi"      in self.var: totalunc.GetXaxis().SetMaxDigits(self.maxdigits)     ### RESTAURARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
             if "MT_LLMETB" in self.var: totalunc.GetXaxis().SetNdivisions(515, True)
             
-            if   "yaxismax_ratio_fidnorm" in vl.varList[self.var] and "fidbin" in self.name:
-                if "yaxismin_ratio_fidnorm" in vl.varList[self.var]:
-                    totalunc.GetYaxis().SetRangeUser(vl.varList[self.var]["yaxismin_ratio_fidnorm"], vl.varList[self.var]["yaxismax_ratio_fidnorm"])
-                else:
-                    totalunc.GetYaxis().SetRangeUser(0.5, vl.varList[self.var]["yaxismax_ratio_fidnorm"])
-            elif "yaxismax_ratio_norm" in vl.varList[self.var] and "bin" in self.name:
-                totalunc.GetYaxis().SetRangeUser(0.5, vl.varList[self.var]["yaxismax_ratio_norm"])
+            if   "yaxismax_ratio_fidbin" in vl.varList[self.var] and "fidbin" in self.name:
+                totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_fidbin"], 0.), vl.varList[self.var]["yaxismax_ratio_fidbin"])
+            elif "yaxismax_ratio_bin" in vl.varList[self.var] and "bin" in self.name:
+                totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_bin"], 0.), vl.varList[self.var]["yaxismax_ratio_bin"])
             else:
-                totalunc.GetYaxis().SetRangeUser(0.5, 1.5)
+                #totalunc.GetYaxis().SetRangeUser(0.5, 1.5)
+                totalunc.GetYaxis().SetRangeUser(0.8, 1.2)
                 #totalunc.GetYaxis().SetRangeUser(0, 2)
 
-            totalunc.GetYaxis().SetTitle('Pred. / Data   ')
+            totalunc.GetYaxis().SetTitle('Pred./Data')
             totalunc.GetYaxis().SetTitleFont(43)
             totalunc.GetYaxis().SetTitleSize(22)
             totalunc.GetYaxis().SetTitleOffset(self.yaxistitleoffset_wide if self.doWide else self.yaxistitleoffset)
@@ -663,14 +670,15 @@ class beautifulUnfPlot:
             if "DPhi"      in self.var: datavalues.GetXaxis().SetMaxDigits(self.maxdigits)     ### RESTAURARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
             if "MT_LLMETB" in self.var: datavalues.GetXaxis().SetNdivisions(515, True)
 
-            if   "yaxismax_ratio_fidnorm" in vl.varList[self.var] and "fiducialnorm" in self.var:
-                datavalues.GetYaxis().SetRangeUser(0.5, vl.varList[self.var]["yaxismax_ratio_fidnorm"])
-            elif "yaxismax_ratio_norm" in vl.varList[self.var] and "norm" in self.var:
-                datavalues.GetYaxis().SetRangeUser(0.5, vl.varList[self.var]["yaxismax_ratio_norm"])
+            if   "yaxismax_ratio_fidbin" in vl.varList[self.var] and "fidbin" in self.name:
+                totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_fidbin"], 0.), vl.varList[self.var]["yaxismax_ratio_fidbin"])
+            elif "yaxismax_ratio_bin" in vl.varList[self.var] and "bin" in self.name:
+                totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_bin"], 0.), vl.varList[self.var]["yaxismax_ratio_bin"])
             else:
-                datavalues.GetYaxis().SetRangeUser(0.5, 1.5)
+                #datavalues.GetYaxis().SetRangeUser(0.5, 1.5)
+                datavalues.GetYaxis().SetRangeUser(0.8, 1.2)
 
-            datavalues.GetYaxis().SetTitle('Pred. / Data   ')
+            datavalues.GetYaxis().SetTitle('Pred./Data')
             datavalues.GetYaxis().SetTitleFont(43)
             datavalues.GetYaxis().SetTitleSize(22)
             datavalues.GetYaxis().SetTitleOffset(self.yaxistitleoffset_wide if self.doWide else self.yaxistitleoffset)
@@ -699,7 +707,12 @@ class beautifulUnfPlot:
                 el.Draw('L,same')
         
         # Save results
-
+        """
+        if self.doLogY:
+            self.canvas.cd(1)
+            r.gPad.SetLogy()
+            self.canvas.cd(2)
+        """
         r.gPad.RedrawAxis()
 
         self.canvas.SaveAs(self.plotspath + "/" + self.name + suffix + '.pdf')

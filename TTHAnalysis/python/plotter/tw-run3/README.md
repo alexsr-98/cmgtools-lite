@@ -120,6 +120,10 @@ The script to train is under `MVA-training` folder. To use your model in the ana
    ```bash
     python tw-run3/differential/doFiducial.py -i ./temp_cards_diff/2023-06-09 -y 2022PostEE -j 8
    ```
+ * Get latexTableCondNum:
+   ```bash
+   python tw-run3/differential/getLaTeXtable.py -i ./temp_cards_diff/2023-10-16_WithTUnfold/  -t condnumtable
+   ```
 
 There is a subfolder under tw-run3 called utils. It contains several scripts useful for different tasks, they are:
  * copyTo_www.py: copy a folder to your website and adds .php files for visualisation in the browser.
@@ -127,7 +131,28 @@ There is a subfolder under tw-run3 called utils. It contains several scripts use
 
 <a name="differentialfit"></a>
 ## tW differential cross section measurement (combine fit)
-**WIP**
+
+ * Create the cards. There are two steps, first you have to create the cards using the same script as above but now as the signal extraction will be done with combine, we don't need the `forExtr` region. Second, you have to run the script `cardsForDifferentialStudies_WithCombine.py` to create the card for the signal extraction. Example:
+   ```bash
+    python tw-run3/differential/cardsForDifferentialStudies.py -P 2023-06-02 -y 2022PostEE -q batch -j 32 -o ./temp_cards_diff/2023-10-03_WithCombine -v 'Lep1_Pt' -a
+   python tw-run3/differential/cardsForDifferentialStudies_WithCombine.py -P 2023-06-02 -y 2022PostEE -q batch -j 32 -o ./temp_cards_diff/2023-10-03_WithCombine -v 'Lep1_Pt' -a   
+   ```
+   Now, we also don't need the `Fiducial` variable.
+  
+ * Extract signal and unfold (done at the same time with the fit). Remember to setup combine (in its appropiate release).
+   ```bash
+     python tw-run3/differential/unfoldHelper_WithCombine.py -i ./temp_cards_diff/2023-10-03_WithCombine/ -y 2022PostEE -V
+   ```
+ 
+ * Estimate the impact of each source separately, and the run again the unfolding. 
+   ```bash
+     python tw-run3/differential/toolkitForRelativeUncs_WithCombine.py -i ./temp_cards_diff/2023-10-03_WithCombine/ -y 2022PostEE -j 1
+   ```
+ 
+ * Normalise to the fiducial cross section.
+    ```bash
+      python tw-run3/differential/doFiducial_WithCombine.py -i ./temp_cards_diff/2023-10-03_WithCombine/ -y 2022PostEE
+    ```
 
  <a name="samples"></a>
 ## Samples
@@ -146,6 +171,7 @@ Here we will list the important twikis for the analysis:
  * Json integration POGs: [gitlab](https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG).
  * Lumi Recommendation: [twiki](https://twiki.cern.ch/twiki/bin/view/CMS/LumiRecommendationsRun3).
  * EGamma SFs: [twiki](https://twiki.cern.ch/twiki/bin/view/CMS/EgammSFandSSRun3).
+ * Muon SFs: [twiki](https://twiki.cern.ch/twiki/bin/view/CMS/MuonRun32022).
  * BTV POG: [web](https://btv-wiki.docs.cern.ch/ScaleFactors/).
  * JSON LUMI (PU): [twiki](https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupJSONFileforData).
- * Stat. Comm. recommendations on Unfolding: [twiki](https://twiki.cern.ch/twiki/bin/viewauth/CMS/ScrecUnfolding).
+ * Stat. Comm. recommendations on Unfolding: [twiki](https://twiki.cern.ch/twiki/bin/viewauth/CMS/ScrecUnfolding)(https://indico.cern.ch/event/1311191/timetable/#20230927). 

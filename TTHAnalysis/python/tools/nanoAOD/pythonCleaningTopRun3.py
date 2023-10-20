@@ -50,10 +50,7 @@ class pythonCleaningTopRun2UL(Module):
         if not self.isMC:
             self.nomjecscaff = "_nom" ######### BE CAREFUL HERE, IT DEPENDS IF WE USE JECS IN DATA OR NOT
             self.jecvars     = []
-            if "elscale" in self.lepenvars:
-                self.lepenvars = ["elscale"]
-            else:
-                self.lepenvars = []
+            self.lepenvars = []
 
         self.year      = year_
         self.isSet     = False

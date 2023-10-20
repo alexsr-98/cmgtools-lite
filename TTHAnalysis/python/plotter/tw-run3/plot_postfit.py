@@ -49,33 +49,45 @@ dictRegions = {
     "ch1"      : "1j1b",
     "ch2"      : "2j1b",
     "ch3"      : "2j2b",
+    "ch4"      : "1j1b-mm",
+    "ch5"      : "1j1b-ee",
 }
 
 dictRegionsXaxisLabels = {
     "ch1"      : "RF discriminant",
     "ch2"      : "RF discriminant",
-    "ch3"      : "Subleading jet #it{p}_{T} (GeV)",
+    #"ch3"      : "Subleading jet #it{p}_{T} (GeV)",
+    "ch3"      : "m_{bl}^{minimax} (GeV)",
+    "ch4"      : "RF discriminant",
+    "ch5"      : "RF discriminant",
 }
 
 dictRegionsYaxisLabels = {
     "ch1"      : "Events",
     "ch2"      : "Events",
-    "ch3"      : "Events / 20 GeV",
+    #"ch3"      : "Events / 20 GeV",
+    "ch3"      : "Events / 32 GeV",
+    "ch4"      : "Events",
+    "ch5"      : "Events",
 }
 
 dictBinEdgesRegions = {
-    "ch1"      : [0.5,10.5],
-    "ch2"      : [0.5,6.5],
-    "ch3"      : [30,190],
+    "ch1"      : [0.5,20.5],
+    "ch2"      : [0.5,12.5],
+    "ch3"      : [0,450],
+    "ch4"      : [0.5,10.5],
+    "ch5"      : [0.5,10.5],
     #"ch1"      : [0.5,2.5],
     #"ch2"      : [0.5,2.5],
     #"ch3"      : [30,190],
 }
 
 dictBinsCenterRegions = {
-    "ch1"      : [1,2,3,4,5,6,7,8,9,10],
-    "ch2"      : [1,2,3,4,5,6],
-    "ch3"      : [35, 45, 55, 65, 75, 85, 95, 105, 115, 125, 135, 145, 155, 165, 175, 185],
+    "ch1"      : [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+    "ch2"      : [1,2,3,4,5,6,7,8,9,10,11,12],
+    "ch3"      : [16.071428571428573,48.21428571428572,80.35714285714286,112.50000000000001,144.64285714285717,176.7857142857143,208.92857142857144,241.0714285714286,273.2142857142858,305.3571428571429,337.5,369.6428571428572,401.78571428571433,433.92857142857144],
+    "ch4"      : [1,2,3,4,5,6,7,8,9,10],
+    "ch5"      : [1,2,3,4,5,6,7,8,9,10],
     #"ch1"      : [1,2],
     #"ch2"      : [1,2],
     #"ch3"      : [70,150],
@@ -86,11 +98,15 @@ legendHeigh = {
     "ch1" : 4,
     "ch2" : 4,
     "ch3" : 7,
+    "ch4" : 4,
+    "ch5" : 4,
     },
     "fit_s" : {
     "ch1" : 5,
     "ch2" : 5,
     "ch3" : 9,
+    "ch4" : 5,
+    "ch5" : 5,
     },
 }
 
@@ -257,6 +273,9 @@ def producePlots(year, region, path):
       hstack.GetYaxis().SetTitleOffset(1.8)
       hstack.SetMaximum(hstack.GetMaximum()*1.5)
       hstack.GetYaxis().SetTitle(dictRegionsYaxisLabels[dire])
+      if dire == "ch3":
+        # Log scale
+        p1.SetLogy()
       hstack.GetYaxis().SetLabelSize(axisLabelsSize)
       hstack.GetYaxis().SetLabelFont(43)
       hstack.GetYaxis().SetTitleSize(titleSize)
@@ -359,8 +378,8 @@ def producePlots(year, region, path):
       ratio_hist.Draw("p E same")	
 
       p1.cd()
-      #doSpam('#splitline{#scale[1.1]{#bf{CMS}}}{#scale[0.9]{#it{Preliminary}}}',.2, .845, .35, .885,textSize = 22)
-      doSpam('#scale[1.1]{#bf{CMS}}',.2, .845, .35, .885,textSize = spamsSize)
+      doSpam('#splitline{#scale[1.1]{#bf{CMS}}}{#scale[0.9]{#it{Preliminary}}}',.2, .845, .35, .885,textSize = 22)
+      #doSpam('#scale[1.1]{#bf{CMS}}',.2, .845, .35, .885,textSize = spamsSize)
       keyname = key
       if keyname == "fit_s": keyname = "postfit"
       doSpam(str(lumidict[year]) + " fb^{-1} (13 TeV)",0.7, .963, .975, .99,textSize = spamsSize*0.98)

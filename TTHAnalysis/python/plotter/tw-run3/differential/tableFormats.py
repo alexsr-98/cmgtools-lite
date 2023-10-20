@@ -6,7 +6,10 @@
 from prettytable import PrettyTable
 import abc
 
-class TableString(object, metaclass=abc.ABCMeta):
+
+ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})  # compatible with Python 2 *and* 3
+
+class TableString(ABC):
     """Metaclass for formatted table strings."""
 
     @abc.abstractmethod
@@ -54,7 +57,9 @@ class latexTable(TableString):
         s = s + ''.join(['c',]*len(self.table.field_names)) + '}'
         s = s + '\n'
         s = s + '&'.join(self.table.field_names)+r'\\ \hline'+'\n'
-        rows = self.table._format_rows(self.table._rows,options)
+        #rows = self.table._format_rows(self.table._rows,options)
+        # The previous line does not work in python3, so we use the following:
+        rows = self.table._rows
         #print rows
         for i in range(len(rows)):
             row = [str(itm) for itm in rows[i]]

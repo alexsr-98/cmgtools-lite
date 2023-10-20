@@ -187,7 +187,7 @@ class JetEnergyCorrector( Module ):
         if self.isMC:
             # + For MC it's easy, we just have an entry in the json with the corrections.
             mainJECname = "{}_V1_{}_{}_{}".format(self.jec, self.runOn, "L1L2L3Res", self.algo)
-            
+            print(" >> Applying %s"%mainJECname)
             for key in list(self.jerc_corrs):
                 if self.runOn not in key: continue
                 sourcename = key.split("_")[-2]
@@ -211,6 +211,7 @@ class JetEnergyCorrector( Module ):
             # Solution: load all corrections into memory an select which one to use on the fly when looping over jets...
             for era in ["F", "G"]:
                 mainJECname = "{}_{}_V1_{}_{}_{}".format(self.jec, "Run%s"%era, self.runOn, "L1L2L3Res", self.algo)
+                print(" >> Applying %s"%mainJECname)
                 for key in list(self.jerc_corrs):
                     if self.runOn not in key: continue
                     sourcename = key.split("_")[-2]

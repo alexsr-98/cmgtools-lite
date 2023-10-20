@@ -64,17 +64,31 @@ vars = ['njets', 'nbjets', 'train_nloosejets', 'train_nbloosejets', 'train_jet1_
 #        "train_lep1lep2jet1met_m",
 #        "train_lep1lep2jet1_c",
 #        "train_lep1lep2jet1_pt"]
-
 # Vars for 2j1b (TOP-21-010)
+#vars_2j1b = ["train_jet2_pt",
+#        "train_lep1jet1_dr",
+#        "train_lep12jet12_dr"]
+
+
+# ----- Test different variables
+# Vars for 1j1b (until 2023-09-28)
+vars_1j1b = ["train_lep1jet1_pt", "train_lep1lep2jet1met_m", "train_lep1lep2jet1_pt", "train_lep1lep2jet1met_ptOVERhttot", "train_htlepOVERhttot", "train_lep1jet1_dr", "train_lep1lep2jet1met_mt", "train_lep1lep2_m", "train_jet1_pt", "train_lep1lep2jet1_c","train_lep1lep2jet1_pz","train_lep1lep2_dr","train_lep1lep2_dphi", "train_met_pt","train_loosejet1_pt", "train_lep1_pt"]
+
+# Vars for 2j1b (until 2023-09-28)
 vars_2j1b = ["train_jet2_pt",
         "train_lep1jet1_dr",
         "train_lep12jet12_dr",
         "train_lep1jet1_pt", "train_lep1lep2jet1met_m", "train_lep1lep2jet1_pt", "train_lep1lep2jet1met_ptOVERhttot", "train_htlepOVERhttot", "train_lep1lep2jet1met_mt", "train_lep1lep2_m", "train_jet1_pt", "train_lep1lep2jet1_c","train_lep1lep2jet1_pz","train_lep1lep2_dr","train_lep1lep2_dphi", "train_met_pt"]
 
-# ----- Test different variables
 # Vars for 1j1b
-vars_1j1b = ["train_lep1jet1_pt", "train_lep1lep2jet1met_m", "train_lep1lep2jet1_pt", "train_lep1lep2jet1met_ptOVERhttot", "train_htlepOVERhttot", "train_lep1jet1_dr", "train_lep1lep2jet1met_mt", "train_lep1lep2_m", "train_jet1_pt", "train_lep1lep2jet1_c","train_lep1lep2jet1_pz","train_lep1lep2_dr","train_lep1lep2_dphi", "train_met_pt"]
+vars_1j1b = ["train_loosejet1_pt", "train_lep1lep2jet1_pt", "train_lep1lep2_m", "train_lep1lep2_dphi",
+             "train_lep1jet1_pt", "train_lep1lep2_dr", "train_lep1_pt", "train_jet1_pt"] 
+             #"train_lep1lep2jet1met_ptOVERhttot", "train_lep1lep2jet1met_mt", "train_met_pt"]
 
+# Vars for 2j1b
+vars_2j1b = ["train_lep1lep2_m", "train_lep12jet12_dr", 
+             "train_lep1lep2jet1_pt", "train_lep1jet1_dr", "train_lep1lep2_dr", "train_lep2_pt", "train_jet2_pt"]
+             #"train_met_pt"]
 
 # -- Training parameters -- #
 test_size = 0.3
@@ -149,9 +163,9 @@ class modelConstructor:
         
         elif self.modelId == "MultiRF":
             if self.region == "1j1b":
-                return RandomForestClassifier(n_estimators=2000,max_depth=4,class_weight='balanced',oob_score=True,random_state=0, n_jobs = self.n_jobs, verbose = 1)
+                return RandomForestClassifier(n_estimators=2000,max_depth=5,class_weight='balanced',oob_score=True,random_state=0, n_jobs = self.n_jobs, verbose = 1)
             elif self.region == "2j1b":
-                return RandomForestClassifier(n_estimators=1000,max_depth=4,class_weight='balanced',oob_score=True,random_state=0, n_jobs = self.n_jobs, verbose = 1)
+                return RandomForestClassifier(n_estimators=2000,max_depth=4,class_weight='balanced',oob_score=True,random_state=0, n_jobs = self.n_jobs, verbose = 1)
             else:
                 print("Region not implemented yet")
                 return None
@@ -520,12 +534,12 @@ if __name__ == "__main__":
         channel = "em"
     elif region == "1j1b-mm":
         vars = vars_1j1b
-        cuts = "(njets == 1) and (nbjets == 1) and (channel == 2)"
+        cuts = "(njets == 1) and (nbjets == 1) and (channel == 2) and (abs(train_lep1lep2_m - 91.2) > 15)"
         region = "1j1b"
         channel = "mm"
     elif region == "1j1b-ee":
         vars = vars_1j1b
-        cuts = "(njets == 1) and (nbjets == 1) and (channel == 3)"
+        cuts = "(njets == 1) and (nbjets == 1) and (channel == 3) and (abs(train_lep1lep2_m - 91.2) > 15)"
         region = "1j1b"
         channel = "ee"
         
@@ -577,7 +591,7 @@ if __name__ == "__main__":
         # Apply weights to the samples
         if isMultiClass:
             if region == "1j1b" and channel == "em":
-                weights = {0: 1, 1: 1, 2: 0.1} # If something is very unbalanced you can use weights to balance it
+                weights = {0: 1, 1: 1, 2: 0.2} # If something is very unbalanced you can use weights to balance it
             elif region == "2j1b" and channel == "em":
                 weights = {0: 1, 1: 1, 2: 0.5}
             else:
@@ -593,7 +607,7 @@ if __name__ == "__main__":
             model.fit(X_train, y_train)
 
     # Create the output directory
-    outputPath = outputPath + outFolder + "/" # Redifine the output path to be the model name
+    outputPath = outputPath + outFolder + "/" + region + "/" # Redifine the output path to be the model name
     if not os.path.exists(outputPath):
         os.makedirs(outputPath)
     

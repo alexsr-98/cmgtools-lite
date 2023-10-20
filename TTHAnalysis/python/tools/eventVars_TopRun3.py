@@ -66,6 +66,8 @@ class EventVars_TopRun2UL(Module):
 
         self.lepenergyvars = [("isSS", "I"),
                               ("channel", "I"),
+                              "Lep1_Pt",
+                              "Lep2_Pt",
                               "Lep1Lep2_Pt",
                               "Lep1Lep2_PtSum",
                               "Lep1Lep2_DR",
@@ -123,6 +125,8 @@ class EventVars_TopRun2UL(Module):
 
                               #### Variables that are not susceptible to JEC variations that need a nominal value
                               # (note that being in the lepenergyvars list does not give this!)
+                              "Lep1_Pt",
+                              "Lep2_Pt",
                               "Lep1Lep2_Pt",
                               "Lep1Lep2_PtSum",
                               "Lep1Lep2_DR",
@@ -142,10 +146,11 @@ class EventVars_TopRun2UL(Module):
         if not self.isMC:
             jecvars = []
             self.nominaljecscaff = "_nom" ######### BE CAREFUL HERE, IT DEPENDS IF WE USE JECS IN DATA OR NOT
-            if "elscale" in lepvars:
-                lepvars = ["elscale"] # only one lep energy variation in data, this is equivalent to apply them to the MC
-            else:
-                lepvars = []
+            lepvars = []
+            #if "elscale" in lepvars:
+            #    lepvars = ["elscale"] # only one lep energy variation in data, this is equivalent to apply them to the MC
+            #else:
+            #    lepvars = []
 
         if   len(jecvars):
             for i, var in enumerate(jecvars):
@@ -287,6 +292,8 @@ class EventVars_TopRun2UL(Module):
             else:
                 allret["channel"] = ch.NoChan
 
+            allret["Lep1_Pt"]        = leps_4m[0].Pt()
+            allret["Lep2_Pt"]        = leps_4m[1].Pt()
             allret["Lep1Lep2_Pt"]    = (leps_4m[0] + leps_4m[1]).Pt()
             allret["Lep1Lep2_PtSum"] = leps_4m[0].Pt() + leps_4m[1].Pt()
             allret["Lep1Lep2_DR"]    = leps_4m[0].DeltaR(leps_4m[1])
@@ -449,6 +456,8 @@ class EventVars_TopRun2UL(Module):
                 else:
                     allret["channel" + sys] = ch.NoChan
 
+                allret["Lep1_Pt"        + sys] = leps_4m[0].Pt()
+                allret["Lep2_Pt"        + sys] = leps_4m[1].Pt()
                 allret["Lep1Lep2_Pt"    + sys] = (leps_4m[0] + leps_4m[1]).Pt()
                 allret["Lep1Lep2_PtSum" + sys] = leps_4m[0].Pt() + leps_4m[1].Pt()
                 allret["Lep1Lep2_DR"    + sys] = leps_4m[0].DeltaR(leps_4m[1])

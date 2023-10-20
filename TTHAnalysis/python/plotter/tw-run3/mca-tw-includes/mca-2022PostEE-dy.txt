@@ -1,2 +1,2 @@
-dy : DYto2L_2Jets_MLL_10to50_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_analysis_* : xsec * 2; FillColor=852
-dy : DYto2L_2Jets_MLL_50_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_analysis_*     : xsec * 2; FillColor=852
+dy : DYto2L_2Jets_MLL_10to50_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_analysis_* : 19317.5 * 2; FillColor=852
+dy : DYto2L_2Jets_MLL_50_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_analysis_*     : 6221.3 * 2; FillColor=852

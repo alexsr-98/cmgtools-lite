@@ -9,20 +9,19 @@ import varList as vl
 r.PyConfig.IgnoreCommandLineOptions = True
 r.gROOT.SetBatch(True)
 
-friendspath   = "/beegfs/data/nanoAODv11/tw-run3/productions"
+friendspath   = "/lustrefs/hdd_pool_dir/nanoAODv11/tw-run3/productions"
 logpath       = friendspath + "/{p}/{y}/logs/cards_differential"
 
-friendsscaff = "--FMCs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors"
+friendsscaff = "--Fs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors"
 
 slurmscaff    = "sbatch -c {nth} -p {queue} -J {jobname} -e {logpath}/log.%j.%x.err -o {logpath}/log.%j.%x.out --wrap '{command}'"
 
-commandscaff  = '''python makeShapeCards_TopRun2.py --tree NanoAOD {mcafile} {cutsfile} "{variable}" "{bins}" {samplespaths} {friends} --od {outpath} -l {lumi} {nth} -f -L twttbar-run2UL/functions_twttbar.cc --neg {weights} --year {year} {asimovornot} {uncs} {extra} {name} --AP --storeAll --notMinimumFill --notVarsChanges'''
-
+commandscaff  = '''python3 makeShapeCards_TopRun2.py --tree NanoAOD {mcafile} {cutsfile} "{variable}" "{bins}" {samplespaths} {friends} --od {outpath} -l {lumi} {nth} -f -L tw-run3/functions_tw.cc --neg {weights} --year {year} {asimovornot} {uncs} {extra} {name} --AP --storeAll --notVarsChanges --threshold 0.001'''
 #### IMPORTANT NOTE: it is crucial to keep the xsec and lumi weights, although afterwards we
 # will have to divide by the second one. The first one is relevant becasue of the dividing of the files.
 # The second one, because of the proportions between MC simulations.
 
-nomweight     = '''-W "MuonIDSF * ElecIDSF * TrigSF * bTagWeight"'''
+nomweight     = '''-W "MuonIDSF * MuonISOSF * ElecIDSF * ElecRECOSF * TrigSF * bTagWeight * puWeight"'''
 genweight     = ""
 
 

@@ -5,7 +5,7 @@ from multiprocessing import Pool
 from array import array
 from copy import deepcopy
 
-from CMGTools.TTHAnalysis.plotter.mcAnalysis import *
+#from CMGTools.TTHAnalysis.plotter.mcAnalysis import *
 from optparse import OptionParser
 sys.path.append('{cmsswpath}/src/CMGTools/TTHAnalysis/python/plotter/tw-run3/differential/'.format(cmsswpath = os.environ['CMSSW_BASE']))
 import varList as vl
@@ -103,7 +103,7 @@ def GetAndPlotResponseMatrix(iY, var, key, theresponseh, theparticleh, thepath):
     #CMS_lumi.extraText  = 'Simulation Supplementary'
     CMS_lumi.extraText  = 'Simulation Supplementary' + ' Preliminary' * vl.doPre
 #    CMS_lumi.lumi_sqrtS = '#sqrt{s} = 13 TeV'
-    CMS_lumi.lumi_sqrtS = '(13 TeV)'
+    CMS_lumi.lumi_sqrtS = '(13.6 TeV)'
     #CMS_lumi.cmsTextSize += 0.1
     CMS_lumi.CMS_lumi(r.gPad, 0, 0, 0.03)
     r.gStyle.SetLabelFont(43, "XYZ")
@@ -347,13 +347,13 @@ def SaveOverlap(theoverlap, thepath):
 def SaveAcceptance(nfid, thepath):
     #print "\n[SaveAcceptance]"
     
-    mcaF = "tw-run3/differential/mca-differential/mca-tw-diff.txt"
+    mcaF = "twttbar-run2UL/differential/mca/mca-twttbar-diff.txt"
     parser = OptionParser(usage="")
     addMCAnalysisOptions(parser)
     they = thepath.split("/")[-3]
     
     if they != "run3": 
-        year = they
+        year = int(they)
         lumi = vl.LumiDict[year]
     else:
         year = "2022,2022PostEE"
@@ -361,10 +361,10 @@ def SaveAcceptance(nfid, thepath):
     
     
 #    print thepath, year
-    friendspath = "/pool/phedexrw/userstorage/vrbouza/proyectos/tw_run2/productions"
-    prod        = "2021-06-09"
+    friendspath = "/pool/phedexrw/userstorage/vrbouza/proyectos/twttbar_run2UL/productions"
+    prod        = "2022-05-06"
     theargs  = ["--year", "{y}".format(y = year), "-l", "{l}".format(l = lumi)]
-    theargs += "--FDs {P}/0_lumijson --Fs {P}/1_lepmerge_roch --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors".split(" ")
+    theargs += "--FMCs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors".split(" ")
     theargs += ("-P " + friendspath + "/" + prod + ("/" + str(year) if they != "run2" else "")).split(" ")
     theargs += "--tree NanoAOD --AP".split(" ")
     
@@ -389,7 +389,7 @@ def SaveAcceptance(nfid, thepath):
     
     fcn = open(thepath + "/acceptance.txt", "w")
     out = 'acceptance\n'
-    if they == "run3":
+    if they == "run2":
         out += str(round(nfid/sum([float(l) for l in lumi.split(",")])/xsec/1000., 4)) + '\n'
     else:
         out += str(round(nfid/lumi/xsec/1000., 4)) + '\n'
@@ -419,6 +419,22 @@ def CalculateAndPlotResponseMatrices(tsk):
     fParticle.Close(); del fParticle
 
     unclist = []
+
+    if not os.path.isfile(inpath + "/" + iY + "/" + iV + "/detector.root"):
+        raise RuntimeError('The rootfile with the detector level information does not exist')
+
+    if not os.path.isfile(inpath + "/" + iY + "/" + iV + "/detectorparticle.root"):
+        raise RuntimeError('The rootfile with the signal region and fiducial cuts with particle binning information does not exist')
+
+    if not os.path.isfile(inpath + "/" + iY + "/" + iV + "/detectorparticleResponse.root"):
+        raise RuntimeError('The rootfile with the signal region and fiducial cuts information in 2D does not exist')
+
+    if not os.path.isfile(inpath + "/" + iY + "/" + iV + "/detectorparticlebutdetector.root"):
+        raise RuntimeError('The rootfile with the signal region and fiducial cuts information with detector binning does not exist')
+
+    if not os.path.isfile(inpath + "/" + iY + "/" + iV + "/nonfiducial.root"):
+        raise RuntimeError('The rootfile with the non fiducial information does not exist')
+
     fDetector         = r.TFile(inpath + "/" + iY + "/" + iV + "/detector.root", "READ")
     fDetectorParticle = r.TFile(inpath + "/" + iY + "/" + iV + "/detectorparticle.root", "READ")
     fResponse         = r.TFile(inpath + "/" + iY + "/" + iV + "/detectorparticleResponse.root", "READ")
@@ -432,9 +448,8 @@ def CalculateAndPlotResponseMatrices(tsk):
         tmpnam = key.GetName()
         #print "\ntmpnam:", tmpnam
 
-        #if "mistagging" in tmpnam: continue #### ?????????????????????????????????????????????????????????????????????????
-
-        if any([el in tmpnam for el in ["ds", "data", "herwig", "amcatnlo"]]):
+        if any([el in tmpnam for el in ["ds", "dr", "data", "herwig", "amc"]]) and "sf" not in tmpnam:   # CUIDADO CON NO SALTARSE LAS INCERTIDUMBRES DE LOS SFs
+            print("WARNING: Skipping", tmpnam, "because it is a data or MC sample of alternative signal")
             continue
 
         if "Up" not in tmpnam and "Down" not in tmpnam: # It is the nominal value!

@@ -300,11 +300,56 @@ def getcondnumLaTeXtable(path, variables, outname = "condnum", addasimov = False
 
     if not os.path.isdir(path + "/tables"):
         os.system("mkdir -p " + path + "/tables")
-
     outfile = open(path + "/tables/" + outname + ".tex", "w")
     outfile.write(thetab)
     outfile.close(); del outfile
     return
+
+
+#def getgoftestsLaTeXtable(variables, path = "./results/tables", txttablespath = "./", outname = "", ty = "unfolding"):
+    #table   = []; headers = []
+
+    #if len(variables) == 0: raise RuntimeError("No variables given.")
+
+    ## First, obtain the info from the txts
+    #listofsamples = []
+    #filledsamples = False
+    #for var in variables:
+        #tmplistofcontents = [ vl.varList[var]["printnamenodim"] ]
+        #tmpfile = open(txttablespath + "/" + var + "_goftests_" + ty + ".txt", "r")
+        #tmpsample = ""
+        #for line in tmpfile.readlines(): # 1 p-value, 2 test statistic value
+            #if "/" not in line: continue
+            #sublines = line.replace(" ", "").split("/")
+            #if "p-value" in sublines[1]:
+                #tmplistofcontents.append( str( round(float(sublines[1].split(":")[1]), 3) ) )
+                #if not filledsamples: listofsamples.append(vl.GOFTranslator[sublines[0]])
+            #else:
+                #tmplistofcontents[-1] += " | " + str( round( float(sublines[1].split(":")[1]), 3) )
+
+        #table.append(tmplistofcontents)
+        #filledsamples = True
+        #tmpfile.close();
+
+
+    #listofsamples.insert(0, "Variable/MC sample")
+    ##sys.exit()
+
+    #finallatextab = tb.tabulate(table, headers = listofsamples, tablefmt = "latex_raw")
+
+    #substr = "".join(["l"] + ["l" for x in range(len(listofsamples) - 1)])
+    #finallatextab = finallatextab.replace(substr, "".join(["l|"] + ["c|" for x in range(len(listofsamples) - 2)] + ["c"] ))
+
+
+    #print finallatextab
+    #if not os.path.isdir(path): os.system("mkdir -p " + path)
+
+    #name = outname if outname != "" else "goftests"
+
+    #outfile = open(path + "/" + name +"_" + ty + ".tex", "w")
+    #outfile.write(finallatextab)
+    #outfile.close(); del outfile
+    #return
 
 
 def getgoftestsLaTeXtable(variables, path = "./results/tables", txttablespath = "./", outname = "", ty = "particlefidbin"):
@@ -369,8 +414,6 @@ def getgoftestsLaTeXtable(variables, path = "./results/tables", txttablespath = 
     return
 
 
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(usage = "python nanoAOD_checker.py [options]", description = "Checker tool for the outputs of nanoAOD production (NOT postprocessing)", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--inpath',    '-i', metavar = 'inpath',     dest = "inpath",   required = True,  default = "./temp/differential")
@@ -409,6 +452,7 @@ if __name__ == "__main__":
                 actualvars = []
                 for iV in thevars:
                     if any([el in iV for el in vl.vetolist]): continue
+                    if iV == "Fiducial": continue
                     actualvars.append(iV)
                 tasks.append( (inpath + "/" + iY, actualvars) )
 
@@ -427,12 +471,3 @@ if __name__ == "__main__":
             eval(thefunc + "(tsk[0], tsk[1])")
 
 print("> Done!")
-
-
-
-
-
-
-
-
-

@@ -13,16 +13,17 @@ nfwdjets       : nFwdJetSel30_Recl : [-0.5,0.5,1.5,2.5,3.5] ; IncludeUnderflow=F
 nfwdloosejets  : nFwdJetSel20_Recl : [-0.5,0.5,1.5,2.5,3.5] ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='Number of forward loose jets', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
 
 
-jet1_pt   : Jet1_Pt                     : 18,20,200        ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="Leading jet p_{T} (GeV)"
+jet1_pt          : Jet1_Pt                     : 18,20,200        ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="Leading jet p_{T} (GeV)"
+jet1_pt_uncorr   : $DATA{Jet_pt[iJetSel30_Recl[0]]} $MC{Jet_pt_nom[iJetSel30_Recl[0]]}                     : 18,20,200        ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="Leading jet p_{T} (GeV)"
 jet1_eta  : Jet_eta[iJetSel30_Recl[0]]  : 15,-2.4,2.4      ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading jet #eta"
-jet1_m    : $DATA{Jet_mass[iJetSel30_Recl[0]]} $MC{Jet_mass_nom[iJetSel30_Recl[0]]} : 12,0,60          ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading jet mass (GeV)"
+jet1_m    : Jet_mass_nom[iJetSel30_Recl[0]] : 12,0,60          ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading jet mass (GeV)"
 jet1_e    : Jet1_E                      : 23,20,250        ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="Leading jet energy (GeV)"
 jet1_phi  : Jet_phi[iJetSel30_Recl[0]]     : 40,-3.14,3.14  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading jet #varphi (rad)"
 jet1_btag : Jet_btagDeepFlavB[iJetSel30_Recl[0]] : 20,0,1  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading jet DeepFlavour b-tagging discr."
 
 jet2_pt   : Jet2_Pt                     : 20,30,190        ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="Subleading jet p_{T} (GeV)"
 jet2_eta  : Jet_eta[iJetSel30_Recl[1]]  : 15,-2.4,2.4      ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Subleading jet #eta"
-jet2_m    : $DATA{Jet_mass[iJetSel30_Recl[1]]} $MC{Jet_mass_nom[iJetSel30_Recl[1]]} : 12,0,60          ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Subleading jet mass (GeV)"
+jet2_m    : Jet_mass_nom[iJetSel30_Recl[1]] : 12,0,60          ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Subleading jet mass (GeV)"
 jet2_phi  : Jet_phi[iJetSel30_Recl[1]]     : 40,-3.14,3.14  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Subleading jet #varphi (rad)"
 jet2_btag : Jet_btagDeepFlavB[iJetSel30_Recl[1]] : 20,0,1  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Subleading jet DeepFlavour b-tagging discr."
 
@@ -46,14 +47,14 @@ lep2_eta  : LepGood_eta[1]         : 15,-2.4,2.4           ; IncludeUnderflow=Fa
 
 met          : METgood_pt            : 30,0,300               ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}^{miss} (GeV)"
 met_phi      : METgood_phi           : 40,-3.14,3.14          ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#phi^{miss} (rad)"
-puppimet     : $DATA{PuppiMET_T1_pt} $MC{PuppiMET_T1_pt}         : 30,0,300              ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}^{miss}_{puppi} (GeV)"
-puppimet_phi : $DATA{PuppiMET_T1_phi} $MC{PuppiMET_T1_phi}        : 40,-3.14,3.14         ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#phi^{miss}_{puppi} (rad)"
+#puppimet     : $DATA{PuppiMET_T1_pt} $MC{PuppiMET_T1_pt}         : 30,0,300              ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}^{miss}_{puppi} (GeV)"
+#puppimet_phi : $DATA{PuppiMET_T1_phi} $MC{PuppiMET_T1_phi}        : 40,-3.14,3.14         ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#phi^{miss}_{puppi} (rad)"
 
 
 lep1lep2_dphi : Lep1Lep2_DPhi      : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#Delta#it{#varphi}(#it{e}^{#pm}\, #it{#mu}^{#mp})/#it{#pi}"
 lep1lep2_pt   : Lep1Lep2_Pt        : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}(\\ell_{1}\, \\ell_{2}) (GeV)"
 lep1lep2_m    : Mll                : 30,0,300 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m(\\ell_{1}\, \\ell_{2}) (GeV)"
-lep1lep2_m_picu : Mll              : 40,20,100; IncludeUnderflow=False,IncludeOverflow=False,IncludeOverflows=False, LegendCutoff=0,  XTitle="m(\\ell_{1}\, \\ell_{2}) (GeV)"
+lep1lep2_m_picu : Mll              : 40,70,100; IncludeUnderflow=False,IncludeOverflow=False,IncludeOverflows=False, LegendCutoff=0,  XTitle="m(\\ell_{1}\, \\ell_{2}) (GeV)"
 
 
 lep1lep2jet1_pz    : Lep1Lep2Jet1_Pz     : 18,0,450 ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="#it{p}_{Z} (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}) (GeV)"
@@ -74,3 +75,8 @@ lep12jet12_dr      : Lep12Jet12_DR       : 10,0,1   ; IncludeOverflows=False, In
 lep12jet12met_dr   : Lep12Jet12MET_DR    : 10,0,1   ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="\\Delta R (\\ell_{12}\, jet_{12} #it{p}_{T}^{miss})"
 lep1lep2jet1_c     : Lep1Lep2Jet1_C      : 20,0,1   ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="C (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j})"
 httot              : HTtot               : 20,0,600 ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="H_{T} (GeV)"
+
+### Object level plots 
+jet_eta  : if3(nJetSel30_Recl>0, Jet_eta[iJetSel30_Recl], -99) : 40,-5.0,5.0 ; XTitle="#eta(jet)", YTitle="Jets", LegendCutoff=0, YMin=0, YMax=30000
+jetfwd_eta  : if3(nFwdJetSel30_Recl>0, Jet_eta[iFwdJetSel30_Recl], -99) : 40,-5.0,5.0 ; XTitle="#eta(jet)", YTitle="Jets", LegendCutoff=0, YMin=0, YMax=30000
+jet_pt  : if3(nJetSel30_Recl>0, Jet_pt_nom[iJetSel30_Recl], -99) : 40, 20, 80 ; XTitle="p_T(jet)", YTitle="Jets", LegendCutoff=0, IncludeOverflows=False

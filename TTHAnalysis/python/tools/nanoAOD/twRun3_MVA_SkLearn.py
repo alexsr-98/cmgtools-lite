@@ -40,14 +40,14 @@ class tW_MVA(Module):
                          "Lep12Jet12_DR{v}"]
 
         # -- Variables to be used in the MVA - Multiclass
-        self.vars1j1b_jecs = ["Lep1Jet1_Pt{v}", "Lep1Lep2Jet1MET_M{v}", "Lep1Lep2Jet1_Pt{v}", "Lep1Lep2Jet1MET_PtOverHTtot{v}", "Lep1_PtLep2_PtOverHTtot{v}", "Lep1Jet1_DR{v}", "Lep1Lep2Jet1MET_Mt{v}", "Mll", "Jet1_Pt{v}", "Lep1Lep2Jet1_C{v}", "Lep1Lep2Jet1_Pz{v}", "Lep1Lep2_DR", "Lep1Lep2_DPhi", "METgood_pt{v}"]
+        self.vars1j1b_jecs = ["JetLoose1_Pt{v}", "Lep1Lep2Jet1_Pt{v}", "Mll", "Lep1Lep2_DPhi", "Lep1Jet1_Pt{v}", "Lep1Lep2_DR", "Lep1_Pt", "Jet1_Pt{v}"]
 
-        self.vars1j1b_leps = ["Lep1Jet1_Pt{v}", "Lep1Lep2Jet1MET_M{v}", "Lep1Lep2Jet1_Pt{v}", "Lep1Lep2Jet1MET_PtOverHTtot{v}", "Lep1_PtLep2_PtOverHTtot{v}", "Lep1Jet1_DR{v}", "Lep1Lep2Jet1MET_Mt{v}", "Mll{v}", "Jet1_Pt{v}", "Lep1Lep2Jet1_C{v}", "Lep1Lep2Jet1_Pz{v}", "Lep1Lep2_DR{v}", "Lep1Lep2_DPhi{v}", "METgood_pt"]
+        self.vars1j1b_leps = ["JetLoose1_Pt{v}", "Lep1Lep2Jet1_Pt{v}", "Mll{v}", "Lep1Lep2_DPhi{v}", "Lep1Jet1_Pt{v}", "Lep1Lep2_DR{v}", "Lep1_Pt{v}", "Jet1_Pt{v}"]
 
         # -- Variables to be used in the MVA - Multiclass
-        self.vars2j1b_jecs = ["Jet2_Pt{v}", "Lep1Jet1_DR{v}", "Lep12Jet12_DR{v}", "Lep1Jet1_Pt{v}", "Lep1Lep2Jet1MET_M{v}", "Lep1Lep2Jet1_Pt{v}", "Lep1Lep2Jet1MET_PtOverHTtot{v}", "Lep1_PtLep2_PtOverHTtot{v}", "Lep1Lep2Jet1MET_Mt{v}", "Mll", "Jet1_Pt{v}", "Lep1Lep2Jet1_C{v}", "Lep1Lep2Jet1_Pz{v}", "Lep1Lep2_DR", "Lep1Lep2_DPhi", "METgood_pt{v}"]
+        self.vars2j1b_jecs = ["Mll", "Lep12Jet12_DR{v}", "Lep1Lep2Jet1_Pt{v}", "Lep1Jet1_DR{v}", "Lep1Lep2_DR", "Lep2_Pt", "Jet2_Pt{v}"]
 
-        self.vars2j1b_leps = ["Jet2_Pt{v}", "Lep1Jet1_DR{v}", "Lep12Jet12_DR{v}", "Lep1Jet1_Pt{v}", "Lep1Lep2Jet1MET_M{v}", "Lep1Lep2Jet1_Pt{v}", "Lep1Lep2Jet1MET_PtOverHTtot{v}", "Lep1_PtLep2_PtOverHTtot{v}", "Lep1Lep2Jet1MET_Mt{v}", "Mll{v}", "Jet1_Pt{v}", "Lep1Lep2Jet1_C{v}", "Lep1Lep2Jet1_Pz{v}", "Lep1Lep2_DR{v}", "Lep1Lep2_DPhi{v}", "METgood_pt"]
+        self.vars2j1b_leps = ["Mll{v}", "Lep12Jet12_DR{v}", "Lep1Lep2Jet1_Pt{v}", "Lep1Jet1_DR{v}", "Lep1Lep2_DR{v}", "Lep2_Pt{v}", "Jet2_Pt{v}"]
         
         # -- Set ONNX options to be single threaded
         session_options = rt.SessionOptions()
@@ -148,7 +148,7 @@ class tW_MVA(Module):
             for delta,sys in self.systsJEC.items():
                 if event.channel == ch.ElMu:
                     # -- 1j1b -- #
-                    if getattr(event, 'nJetSel30{v}_Recl'.format(v = sys if "unclustEn" not in sys else "")) > 0 and getattr(event, 'nBJetSelMedium30{v}_Recl'.format(v = sys if "unclustEn" not in sys else "")) > 0: # we require 1j1b, the bjet requirement helps to improve the process time
+                    if getattr(event, 'nJetSel30{v}_Recl'.format(v = sys if "unclustEn" not in sys else "")) > 0 and getattr(event, 'nBJetSelMedium30{v}_Recl'.format(v = sys if "unclustEn" not in sys else "")) >= 0: # we require 1j1b, the bjet requirement helps to improve the process time
                         # We pass the value of the input variables (nominal and varied) as a numpy array 
                         inputVars1j1b = np.array([getattr(event, var.format(v = sys)) for var in self.vars1j1b_jecs], dtype = np.float32).reshape(1, -1) # we need to reshape the array to have the correct shape
                         allret["mvaRF_1j1b" + sys] = self.model_1j1b.run(None, {self.input_name_1j1b: inputVars1j1b})[1][0][1] # Run returns: (prediction, [class probabilities]) so we take class probabilities and from there the signal probability
@@ -175,7 +175,7 @@ class tW_MVA(Module):
             if getattr(event, "nLepGood" + sys[1:]) >= 2:
                 if getattr(event, "channel" + sys) == ch.ElMu:
                     # -- 1j1b -- #
-                    if getattr(event, 'nJetSel30{v}_Recl'.format(v = sys)) > 0 and getattr(event, 'nBJetSelMedium30{v}_Recl'.format(v = sys)) > 0:
+                    if getattr(event, 'nJetSel30{v}_Recl'.format(v = sys)) > 0 and getattr(event, 'nBJetSelMedium30{v}_Recl'.format(v = sys)) >= 0:
                         inputVars1j1b = np.array([getattr(event, var.format(v = sys)) for var in self.vars1j1b_leps], dtype = np.float32).reshape(1, -1)
                         allret["mvaRF_1j1b" + sys] = self.model_1j1b.run(None, {self.input_name_1j1b: inputVars1j1b})[1][0][1]
                     # -- 2j1b -- #

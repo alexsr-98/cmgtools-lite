@@ -1,3 +1,4 @@
-tw+ : TbarWplus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_train_*   : xsec * 2; FillColor=798
-tw+ : TWminus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_train_*     : xsec * 2; FillColor=798
-
+#tw+ : TbarWplus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_train_*   : xsec * 2; FillColor=798
+#tw+ : TWminus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_train_*     : xsec * 2; FillColor=798
+tw+ : TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_train_*   : xsec * 2; FillColor=798
+tw+ : TWminusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_train_*     : xsec * 2; FillColor=798

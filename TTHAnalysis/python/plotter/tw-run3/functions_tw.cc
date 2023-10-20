@@ -58,50 +58,63 @@ Float_t getBDtWOther(Double_t BDT){
 
 // Random Forests
 Float_t getRFtW(Double_t BDT){
-  if      (BDT < 0.392348   ) return 1;
-  else if (BDT < 0.414540) return 2;
-  else if (BDT < 0.431385) return 3;
-  else if (BDT < 0.448032) return 4;
-  else if (BDT < 0.464931) return 5;
-  else if (BDT < 0.487771) return 6;
-  else if (BDT < 0.510953) return 7;
-  else if (BDT < 0.532430) return 8;
-  else if (BDT < 0.548111) return 9;
+  if      (BDT < 0.362929   ) return 1;
+  else if (BDT < 0.393709) return 2;
+  else if (BDT < 0.411112) return 3;
+  else if (BDT < 0.424242) return 4;
+  else if (BDT < 0.452956) return 5;
+  else if (BDT < 0.485076) return 6;
+  else if (BDT < 0.518692) return 7;
+  else if (BDT < 0.534609) return 8;
+  else if (BDT < 0.546438) return 9;
   else                       return 10;
 }
 
 Float_t getRFtWOther(Double_t BDT){
-  if      (BDT < 0.336244   ) return 1;
-  else if (BDT < 0.358161) return 2;
-  else if (BDT < 0.382590) return 3;
-  else if (BDT < 0.429195) return 4;
-  else if (BDT < 0.477400) return 5;
+  if      (BDT < 0.335388   ) return 1;
+  else if (BDT < 0.361837) return 2;
+  else if (BDT < 0.387806) return 3;
+  else if (BDT < 0.440645) return 4;
+  else if (BDT < 0.496462) return 5;
   else                       return 6;
 }
 
+Float_t getRFtW1j0b(Double_t BDT){
+  if      (BDT < 0.395016   ) return 1;
+  else if (BDT < 0.415115) return 2;
+  else if (BDT < 0.430495) return 3;
+  else if (BDT < 0.445367) return 4;
+  else if (BDT < 0.460616) return 5;
+  else if (BDT < 0.482564) return 6;
+  else if (BDT < 0.507189) return 7;
+  else if (BDT < 0.529880) return 8;
+  else if (BDT < 0.547096) return 9;
+  else                       return 10;
+} 
+
 Float_t getRFtW_mm(Double_t BDT){
-  if      (BDT < 0.312443   ) return 1;
-  else if (BDT < 0.373891) return 2;
-  else if (BDT < 0.397530) return 3;
-  else if (BDT < 0.412720) return 4;
-  else if (BDT < 0.427015) return 5;
-  else if (BDT < 0.441912) return 6;
-  else if (BDT < 0.458512) return 7;
-  else if (BDT < 0.474497) return 8;
-  else if (BDT < 0.492020) return 9;
+  if      (BDT < 0.273437   ) return 1;
+  else if (BDT < 0.326876) return 2;
+  else if (BDT < 0.344809) return 3;
+  else if (BDT < 0.360357) return 4;
+  else if (BDT < 0.376982) return 5;
+  else if (BDT < 0.411057) return 6;
+  else if (BDT < 0.429613) return 7;
+  else if (BDT < 0.446195) return 8;
+  else if (BDT < 0.459559) return 9;
   else                       return 10;
 }
 
 Float_t getRFtW_ee(Double_t BDT){
-  if      (BDT < 0.314974   ) return 1;
-  else if (BDT < 0.373050) return 2;
-  else if (BDT < 0.395662) return 3;
-  else if (BDT < 0.412996) return 4;
-  else if (BDT < 0.426564) return 5;
-  else if (BDT < 0.441021) return 6;
-  else if (BDT < 0.455306) return 7;
-  else if (BDT < 0.471604) return 8;
-  else if (BDT < 0.487447) return 9;
+  if      (BDT < 0.272420   ) return 1;
+  else if (BDT < 0.328963) return 2;
+  else if (BDT < 0.347061) return 3;
+  else if (BDT < 0.359887) return 4;
+  else if (BDT < 0.380686) return 5;
+  else if (BDT < 0.414465) return 6;
+  else if (BDT < 0.432662) return 7;
+  else if (BDT < 0.445169) return 8;
+  else if (BDT < 0.456785) return 9;
   else                       return 10;
 }
 
@@ -138,28 +151,41 @@ Float_t getRF1j1b_opt_10bins(Double_t BDT){
 
     
 Float_t getRF1j1b_opt_20bins(Double_t BDT){
-  if      (BDT < 0.370521   ) return 1;
-  else if (BDT < 0.392348) return 2;
-  else if (BDT < 0.405315) return 3;
-  else if (BDT < 0.414540) return 4;
-  else if (BDT < 0.422710) return 5;
-  else if (BDT < 0.431385) return 6;
-  else if (BDT < 0.440062) return 7;
-  else if (BDT < 0.448032) return 8;
-  else if (BDT < 0.456059) return 9;
-  else if (BDT < 0.464931) return 10;
-  else if (BDT < 0.475433) return 11;
-  else if (BDT < 0.487771) return 12;
-  else if (BDT < 0.499823) return 13;
-  else if (BDT < 0.510953) return 14;
-  else if (BDT < 0.522045) return 15;
-  else if (BDT < 0.532430) return 16;
-  else if (BDT < 0.541378) return 17;
-  else if (BDT < 0.548111) return 18;
-  else if (BDT < 0.555574) return 19;
+  if      (BDT < 0.349516   ) return 1;
+  else if (BDT < 0.362929) return 2;
+  else if (BDT < 0.378330) return 3;
+  else if (BDT < 0.393709) return 4;
+  else if (BDT < 0.404067) return 5;
+  else if (BDT < 0.411112) return 6;
+  else if (BDT < 0.417000) return 7;
+  else if (BDT < 0.424242) return 8;
+  else if (BDT < 0.440702) return 9;
+  else if (BDT < 0.452956) return 10;
+  else if (BDT < 0.467729) return 11;
+  else if (BDT < 0.485076) return 12;
+  else if (BDT < 0.503881) return 13;
+  else if (BDT < 0.518692) return 14;
+  else if (BDT < 0.527935) return 15;
+  else if (BDT < 0.534609) return 16;
+  else if (BDT < 0.540526) return 17;
+  else if (BDT < 0.546438) return 18;
+  else if (BDT < 0.553782) return 19;
   else                       return 20;
 } 
-
+Float_t getRF2j1b_opt_12bins(Double_t BDT){
+  if      (BDT < 0.319423   ) return 1;
+  else if (BDT < 0.335388) return 2;
+  else if (BDT < 0.347965) return 3;
+  else if (BDT < 0.361837) return 4;
+  else if (BDT < 0.373409) return 5;
+  else if (BDT < 0.387806) return 6;
+  else if (BDT < 0.409925) return 7;
+  else if (BDT < 0.440645) return 8;
+  else if (BDT < 0.461806) return 9;
+  else if (BDT < 0.496462) return 10;
+  else if (BDT < 0.516066) return 11;
+  else                       return 12;
+}
     
 Float_t getRF1j1b_opt_30bins(Double_t BDT){
   if      (BDT < 0.359345   ) return 1;

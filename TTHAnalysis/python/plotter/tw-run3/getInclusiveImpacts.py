@@ -76,7 +76,7 @@ def reviewThePreviousStepsFiles(thefolder, nth, verbose):
 
 
 def makeImpacts(task):
-    inpath, year, region, ncores, pretend, verbose, extra, doobs, doBlind = task
+    inpath, year, region, physModel, ncores, pretend, verbose, extra, doobs, doBlind = task
 
     print('\n> Creating impacts for region(s)', region, 'from year', year, '\n')
     
@@ -99,7 +99,7 @@ def makeImpacts(task):
 
     firstcomm = comm1.format(y      = year,
                              ncores = ("--parallel " + str(ncores)) if ncores else "",
-                             asimov = "" if doobs else "-t -1 --setParameters r=1",
+                             asimov = ("" if doobs else "-t -1 --setParameters r=1") if physModel == "1POI" else ("--freezeParameters ttbar_norm" if doobs else "-t -1 --setParameters r_tw=1,r_ttbar=1 --freezeParameters ttbar_norm"),
                              incard = "../combcard_{r}.root".format(r = region.replace(",", "")) if "," in region else "../{r}/cuts-tw-{r}_ws.root".format(r = region),
                              outdir = "./",
                              extra  = extra,
@@ -117,7 +117,7 @@ def makeImpacts(task):
 
     secondcomm = comm2.format(y      = year,
                              ncores = ("--parallel " + str(ncores)) if ncores else "",
-                             asimov = "" if doobs else "-t -1 --setParameters r=1",
+                             asimov = ("" if doobs else "-t -1 --setParameters r=1") if physModel == "1POI" else ("--freezeParameters ttbar_norm" if doobs else "-t -1 --setParameters r_tw=1,r_ttbar=1 --freezeParameters ttbar_norm"),
                              incard = "../combcard_{r}.root".format(r = region.replace(",", "")) if "," in region else "../{r}/cuts-tw-{r}_ws.root".format(r = region),
                              outdir = "./",
                              extra  = extra,
@@ -135,7 +135,7 @@ def makeImpacts(task):
     
     thirdcomm = comm3.format(y      = year,
                              ncores = ("--parallel " + str(ncores)) if ncores else "",
-                             asimov = "" if doobs else "-t -1 --setParameters r=1",
+                             asimov = ("" if doobs else "-t -1 --setParameters r=1") if physModel == "1POI" else ("--freezeParameters ttbar_norm" if doobs else "-t -1 --setParameters r_tw=1,r_ttbar=1 --freezeParameters ttbar_norm"),
                              incard = "../combcard_{r}.root".format(r = region.replace(",", "")) if "," in region else "../{r}/cuts-tw-{r}_ws.root".format(r = region),
                              outdir = "./",
                              extra  = extra,
@@ -160,7 +160,7 @@ def makeImpacts(task):
 
     fourthcomm = comm4.format(y      = year,
                               ncores = ("--parallel " + str(ncores)) if ncores else "",
-                              asimov = "" if doobs else "-t -1 --setParameters r=1",
+                              asimov = ("" if doobs else "-t -1 --setParameters r=1") if physModel == "1POI" else ("--freezeParameters ttbar_norm" if doobs else "-t -1 --setParameters r_tw=1,r_ttbar=1 --freezeParameters ttbar_norm"),
                               incard = "../combcard_{r}.root".format(r = region.replace(",", "")) if "," in region else "../{r}/cuts-tw-{r}_ws.root".format(r = region),
                               outdir = "./",
                               bl     = "--blind" if doBlind else "",
@@ -190,6 +190,7 @@ if __name__ == '__main__':
     parser.add_argument('--inpath',     '-i', metavar = 'inpath',     dest = "inpath",   required = False, default = "./temp/differential/")
     parser.add_argument('--year',       '-y', metavar = 'year',       dest = "year",     required = False, default = "all")
     parser.add_argument('--region',    '-r', metavar = 'region',        dest = "region",  required = False, default = "1j1t")
+    parser.add_argument('--physModel',    '-pM', metavar = 'physModel',     dest = "physModel",   required = False, default = "1POI")
     parser.add_argument('--extraArgs',  '-e', metavar = 'extra',      dest = "extra",    required = False, default = "")
     parser.add_argument('--nthreads',   '-j', metavar = 'nthreads',   dest = "nthreads", required = False, default = 0, type = int)
     parser.add_argument('--pretend',    '-p', action  = "store_true", dest = "pretend",  required = False, default = False)
@@ -205,6 +206,7 @@ if __name__ == '__main__':
     inpath   = args.inpath
     verbose  = args.verbose
     region   = args.region
+    physModel = args.physModel
     extra    = args.extra
     doObs    = args.doobs
     doBlind  = args.blindmu
@@ -234,7 +236,7 @@ if __name__ == '__main__':
     for iY in theyears:
         if not os.path.isdir(inpath + "/" + iY + "/" + "/" + ("Obs" * doObs) + "Impacts_" + region):
             os.system("mkdir -p " + inpath + "/" + iY + "/" + ("Obs" * doObs) + "Impacts_" + region)
-        tasks.append( (inpath, iY, region, nthreads, pretend, verbose, extra, doObs, doBlind) )
+        tasks.append( (inpath, iY, region, physModel, nthreads, pretend, verbose, extra, doObs, doBlind) )
 
     #print tasks
     for task in tasks:

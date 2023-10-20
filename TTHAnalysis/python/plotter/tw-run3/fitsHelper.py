@@ -7,10 +7,10 @@ r.PyConfig.IgnoreCommandLineOptions = True
 r.gROOT.SetBatch(True)
 
 
-combinecomm = "combine -M FitDiagnostics --expectSignal 1 {combcard} -n {y}_{r} --robustFit 1 --cminDefaultMinimizerStrategy 0 --X-rtd MINIMIZER_analytic --X-rtd MINIMIZER_MaxCalls=5000000 {extra} {plotsPrePost} {asimov}  &> {outfile}" # --cminDefaultMinimizerType Minuit --robustHesse 1
+combinecomm = "combine -M FitDiagnostics {combcard} -n {y}_{r} {expPar} --robustFit 1 --cminDefaultMinimizerStrategy 0 --X-rtd MINIMIZER_analytic --X-rtd MINIMIZER_MaxCalls=5000000  {extra} {plotsPrePost} {asimov} &> {outfile}" # --cminDefaultMinimizerType Minuit --robustHesse 1
 
 #Expected
-gofcomm = "combineTool.py -M GoodnessOfFit --expectSignal 1 {combcard} -n {y}_{r} --cminDefaultMinimizerStrategy 0 --X-rtd MINIMIZER_analytic --X-rtd MINIMIZER_MaxCalls=5000000 --algo=saturated {preorpost} {tois} {nthreads} {queue} --cminDefaultMinimizerType Minuit"
+gofcomm = "combineTool.py -M GoodnessOfFit --expectSignal 1 {combcard} -n {y}_{r} --cminDefaultMinimizerStrategy 0 --X-rtd MINIMIZER_analytic --X-rtd MINIMIZER_MaxCalls=5000000 --algo=saturated {preorpost} {tois} {nthreads} {queue}"
 
 slurmscaff = 'sbatch {extraS} -p {queue} -J {jobname} -e {logpath}/log.%j.%x.err -o {logpath}/log.%j.%x.out --wrap "{command}"'
 
@@ -22,7 +22,7 @@ nToysPerJob   = 20
 nThreshold    = 1000
 
 def makeFit(task):
-    year, region, inpath, verbose, pretend, extra, doPrePostPlots, doAsimov = task
+    year, region, inpath, verbose, pretend, extra, doPrePostPlots, doAsimov, physModel = task
     fitoutpath  = inpath + "/" + year
     if "," in region:
         cardList = []
@@ -51,8 +51,14 @@ def makeFit(task):
             if outstat:
                 raise RuntimeError("FATAL: combineCards.py failed to execute for year {y} and regions {r}.".format(y = year, r = region))
         
-        physicsModel = 'text2workspace.py -m 125 {infile} -o {outfile}'.format(infile  = fitoutpath + "/" + combcardnam,
+        if physModel == "1POI":
+            physicsModel = 'text2workspace.py -m 125 {infile} -o {outfile}'.format(infile  = fitoutpath + "/" + combcardnam,
                                                                                outfile = fitoutpath + "/" + combcardnam.replace(".txt", ".root"),)
+        elif physModel == "2POI":
+            physicsModel = 'text2workspace.py -m 125 {infile} -o {outfile} -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose --PO \'map=.*/tw*:r_tw[1,0,10]\' --PO \'map=.*/ttbar*:r_ttbar[1,0,10]\''.format(infile  = fitoutpath + "/" + combcardnam,
+                                                                                                                                                                                                                                    outfile = fitoutpath + "/" + combcardnam.replace(".txt", ".root"),)
+        else:
+            raise RuntimeError("FATAL: invalid physics model chosen. Please choose between 1POI and 2POI.")
         if verbose:
             print("Text2Workspace command:", physicsModel, "\n")
 
@@ -77,6 +83,7 @@ def makeFit(task):
                               outfile  = outfile_,
                               y        = year,
                               r        = region if "," not in region else region.replace(",", ""),
+                              expPar   = "--expectSignal 1" if physModel == "1POI" else "--setParameters r_tw=1,r_ttbar=1 --freezeParameters ttbar_norm",
                               plotsPrePost = "--saveShapes --saveWithUncertainties" if doPrePostPlots else "",
                               asimov   = "-t -1" if doAsimov else "",
                               extra    = extra)
@@ -320,7 +327,7 @@ def makeGOF(task):
 
 
 def makeGOFplot(task):
-    year, region, inpath, verbose, pretend, extra, doPost = task
+    year, region, inpath, verbose, pretend, extra, doPost, gofplotTitle = task
     fitoutpath = inpath + "/" + year
     gofoutpath = fitoutpath + "/GOF{p}_{y}_{r}".format(y = year, r = region.replace(",", ""), p = "" if not doPost else "post")
     if not os.path.isdir(gofoutpath):
@@ -381,7 +388,10 @@ def makeGOFplot(task):
     hToys.SetLineColor(r.kBlue)
     hToys.GetXaxis().SetTitle("Saturated test statistic (adim.)")
     hToys.GetYaxis().SetTitle("# toys (adim.)")
-    hToys.SetTitle(("Pre-fit GOF test" if not doPost else "Post-fit GOF test") + " - {y} - {r}".format(y = year, r = region.replace(",", "")))
+    if gofplotTitle == "":
+        hToys.SetTitle(("Pre-fit GOF test" if not doPost else "Post-fit GOF test") + " - {y} - {r}".format(y = year, r = region.replace(",", "")))
+    else:
+        hToys.SetTitle(gofplotTitle)
     hToys.Draw("hist")
 
     lineData = r.TLine(valData, 0, valData, hToys.GetMaximum() * 1.05)
@@ -411,6 +421,7 @@ if __name__ == "__main__":
     parser.add_argument('--inpath',    '-i', metavar = 'inpath ',    dest = "inpath",   required = False, default = "./temp/cards")
     parser.add_argument('--queue',     '-q', metavar = 'queue',      dest = "queue",    required = False, default = None)
     parser.add_argument('--region',    '-r', metavar = 'region',     dest = "region",   required = False, default = "1j1t")
+    parser.add_argument('--physModel',    '-pM', metavar = 'physModel',     dest = "physModel",   required = False, default = "1POI")
     parser.add_argument('--verbose',      '-V',  action  = "store_true",  dest = "verbose",      required = False, default = False)
     parser.add_argument('--nToys',        '-nT', metavar = 'ntoys',       dest = "ntoys",        required = False, default = 100, type = int)
     parser.add_argument('--plotsPrePost', '-pp', action  = "store_true",  dest = "plotsPrePost", required = False, default = False)
@@ -418,6 +429,7 @@ if __name__ == "__main__":
     parser.add_argument('--gofprefit',    '-gP', action  = "store_true",  dest = "gofprefit",    required = False, default = False) #Option to make gof test
     parser.add_argument('--gofpostfit',   '-gF', action  = "store_true",  dest = "gofpostfit",   required = False, default = False) #Option to make gof test
     parser.add_argument('--gofplot',      '-gH', action  = "store_true",  dest = "gofhisto",     required = False, default = False) #Option to make gof test
+    parser.add_argument('--gofplotTitle',    '-gT', metavar = 'gofplotTitle',     dest = "gofplotTitle",   required = False, default = "")
     parser.add_argument('--extraSlurmArgs','-eS',metavar = 'extraslurm',  dest = "extraslurm",   required = False, default = "")
 
     args     = parser.parse_args()
@@ -428,6 +440,7 @@ if __name__ == "__main__":
     pretend  = args.pretend
     inpath   = args.inpath
     region   = args.region
+    physModel = args.physModel #1POI or 2POI
     queue    = args.queue
     verbose  = args.verbose
     nts      = args.ntoys
@@ -436,7 +449,7 @@ if __name__ == "__main__":
     gofpre   = args.gofprefit
     gofpost  = args.gofpostfit
     gofhisto = args.gofhisto
-
+    gofplotTitle = args.gofplotTitle
 
     theyears = ["2016", "2017", "2018", "run2", "2022"]
     theregs  = ["1j1t", "2j1t", "2j2t", "1j1t,2j1t", "1j1t,2j2t", "2j1t,2j2t", "1j1t,2j1t,2j2t"]
@@ -456,7 +469,7 @@ if __name__ == "__main__":
     if not gofpre and not gofpost and not gofhisto:
         for yr in theyears:
             for rg in theregs:
-                tasks.append( (yr, rg, inpath, verbose, pretend, extra, plotsPrePost, asimov) )
+                tasks.append( (yr, rg, inpath, verbose, pretend, extra, plotsPrePost, asimov, physModel) )
 
         for task in tasks:
             if verbose: print("\nProcessing " + str(task) + "\n")
@@ -472,7 +485,7 @@ if __name__ == "__main__":
     else:
         for yr in theyears:
             for rg in theregs:
-                tasks.append( (yr, rg, inpath, verbose, pretend, extra, gofpost) )
+                tasks.append( (yr, rg, inpath, verbose, pretend, extra, gofpost, gofplotTitle) )
 
         for task in tasks:
             if verbose: print("\nProcessing " + str(task) + "\n")

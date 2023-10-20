@@ -252,7 +252,7 @@ class createTrainingMiniTree_TopRun3(Module):
             allret["train_fwdloosejet1_m"             ] = 0
 
         # Do we need to add the weights?
-        #allret["allweights"]                        = (event.genWeight * event.MuonIDSF * event.MuonISOSF * event.ElecIDSF * event.ElecRECOSF *
-        #                                               event.TrigSF * event.puWeight * event.bTagWeight * event.PrefireWeight)
+        allret["allweights"]                        = (event.genWeight * event.MuonIDSF * event.ElecIDSF *
+                                                       event.TrigSF * event.puWeight * event.bTagWeight)
 
         return allret
