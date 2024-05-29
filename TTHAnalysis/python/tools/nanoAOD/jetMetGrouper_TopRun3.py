@@ -61,7 +61,32 @@ class jetmetGrouper_TopRun3(Module):
                     for comp in self.groups[group]:
                         jetVarPt[-1] = (jetVarPt[-1]**2 + (getattr(j, "pt_jes"   + comp + sign) - thePt)**2)**0.5
                         jetVarM[-1]  = (jetVarM[-1]**2  + (getattr(j, "mass_jes" + comp + sign) - theMass)**2)**0.5
-
+                    
+                    # To split in flavour (option 1)
+                    if group == "FlavorQCD_bottom" and j.hadronFlavour != 5:
+                        jetVarPt[-1] = 0
+                        jetVarM[-1]  = 0
+                    if group == "FlavorQCD_charm" and j.hadronFlavour != 4:
+                        jetVarPt[-1] = 0
+                        jetVarM[-1]  = 0
+                    if group == "FlavorQCD_light" and j.hadronFlavour != 0:
+                        jetVarPt[-1] = 0
+                        jetVarM[-1]  = 0
+                    
+                    # To split in flavour (option 2)
+                    if group == "FlavorPure_Bottom" and abs(j.partonFlavour) != 5:
+                        jetVarPt[-1] = 0
+                        jetVarM[-1]  = 0
+                    if group == "FlavorPure_Charm" and abs(j.partonFlavour) != 4:
+                        jetVarPt[-1] = 0
+                        jetVarM[-1]  = 0
+                    if group == "FlavorPure_Quark" and abs(j.partonFlavour) != 1 and abs(j.partonFlavour) != 2 and abs(j.partonFlavour) != 3:
+                        jetVarPt[-1] = 0
+                        jetVarM[-1]  = 0
+                    if group == "FlavorPure_Gluon" and abs(j.partonFlavour) != 21:
+                        jetVarPt[-1] = 0
+                        jetVarM[-1]  = 0
+                    
                     metPxVar     = metPxVar - (1 if sign == 'Up' else -1) * jetVarPt[-1] * math.cos(thePhi)
                     metPyVar     = metPyVar - (1 if sign == 'Up' else -1) * jetVarPt[-1] * math.sin(thePhi)
                     jetVarPt[-1] = thePt    + (1 if sign == 'Up' else -1) * jetVarPt[-1]
@@ -119,6 +144,13 @@ moreVars = [
 groups = {'HF'                 : ['PileUpPtHF', 'RelativeJERHF', 'RelativePtHF'],
           'BBEC1_year'         : ['RelativeJEREC1', 'RelativePtEC1', 'RelativeStatEC'],
           'FlavorQCD'          : ['FlavorQCD'],
+          'FlavorQCD_bottom'   : ['FlavorQCD'],
+          'FlavorQCD_charm'    : ['FlavorQCD'],
+          'FlavorQCD_light'    : ['FlavorQCD'],
+          #'FlavorPure_Quark'    : ['FlavorPureQuark'],
+          #'FlavorPure_Charm'    : ['FlavorPureCharm'],
+          #'FlavorPure_Bottom'   : ['FlavorPureBottom'],
+          #'FlavorPure_Gluon'    : ['FlavorPureGluon'],
           'RelativeSample_year': ['RelativeSample'],
           'EC2'                : ['PileUpPtEC2'],
           'HF_year'            : ['RelativeStatHF'],
