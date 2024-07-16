@@ -1,0 +1,27 @@
+lep1lep2_dphi      : Lep1Lep2_DPhi           : 10,0,1    ; IncludeUnderflow=False, MoreY=1.3, LegendCutoff=0, XTitle="#Delta#it{#varphi}(#it{e}^{#pm}\, #it{#mu}^{#mp})/#it{#pi}", Legend='TL'
+jet1_pt            : Jet1_Pt                 : 18,20,200 ; IncludeUnderflow=False, MoreY=1.3, LegendCutoff=0, XTitle="Jet #it{p}_{T} (GeV)"
+lep1_pt            : LepGood_pt_corrAll[0]   : 14,10,150 ; IncludeUnderflow=False, MoreY=1.3, LegendCutoff=0, XTitle="Leading lepton #it{p}_{T} (GeV)"
+#lep1lep2_pt        : Lep1Lep2_Pt             : 20,0,200  ; IncludeUnderflow=False, MoreY=1.3, LegendCutoff=0, XTitle="#it{p}_{T}(\\ell_{1}\, \\ell_{2}) (GeV)"
+lep1lep2jet1_pz : abs(Lep1Lep2Jet1_Pz) : 18,0,700  ; IncludeUnderflow=False, MoreY=1.3, LegendCutoff=0, XTitle="|#it{p}_{Z}| (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}) (GeV)"
+lep1lep2jet1_m     : Lep1Lep2Jet1_M          : 20,0,600  ; IncludeUnderflow=False, MoreY=1.1, LegendCutoff=0, XTitle="#it{m} (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}) (GeV)"
+lep1lep2jet1met_mt : Lep1Lep2Jet1MET_Mt      : 20,0,600  ; IncludeUnderflow=False, MoreY=1.3, LegendCutoff=0, XTitle="#it{m}_{T} (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}\, #vec{#it{p}}_{T}^{ miss}) (GeV)"
+
+#nfwdjets  : nFwdJetSel30_Recl           : [-0.5,0.5,1.5,2.5,3.5] ; LegendCutoff=0, XTitle='Number of forward jets', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
+#nfwdloosejets  : nFwdJetSel20_Recl      : [-0.5,0.5,1.5,2.5,3.5] ; LegendCutoff=0, XTitle='Number of forward loose jets', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
+
+tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", LegendCutoff=0, MoreY=2.0
+
+
+
+#lep1_ptlarge : LepGood_pt_corrAll[0]   : 25,10,310 ; IncludeUnderflow=False, MoreY=1.3, LegendCutoff=0, XTitle="Leading lepton p_{T} (GeV)"
+
+#lep1_ptlarge2 : LepGood_pt_corrAll[0]   : [25., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 105., 115., 125., 135., 150., 175., 200., 225., 250.] ; IncludeUnderflow=False, MoreY=1.3, LegendCutoff=0, XTitle="Leading lepton p_{T} (GeV)"
+
+
+
+
+#lep1lep2jet1met_mt_newbin : min(max(Lep1Lep2Jet1MET_Mt, 101.), 599.) : [0., 180., 200., 220., 240., 250., 260., 270., 280., 290., 300., 310., 320., 330., 340., 360., 380., 400., 420., 440., 460., 500., 550., 600.]  ; IncludeUnderflow=False, MoreY=1.3, LegendCutoff=0, XTitle="m_{T} (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}\, #it{p}_{T}^{miss}) (GeV)"
+#lep1jet1_dphi      : Lep1Jet1_DPhi       : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\varphi(\\ell_{1}\,j)/\\pi"
+#lep2jet1_dphi      : Lep2Jet1_DPhi       : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\varphi(\\ell_{2}\,j)/\\pi"
+#costhetastar1      : cosThetaStar1       : 10,-1,1  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="cos(\\theta)^{*}_{\\ell_{1}}"
+#costhetastar2      : cosThetaStar2       : 10,-1,1  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="cos(\\theta)^{*}_{\\ell_{2}}"

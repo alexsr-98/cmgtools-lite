@@ -168,7 +168,7 @@ class EventLoop:
         modules = self._modules
         for m in modules: m.beginJob()
         if type(trees) != list: trees = [ trees ]
-        t0 = time.clock(); tlast = t0
+        t0 = time.perf_counter(); tlast = t0
         for tree in trees:
             tree.entry = -1
             for m in modules: m.init(tree)
@@ -183,7 +183,7 @@ class EventLoop:
                     if ret == False: break
                 self._doneEvents += 1
                 if i > 0 and i % 10000 == 0:
-                    t1 = time.clock()
+                    t1 = time.perf_counter()
                     print("Processed %8d/%8d entries of this tree (elapsed time %7.1fs, curr speed %8.3f kHz, avg speed %8.3f kHz)" % (i,tree.GetEntries(),t1-t0,(10.000)/(max(t1-tlast,1e-9)),i/1000./(max(t1-t0,1e-9))))
                     tlast = t1
         for m in modules: m.endJob()

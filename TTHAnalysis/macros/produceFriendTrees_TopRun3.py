@@ -8,13 +8,16 @@ r.PyConfig.IgnoreCommandLineOptions = True
 r.gROOT.SetBatch(True)
 
 #### Settings
-prodname = "2023-09-10"
+prodname = "2023-12-23"
 
-datasamples  = ["SingleMuon", "SingleElec", "DoubleMuon", "DoubleEG", "MuonEG", "LowEGJet", "HighEGJet", "EGamma","Muon", "JetMET"]
+datasamples  = ["SingleMuon", "SingleElec", "DoubleMuon", "DoubleEG", "MuonEG", "LowEGJet", "HighEGJet", "EGamma","Muon", "JetMET", "MET", "JetHT"]
 
 
-mcpath       = "/lustrefs/hdd_pool_dir/nanoAODv11/tw-run3/productions/" + prodname
-friendspath  = "/lustrefs/hdd_pool_dir/nanoAODv11/tw-run3/productions/"
+mcpath       = "/lustrefs/hdd_pool_dir/nanoAODv12/tw-run3/productions/" + prodname
+friendspath  = "/lustrefs/hdd_pool_dir/nanoAODv12/tw-run3/productions/"
+
+mcpath       = "/pool/phedex/userstorage/asoto/tw-run3/productions/" + prodname
+friendspath  = "/pool/phedexrw/userstorage/asoto/tw-run3/productions/"
 
 ###### Path to create MiniTrees for MVA training
 #prodname     = "2022-10-25"
@@ -34,12 +37,17 @@ friendfolders = {0 : "0_jecs",
                  1 : "1_lepsuncsAndParticle",
                  2 : "2_cleaning",
                  3 : "3_varstrigger",
-                 4 : "4_scalefactors",
+                 4 : "4_scalefactors_full2022_comb",
                  5 : "5_mvas",
                  6 : "6_mvasRF",
+                 7 : "7_caloWeight",
+                 8 : "8_topPtReweight13to13p6",
                  "btageffvars" : "x_btageff",
                  "mvatrain" : "x_mvatrain",
 }
+#### Configuration for nanoGenFriendTrees
+nanogenSamples = ["BBLLNuNu_TuneCP5_13p6TeV_powheg_pythia8"]
+
 
 chunksizes    = {0 : 200000, 
                  1 : 200000,
@@ -48,6 +56,8 @@ chunksizes    = {0 : 200000,
                  4 : 200000,
                  5 : 250000,
                  6 : 250000,
+                 7 : 200000,
+                 8 : 200000,
                  "btageffvars" : 500000,
                  "mvatrain" : 500000,
 }
@@ -64,10 +74,12 @@ class errs(enum.IntEnum):
 minitnamedict = {
     "ttbar"         : ["TTTo2L2Nu_train"],
     "ttbarsemilep"  : ["TTToSemiLeptonic_train"],
+    "ttbarsemilepext1" : ["TTToSemiLeptonicext1_train"],
     "tw"            : ["tW_dilep_train"],
     "tbarw"         : ["tbarW_dilep_train"],
     "dy_10to50"     : ["DYJetsToLL_M_10to50_NLO_train"],
     "dy_50"         : ["DYJetsToLL_M_50_NLO_train"],
+    "data"          : ["MuonEG"],
 }
 
 
@@ -78,134 +90,12 @@ sampledict["2022"] = {
     ###### Nominales
     ##### ttbar
     # Powheg+Pythia8
-    "TTTo2L2Nu"        : "TTTo2L2Nu_CP5_13p6TeV_powheg_pythia8",
-    "TTToSemiLeptonic" : "TTTo2J1L1Nu_CP5_13p6TeV_powheg_pythia8",
-
-    # Powheg+Herwig7
-
-
-    # aMC@NLO+Pythia8
-
-
-    ##### WWbb
-
-
-
-    ###### tW
-    ### Inclusive
-
-
-    ### No fully hadronic
-    "tW"       : "TWminus_DR_AtLeastOneLepton_CP5_13p6TeV_powheg_pythia8",
-    "tbarW"    : "TbarWplus_DR_AtLeastOneLepton_CP5_13p6TeV_powheg_pythia8",
-
-    ## No fully hadronic DS
-
-
-    ### No fully hadronic Powheg+Herwig7
-
-
-    ### Dilep aMC@NLO+Pythia8
-
-
-    ###### WJets
-    ### LO
-    "WJetsToLNu_LO" : "WJetsToLNu_TuneCP5_13p6TeV_madgraphMLM_pythia8",
-
-    ### NLO
-
-
-    ###### DY
-    ### LO
-    "DYJetsToLL_M_10to50_LO" : "DYJetsToLL_M_10to50_TuneCP5_13p6TeV_madgraphMLM_pythia8",
-    "DYJetsToLL_M_50_LO"     : "DYJetsToLL_M_50_TuneCP5_13p6TeV_madgraphMLM_pythia8ext", 
-
-    ### NLO
-
-
-    ###### WW
-    ## LO
-    "WW_LO" : "WW_TuneCP5_13p6TeV_pythia8",
-
-    ## NLO
-
-
-    ###### WZ
-    ## LO
-    "WZ_LO" : "WZ_TuneCP5_13p6TeV_pythia8",
-
-    ## NLO
-
-
-    ###### ZZ
-    ## LO
-    "ZZ_LO" : "ZZ_TuneCP5_13p6TeV_pythia8",
-
-    ## NLO
-
-
-    ##### ttW
-
-
-    ##### ttZ
-
-
-    ###### ttGamma
-
-
-    ###### VVV
-
-
-    ######## Incertidumbres
-    ####### tW
-    ### hdamp
-
-
-    ### mtop
-
-
-    ### CR
-
-
-    ### UE
-
-
-    ### PDF
-
-
-    ###### ttbar
-    ### hdamp
-
-
-    ### mtop
-
-
-    ### CR
-
-
-    ### UE
-
-
-
-    ##### Datos
-    "SingleMuon"     : "SingleMuon_Run2022",
-    #"SingleElectron" : "SingleElectron_Run2016",
-    "DoubleMuon"     : "DoubleMuon_Run2022",
-    #"DoubleEG"       : "DoubleEG_Run2016",
-    "MuonEG"         : "MuonEG_Run2022",
-    "EGamma"         : "EGamma_Run2022",
-    "Muon"           : "Muon_Run2022",
-
-}
-
-sampledict["2022PostEE"] = {
-    ###### Nominales
-    ##### ttbar
-    # Powheg+Pythia8
     "TTTo2L2Nu"        : "TTto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis",
     "TTToSemiLeptonic" : "TTtoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8_analysis",
+    "TTToSemiLeptonicext1" : "TTtoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8_ext1_analysis",
     "TTTo2L2Nu_train"        : "TTto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_train",
     "TTToSemiLeptonic_train" : "TTtoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8_train",
+    "TTToSemiLeptonicext1_train" : "TTtoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8_ext1_train",
 
     # Powheg+Herwig7
 
@@ -222,16 +112,19 @@ sampledict["2022PostEE"] = {
 
 
     ### No fully hadronic (SMP)
-    "tW"       : "TWminus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_analysis",
-    "tbarW"    : "TbarWplus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_analysis",
-    "tW_train"       : "TWminus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_train",
-    "tbarW_train"    : "TbarWplus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_train",
+    #"tW"       : "TWminus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_analysis",
+    #"tbarW"    : "TbarWplus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_analysis",
+    #"tW_train"       : "TWminus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_train",
+    #"tbarW_train"    : "TbarWplus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_train",
 
     ### Dileptonic (GEN)
     "tW_dilep"             : "TWminusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis",
     "tbarW_dilep"          : "TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis",
     "tW_dilep_train"       : "TWminusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_train",
     "tbarW_dilep_train"    : "TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_train",    
+    ### Semileptonic (GEN)
+    "tW_semilep"             : "TWminustoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8",
+    "tbarW_semilep"          : "TbarWplustoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8",
 
     ## Dileptonic (for differential)
     "tW_amcDR1_dilep"             : "TWto2L2Nu_DR1_TuneCP5_13p6TeV_amcatnlo_pythia8",
@@ -240,7 +133,8 @@ sampledict["2022PostEE"] = {
     "tW_amcDSFS_dilep"             : "TWto2L2Nu_DS_FS_TuneCP5_13p6TeV_amcatnlo_pythia8",
     "tW_amcDSIS_dilep"             : "TWto2L2Nu_DS_IS_TuneCP5_13p6TeV_amcatnlo_pythia8",
     "tW_amcDSISBW_dilep"             : "TWto2L2Nu_DS_IS_BW_TuneCP5_13p6TeV_amcatnlo_pythia8",
-
+    "tW_dilep_herwig"             : "TWminusto2L2Nu_TuneCH3_13p6TeV_powheg_herwig7",
+    "tbarW_dilep_herwig"          : "TbarWplusto2L2Nu_TuneCH3_13p6TeV_powheg_herwig7",
 
     ###### WJets
     ### LO
@@ -261,14 +155,14 @@ sampledict["2022PostEE"] = {
 
     ###### WW
     ## LO
-    "WW_LO" : "WW_TuneCP5_13p6TeV_pythia8",
+    #"WW_LO" : "WW_TuneCP5_13p6TeV_pythia8",
 
     ## NLO
     "WWto2L2Nu_NLO" : "WWto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8",
 
     ###### WZ
     ## LO
-    "WZ_LO" : "WZ_TuneCP5_13p6TeV_pythia8",
+    #"WZ_LO" : "WZ_TuneCP5_13p6TeV_pythia8",
 
     ## NLO
     "WZto2L2Q_NLO" : "WZto2L2Q_TuneCP5_13p6TeV_powheg_pythia8",
@@ -276,7 +170,7 @@ sampledict["2022PostEE"] = {
 
     ###### ZZ
     ## LO
-    "ZZ_LO" : "ZZ_TuneCP5_13p6TeV_pythia8",
+    #"ZZ_LO" : "ZZ_TuneCP5_13p6TeV_pythia8",
 
     ## NLO
     "ZZto2L2Nu_NLO" : "ZZto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8",
@@ -284,14 +178,17 @@ sampledict["2022PostEE"] = {
     "ZZto4L_NLO"    : "ZZto4L_TuneCP5_13p6TeV_powheg_pythia8",
 
     ##### ttW
-
+    "TTL_1J" : "TTLNu_1Jets_TuneCP5_13p6TeV_amcatnloFXFX_pythia8",
 
     ##### ttZ
-    "TTZ-ZtoQQ" : "TTZ_ZtoQQ_1Jets_TuneCP5_13p6TeV_amcatnloFXFX_pythia8",
+    "TTZ-ZtoQQ"         : "TTZ_ZtoQQ_1Jets_TuneCP5_13p6TeV_amcatnloFXFX_pythia8",
+    "TTLL_MLL4to50"     : "TTLL_MLL_4to50_TuneCP5_13p6TeV_amcatnlo_pythia8",
+    "TTLL_MLL50"        : "TTLL_MLL_50_TuneCP5_13p6TeV_amcatnlo_pythia8",
 
-    ###### ttGamma (UL!!!!!!!!!!!)
-    ##"TTGammaDilep"   : "TTGamma_Dilept_TuneCP5_13TeV_madgraph_pythia8",
-    ##"TTGammaSemilep" : "TTGamma_SingleLept_TuneCP5_13TeV_madgraph_pythia8",
+    ###### ttGamma
+    "TTGamma_10to100"   : "TTG_1Jets_PTG_10to100_TuneCP5_13p6TeV_amcatnloFXFXold_pythia8",
+    "TTGamma_100to200"  : "TTG_1Jets_PTG_100to200_TuneCP5_13p6TeV_amcatnloFXFXold_pythia8",
+    "TTGamma_200"       : "TTG_1Jets_PTG_200_TuneCP5_13p6TeV_amcatnloFXFXold_pythia8",
 
     ###### VVV
 
@@ -308,6 +205,11 @@ sampledict["2022PostEE"] = {
     "tbarW_dilep_mtopUp"            : "TbarWplusto2L2Nu_MT_173p5_TuneCP5_13p6TeV_powheg_pythia8",
     "tW_dilep_mtopDown"             : "TWminusto2L2Nu_MT_171p5_TuneCP5_13p6TeV_powheg_pythia8",
     "tbarW_dilep_mtopDown"          : "TbarWplusto2L2Nu_MT_171p5_TuneCP5_13p6TeV_powheg_pythia8",
+    # mtop 3GeV
+    "tW_dilep_3mtopUp"               : "TWminusto2L2Nu_MT_175p5_TuneCP5_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_3mtopUp"            : "TbarWplusto2L2Nu_MT_175p5_TuneCP5_13p6TeV_powheg_pythia8",
+    "tW_dilep_3mtopDown"             : "TWminusto2L2Nu_MT_169p5_TuneCP5_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_3mtopDown"          : "TbarWplusto2L2Nu_MT_169p5_TuneCP5_13p6TeV_powheg_pythia8",
 
     ### CR
     "tW_dilep_CR1"               : "TWminusto2L2Nu_TuneCP5CR1_13p6TeV_powheg_pythia8",
@@ -335,6 +237,189 @@ sampledict["2022PostEE"] = {
     ### mtop
     "TTTo2L2Nu_mtopUp"         : "TTto2L2Nu_MT_173p5_TuneCP5_13p6TeV_powheg_pythia8",
     "TTTo2L2Nu_mtopDown"       : "TTto2L2Nu_MT_171p5_TuneCP5_13p6TeV_powheg_pythia8",
+    # mtop 3GeV
+    "TTTo2L2Nu_3mtopUp"         : "TTto2L2Nu_MT_175p5_TuneCP5_13p6TeV_powheg_pythia8",
+    "TTTo2L2Nu_3mtopDown"       : "TTto2L2Nu_MT_169p5_TuneCP5_13p6TeV_powheg_pythia8",
+
+    ### CR
+    "TTTo2L2Nu_CR1"            : "TTto2L2Nu_TuneCP5CR1_13p6TeV_powheg_pythia8",
+    "TTTo2L2Nu_CR2"            : "TTto2L2Nu_TuneCP5CR2_13p6TeV_powheg_pythia8",
+    "TTTo2L2Nu_ERDOn"          : "TTto2L2Nu_TuneCP5_ERDOn_13p6TeV_powheg_pythia8",
+
+    ### UE
+    "TTTo2L2Nu_ueUp"           : "TTto2L2Nu_TuneCP5Up_13p6TeV_powheg_pythia8",
+    "TTTo2L2Nu_ueDown"         : "TTto2L2Nu_TuneCP5Down_13p6TeV_powheg_pythia8",
+
+
+
+    ##### Datos
+    "SingleMuon"     : "SingleMuon_Run2022",
+    "DoubleMuon"     : "DoubleMuon_Run2022",
+    "MuonEG"         : "MuonEG_Run2022",
+    "EGamma"         : "EGamma_Run2022",
+    "Muon"           : "Muon_Run2022",
+    "JetMET"         : "JetMET_Run2022",
+    #"JetHT"          : "JetHT_Run2022",
+    "MET"            : "MET_Run2022",
+
+}
+
+sampledict["2022PostEE"] = {
+    ###### Nominales
+    ##### ttbar
+    # Powheg+Pythia8
+    "TTTo2L2Nu"        : "TTto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis",
+    "TTToSemiLeptonic" : "TTtoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8_analysis",
+    "TTToSemiLeptonicext1" : "TTtoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8_ext1_analysis",
+    "TTTo2L2Nu_train"        : "TTto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_train",
+    "TTToSemiLeptonic_train" : "TTtoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8_train",
+    "TTToSemiLeptonicext1_train" : "TTtoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8_ext1_train",
+
+    # Powheg+Herwig7
+
+
+    # aMC@NLO+Pythia8
+
+
+    ##### bb4l
+    #"bb4l" : "BBLLNuNu_TuneCP5_13p6TeV_powheg_pythia8",
+
+
+
+    ###### tW
+    ### Inclusive
+
+
+    ### No fully hadronic (SMP)
+    #"tW"       : "TWminus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_analysis",
+    #"tbarW"    : "TbarWplus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_analysis",
+    #"tW_train"       : "TWminus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_train",
+    #"tbarW_train"    : "TbarWplus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_train",
+
+    ### Dileptonic (GEN)
+    "tW_dilep"             : "TWminusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis",
+    "tbarW_dilep"          : "TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis",
+    "tW_dilep_train"       : "TWminusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_train",
+    "tbarW_dilep_train"    : "TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_train",    
+    ### Semileptonic (GEN)
+    "tW_semilep"             : "TWminustoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8",
+    "tbarW_semilep"          : "TbarWplustoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8",
+
+    ## Dileptonic (for differential)
+    "tW_amcDR1_dilep"             : "TWto2L2Nu_DR1_TuneCP5_13p6TeV_amcatnlo_pythia8",
+    "tW_amcDR2_dilep"             : "TWto2L2Nu_DR2_TuneCP5_13p6TeV_amcatnlo_pythia8",
+    "tW_amcDSFSBW_dilep"             : "TWto2L2Nu_DS_FS_BW_TuneCP5_13p6TeV_amcatnlo_pythia8",
+    "tW_amcDSFS_dilep"             : "TWto2L2Nu_DS_FS_TuneCP5_13p6TeV_amcatnlo_pythia8",
+    "tW_amcDSIS_dilep"             : "TWto2L2Nu_DS_IS_TuneCP5_13p6TeV_amcatnlo_pythia8",
+    "tW_amcDSISBW_dilep"             : "TWto2L2Nu_DS_IS_BW_TuneCP5_13p6TeV_amcatnlo_pythia8",
+    "tW_dilep_herwig"             : "TWminusto2L2Nu_TuneCH3_13p6TeV_powheg_herwig7",
+    "tbarW_dilep_herwig"          : "TbarWplusto2L2Nu_TuneCH3_13p6TeV_powheg_herwig7",
+
+
+    ###### WJets
+    ### LO
+    #"WJetsToLNu_LO" : "WJetsToLNu_TuneCP5_13p6TeV_madgraphMLM_pythia8",
+
+    ### NLO
+    "WJetsToLNu_NLO" : "WtoLNu_2Jets_TuneCP5_13p6TeV_amcatnloFXFX_pythia8",
+
+    ###### DY
+    ### LO
+
+
+    ### NLO
+    "DYJetsToLL_M_10to50_NLO" : "DYto2L_2Jets_MLL_10to50_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_analysis",
+    "DYJetsToLL_M_50_NLO"     : "DYto2L_2Jets_MLL_50_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_analysis", 
+    "DYJetsToLL_M_10to50_NLO_train" : "DYto2L_2Jets_MLL_10to50_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_train",
+    "DYJetsToLL_M_50_NLO_train"     : "DYto2L_2Jets_MLL_50_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_train", 
+
+    ###### WW
+    ## LO
+    #"WW_LO" : "WW_TuneCP5_13p6TeV_pythia8",
+
+    ## NLO
+    "WWto2L2Nu_NLO" : "WWto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8",
+
+    ###### WZ
+    ## LO
+    #"WZ_LO" : "WZ_TuneCP5_13p6TeV_pythia8",
+
+    ## NLO
+    "WZto2L2Q_NLO" : "WZto2L2Q_TuneCP5_13p6TeV_powheg_pythia8",
+    "WZto3LNu_NLO" : "WZto3LNu_TuneCP5_13p6TeV_powheg_pythia8",
+
+    ###### ZZ
+    ## LO
+    #"ZZ_LO" : "ZZ_TuneCP5_13p6TeV_pythia8",
+
+    ## NLO
+    "ZZto2L2Nu_NLO" : "ZZto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8",
+    "ZZto2L2Q_NLO"  : "ZZto2L2Q_TuneCP5_13p6TeV_powheg_pythia8",
+    "ZZto4L_NLO"    : "ZZto4L_TuneCP5_13p6TeV_powheg_pythia8",
+
+    ##### ttW
+    "TTL_1J" : "TTLNu_1Jets_TuneCP5_13p6TeV_amcatnloFXFX_pythia8",
+
+    ##### ttZ
+    "TTZ-ZtoQQ"         : "TTZ_ZtoQQ_1Jets_TuneCP5_13p6TeV_amcatnloFXFX_pythia8",
+    "TTLL_MLL4to50"     : "TTLL_MLL_4to50_TuneCP5_13p6TeV_amcatnlo_pythia8",
+    "TTLL_MLL50"        : "TTLL_MLL_50_TuneCP5_13p6TeV_amcatnlo_pythia8",
+
+    ###### ttGamma
+    "TTGamma_10to100"   : "TTG_1Jets_PTG_10to100_TuneCP5_13p6TeV_amcatnloFXFXold_pythia8",
+    "TTGamma_100to200"  : "TTG_1Jets_PTG_100to200_TuneCP5_13p6TeV_amcatnloFXFXold_pythia8",
+    "TTGamma_200"       : "TTG_1Jets_PTG_200_TuneCP5_13p6TeV_amcatnloFXFXold_pythia8",
+
+    ###### VVV
+
+
+    ######## Incertidumbres
+    ####### tW
+    ### hdamp
+    "tW_dilep_hdampUp"               : "TWminusto2L2Nu_Hdamp_418_TuneCP5_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_hdampUp"            : "TbarWplusto2L2Nu_Hdamp_418_TuneCP5_13p6TeV_powheg_pythia8",
+    "tW_dilep_hdampDown"             : "TWminusto2L2Nu_Hdamp_158_TuneCP5_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_hdampDown"          : "TbarWplusto2L2Nu_Hdamp_158_TuneCP5_13p6TeV_powheg_pythia8",
+    ### mtop
+    "tW_dilep_mtopUp"               : "TWminusto2L2Nu_MT_173p5_TuneCP5_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_mtopUp"            : "TbarWplusto2L2Nu_MT_173p5_TuneCP5_13p6TeV_powheg_pythia8",
+    "tW_dilep_mtopDown"             : "TWminusto2L2Nu_MT_171p5_TuneCP5_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_mtopDown"          : "TbarWplusto2L2Nu_MT_171p5_TuneCP5_13p6TeV_powheg_pythia8",
+    # mtop 3GeV
+    "tW_dilep_3mtopUp"               : "TWminusto2L2Nu_MT_175p5_TuneCP5_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_3mtopUp"            : "TbarWplusto2L2Nu_MT_175p5_TuneCP5_13p6TeV_powheg_pythia8",
+    "tW_dilep_3mtopDown"             : "TWminusto2L2Nu_MT_169p5_TuneCP5_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_3mtopDown"          : "TbarWplusto2L2Nu_MT_169p5_TuneCP5_13p6TeV_powheg_pythia8",
+
+    ### CR
+    "tW_dilep_CR1"               : "TWminusto2L2Nu_TuneCP5CR1_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_CR1"            : "TbarWplusto2L2Nu_TuneCP5CR1_13p6TeV_powheg_pythia8",
+    "tW_dilep_CR2"               : "TWminusto2L2Nu_TuneCP5CR2_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_CR2"            : "TbarWplusto2L2Nu_TuneCP5CR2_13p6TeV_powheg_pythia8",
+    "tW_dilep_ERDOn"             : "TWminusto2L2Nu_TuneCP5_ERDOn_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_ERDOn"          : "TbarWplusto2L2Nu_TuneCP5_ERDOn_13p6TeV_powheg_pythia8",
+
+    ### UE
+    "tW_dilep_ueUp"               : "TWminusto2L2Nu_TuneCP5Up_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_ueUp"            : "TbarWplusto2L2Nu_TuneCP5Up_13p6TeV_powheg_pythia8",
+    "tW_dilep_ueDown"             : "TWminusto2L2Nu_TuneCP5Down_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_ueDown"          : "TbarWplusto2L2Nu_TuneCP5Down_13p6TeV_powheg_pythia8",
+
+    ### DS
+    "tW_dilep_DS"               : "TWminusto2L2Nu_DS_TuneCP5_13p6TeV_powheg_pythia8",
+    "tbarW_dilep_DS"            : "TbarWplusto2L2Nu_DS_TuneCP5_13p6TeV_powheg_pythia8",
+
+    ###### ttbar
+    ### hdamp
+    "TTTo2L2Nu_hdampUp"        : "TTto2L2Nu_Hdamp_418_TuneCP5_13p6TeV_powheg_pythia8",
+    "TTTo2L2Nu_hdampDown"      : "TTto2L2Nu_Hdamp_158_TuneCP5_13p6TeV_powheg_pythia8",
+
+    ### mtop
+    "TTTo2L2Nu_mtopUp"         : "TTto2L2Nu_MT_173p5_TuneCP5_13p6TeV_powheg_pythia8",
+    "TTTo2L2Nu_mtopDown"       : "TTto2L2Nu_MT_171p5_TuneCP5_13p6TeV_powheg_pythia8",
+    # mtop 3GeV
+    "TTTo2L2Nu_3mtopUp"         : "TTto2L2Nu_MT_175p5_TuneCP5_13p6TeV_powheg_pythia8",
+    "TTTo2L2Nu_3mtopDown"       : "TTto2L2Nu_MT_169p5_TuneCP5_13p6TeV_powheg_pythia8",
 
     ### CR
     "TTTo2L2Nu_CR1"            : "TTto2L2Nu_TuneCP5CR1_13p6TeV_powheg_pythia8",
@@ -359,19 +444,20 @@ sampledict["2022PostEE"] = {
 trainsampledict = {}; trainsampledict["2022"] = {}; trainsampledict["2022PostEE"] = {}
 trainsampledict["2022"] = {
     ### ttbar
-    "TTTo2L2Nu" : sampledict["2022"]["TTTo2L2Nu"],
-    "TTToSemiLeptonic" : sampledict["2022"]["TTToSemiLeptonic"],
+    "TTTo2L2Nu_train" : sampledict["2022"]["TTTo2L2Nu_train"],
+    "TTToSemiLeptonic_train" : sampledict["2022"]["TTToSemiLeptonic_train"],
+    "TTToSemiLeptonicext1_train" : sampledict["2022"]["TTToSemiLeptonicext1_train"],
 
     ### tW
-    "tW"     : sampledict["2022"]["tW"],
-    "tbarW"  : sampledict["2022"]["tbarW"],
+    "tW_dilep_train"     : sampledict["2022"]["tW_dilep_train"],
+    "tbarW_dilep_train"  : sampledict["2022"]["tbarW_dilep_train"],
     
-    "DYJetsToLL_M_10to50_LO" : sampledict["2022"]["DYJetsToLL_M_10to50_LO"],
-    "DYJetsToLL_M_50_LO"     : sampledict["2022"]["DYJetsToLL_M_50_LO"],
-#    "DYJetsToLL_M_50"         : sampledict[2017]["DYJetsToLL_M_50"],
-    #"DYJetsToLL_M_50_MLM"     : sampledict[2017]["DYJetsToLL_M_50_MLM"],
-#    "DYJetsToLLdiv2_M_10to50_MLM" : sampledict[2017]["DYJetsToLLdiv2_M_10to50_MLM"],
-#    "DYJetsToLLdiv2_M_50"         : sampledict[2017]["DYJetsToLLdiv2_M_50"],
+    ### DY
+    "DYJetsToLL_M_10to50_NLO_train" : sampledict["2022"]["DYJetsToLL_M_10to50_NLO_train"],
+    "DYJetsToLL_M_50_NLO_train"     : sampledict["2022"]["DYJetsToLL_M_50_NLO_train"],
+
+    ### Data (used to plot correlation matrix also for data)
+    "MuonEG"     : sampledict["2022"]["MuonEG"],
 }
 
 
@@ -379,17 +465,18 @@ trainsampledict["2022PostEE"] = {
     ### ttbar
     "TTTo2L2Nu_train" : sampledict["2022PostEE"]["TTTo2L2Nu_train"],
     "TTToSemiLeptonic_train" : sampledict["2022PostEE"]["TTToSemiLeptonic_train"],
+    "TTToSemiLeptonicext1_train" : sampledict["2022PostEE"]["TTToSemiLeptonicext1_train"],
 
     ### tW
     "tW_dilep_train"     : sampledict["2022PostEE"]["tW_dilep_train"],
     "tbarW_dilep_train"  : sampledict["2022PostEE"]["tbarW_dilep_train"],
     
+    ### DY
     "DYJetsToLL_M_10to50_NLO_train" : sampledict["2022PostEE"]["DYJetsToLL_M_10to50_NLO_train"],
     "DYJetsToLL_M_50_NLO_train"     : sampledict["2022PostEE"]["DYJetsToLL_M_50_NLO_train"],
-#    "DYJetsToLL_M_50"         : sampledict[2017]["DYJetsToLL_M_50"],
-    #"DYJetsToLL_M_50_MLM"     : sampledict[2017]["DYJetsToLL_M_50_MLM"],
-#    "DYJetsToLLdiv2_M_10to50_MLM" : sampledict[2017]["DYJetsToLLdiv2_M_10to50_MLM"],
-#    "DYJetsToLLdiv2_M_50"         : sampledict[2017]["DYJetsToLLdiv2_M_50"],
+
+    ### Data (used to plot correlation matrix also for data)
+    "MuonEG"     : sampledict["2022PostEE"]["MuonEG"],
 }
 
 
@@ -422,27 +509,32 @@ def SendDatasetJobs(task):
     friendsuff = "/{cname}_Friend.root"
 
     comm = ""; module_ = ""; friends_ = ""
-
-    if   step == 0:
+    isnanogen = False
+    for nanogensample in nanogenSamples:
+        if nanogensample == dataset:
+            isnanogen = True
+            print("This is a nanogen sample!!!!")
+            
+    if   step == 0 and not isnanogen:
         module_ = "jecs_{ty}_{y}".format(ty = "data" if isData else "mc", y  = year)
 
-    elif step == 1:
+    elif step == 1 and not isnanogen:
         module_  = "lepsuncsAndParticle_" + ("mc" if not isData else "data")
 
-    elif step == 2:
+    elif step == 2 and not isnanogen:
         module_  = "cleaning_{ty}_{y}".format(ty = "data" if isData else "mc", y  = year)
         #if not isData:
         friends_ +=       friendpref + getFriendsFolder(dataset, friendsbasepath, 0) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 1) + friendsuff
 
-    elif step == 3:
+    elif step == 3 and not isnanogen:
         module_  = "varstrigger_" + (("mc_" + year) if not isData else "data")
         #if not isData:
         friends_ +=       friendpref + getFriendsFolder(dataset, friendsbasepath, 0) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 1) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 2) + friendsuff
 
-    elif step == 4 and not isData:
+    elif step == 4 and not isData and not isnanogen:
         module_  = "sfSeq_{y}".format(y = year)
         #if not isData:
         friends_ +=       friendpref + getFriendsFolder(dataset, friendsbasepath, 0) + friendsuff
@@ -450,7 +542,7 @@ def SendDatasetJobs(task):
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 2) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 3) + friendsuff
     
-    elif step == 5:
+    elif step == 5 and not isnanogen:
         #module_  = "mvas_" + ("mc" if not isData else "data")
         module_  = "mvas_" + ("mc" if not isData else "data")
         #if not isData:
@@ -459,7 +551,7 @@ def SendDatasetJobs(task):
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 2) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 3) + friendsuff
 
-    elif step == 6:
+    elif step == 6 and not isnanogen:
         #module_  = "mvas_" + ("mc" if not isData else "data")
         module_  = "mvaNew_" + ("mc" if not isData else "data")
         #if not isData:
@@ -468,19 +560,36 @@ def SendDatasetJobs(task):
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 2) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 3) + friendsuff
 
-    elif step == "btageffvars" and not isData:
+    elif step == 7 and not isData and not isnanogen:
+        module_  = "addcentralCaloWeightPU_{y}".format(y = year)
+    
+    elif step == 8 and not isData and not isnanogen:
+        module_  = "addTopPtWeight13to13p6"
+        friends_ +=       friendpref + getFriendsFolder(dataset, friendsbasepath, 0) + friendsuff
+        friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 1) + friendsuff
+        friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 2) + friendsuff
+        friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 3) + friendsuff
+
+    elif step == "btageffvars" and not isData and not isnanogen:
         module_ = "btagEffFtree_{y}".format(y  = year)
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 0) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 1) + friendsuff
     
-    elif step == "mvatrain":
+    elif step == "mvatrain" and not isnanogen:
         module_  = "createMVAMiniTree"
         friends_ +=       friendpref + getFriendsFolder(dataset, friendsbasepath, 0) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 1) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 2) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 3) + friendsuff
-        friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 4) + friendsuff
+        if not isData:
+            friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 4) + friendsuff
     
+    if step == 1 and isnanogen:
+        module_  = "theDressAndPartInfo"
+    elif step == 3 and isnanogen:
+        module_  = "theDressAndPartVars"
+        friends_ +=       friendpref + getFriendsFolder(dataset, friendsbasepath, 1) + friendsuff
+
     if module_ != "":
         comm = commandscaff.format(inpath  = inputpath_,
                                    outpath = outpath_,

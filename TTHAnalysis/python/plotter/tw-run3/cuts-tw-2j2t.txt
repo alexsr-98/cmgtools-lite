@@ -11,3 +11,5 @@ metgood:    (channel == 1) || (METgood_pt > 40)
 
 2jet:   nJetSel30_Recl == 2;
 2btag:  nBJetSelMedium30_Recl == 2;
+
+#minimaxCut: minimax > 257.14285714285717;

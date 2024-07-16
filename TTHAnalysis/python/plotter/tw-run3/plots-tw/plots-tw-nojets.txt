@@ -1,14 +1,20 @@
 channel   : channel                : [0.5,1.5,2.5,3.5]                      ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='Channel', xBinLabels="e#mu\,#mu#mu\,ee"
 tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", LegendCutoff=0, MoreY=2.0
-nvertex: PV_npvsGood : 65, -0.5, 64.5; XTitle = "Number of vertices", LegendCutoff=0, MoreY=2.0
 
-nJetnBJet : getnJetnBJet(nJetSel30_Recl, nBJetSelMedium30_Recl) : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5] ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='(Number of jets\, number of b-tagged jets)', XNDiv=5, shiftLegend=-0.1, xBinLabels="(0! 0)\,(1! 0)\,(1! 1)\,(2! 0)\,(2! 1)\,(2! 2)\,(#geq 3! #geq 0)", MoreY=1.9
+nvertex: PV_npvsGood : 65, -0.5, 64.5; XTitle = "Number of vertices", LegendCutoff=0, MoreY=2.0
+nvertexnotgood: PV_npvs : 65, -0.5, 64.5; XTitle = "Number of vertices", LegendCutoff=0, MoreY=2.0
+rho_pu: Rho_fixedGridRhoFastjetCentralChargedPileUp : 65, -0.5, 64.5; XTitle = "#rho charged PU", LegendCutoff=0, MoreY=2.0
+rho_calo: Rho_fixedGridRhoFastjetCentralCalo : 45, -0.5, 44.5; XTitle = "#rho central calo", LegendCutoff=0, MoreY=2.0
+rho_neutral: Rho_fixedGridRhoFastjetCentralNeutral : 25, -0.5, 24.5; XTitle = "#rho central neutral", LegendCutoff=0, MoreY=2.0
+
+nJetnBJet : getnJetnBJet(nJetSel30_Recl, nBJetSelMedium30_Recl) : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5] ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='(Number of jets\, number of b-tagged jets)', XNDiv=5, xBinLabels="(0! 0)\,(1! 0)\,(1! 1)\,(2! 0)\,(2! 1)\,(2! 2)\,(#geq 3! #geq 0)", MoreY=1.9
 #nJetnBJet : getnJetnBJet(nJetSel30_Recl, nBJetSelMedium30_Recl) : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5] ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='(Number of jets\, number of b-tagged jets)', XNDiv=5, xBinLabels="(0-0)\,(1-0)\,(1-1)\,(2-0)\,(2-1)\,(2-2)\,(3-0)\,(3-1)\,(3-2)\,(3-3)\,(#geq 4-#geq 0)", MoreY=1.7
 
 njets     : nJetSel30_Recl            : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='Number of jets', XNDiv=6, xBinLabels="0\,1\,2\,3\,4\,#geq 5"
 nbjets    : nBJetSelMedium30_Recl     : [-0.5,0.5,1.5,2.5,3.5]             ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='Number of b-tagged jets', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3", MoreY=1.7
 nloosejets: nJetSel20_Recl : [-0.5,0.5,1.5,2.5,3.5] ; LegendCutoff=0, XTitle='N(loose jet)', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
 
+#loosejet1NoUF_pt                : JetLoose1_Pt                : 15,10,30                                ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0, MoreY=1.3, XTitle="Leading loose jet #it{p}_{T} (GeV)"
 nfwdjets       : nFwdJetSel30_Recl : [-0.5,0.5,1.5,2.5,3.5] ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='Number of forward jets', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
 nfwdloosejets  : nFwdJetSel20_Recl : [-0.5,0.5,1.5,2.5,3.5] ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='Number of forward loose jets', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
 
@@ -19,13 +25,19 @@ jet1_eta  : Jet_eta[iJetSel30_Recl[0]]  : 15,-2.4,2.4      ; IncludeUnderflow=Fa
 jet1_m    : Jet_mass_nom[iJetSel30_Recl[0]] : 12,0,60          ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading jet mass (GeV)"
 jet1_e    : Jet1_E                      : 23,20,250        ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="Leading jet energy (GeV)"
 jet1_phi  : Jet_phi[iJetSel30_Recl[0]]     : 40,-3.14,3.14  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading jet #varphi (rad)"
-jet1_btag : Jet_btagDeepFlavB[iJetSel30_Recl[0]] : 20,0,1  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading jet DeepFlavour b-tagging discr."
+jet1_btag : Jet_btagDeepFlavB[iJetSel30_Recl[0]] : 20,0,1  ; IncludeOverflows=False, LegendCutoff=0,  XTitle="Leading jet DeepFlavour b-tagging discr."
+jet1_btagpnet : Jet_btagPNetB[iJetSel30_Recl[0]] : 20,0,1  ; IncludeOverflows=False, LegendCutoff=0,  XTitle="Leading jet ParticleNet b-tagging discr."
+jet1_btagpartt : Jet_btagRobustParTAK4B[iJetSel30_Recl[0]] : 20,0,1  ; IncludeOverflows=False, LegendCutoff=0,  XTitle="Leading jet ParticleTransformer b-tagging discr."
+
+#btagpnet_btagdeepjet : Jet_btagDeepFlavB[iJetSel30_Recl[0]]\:Jet_btagPNetB[iJetSel30_Recl[0]] : [0.0, 0.05263157894736842, 0.10526315789473684, 0.15789473684210525, 0.21052631578947367, 0.2631578947368421, 0.3157894736842105, 0.3684210526315789, 0.42105263157894735, 0.47368421052631576, 0.5263157894736842, 0.5789473684210527, 0.631578947368421, 0.6842105263157894, 0.7368421052631579, 0.7894736842105263, 0.8421052631578947, 0.894736842105263, 0.9473684210526315, 1.0]*[0.0, 0.05263157894736842, 0.10526315789473684, 0.15789473684210525, 0.21052631578947367, 0.2631578947368421, 0.3157894736842105, 0.3684210526315789, 0.42105263157894735, 0.47368421052631576, 0.5263157894736842, 0.5789473684210527, 0.631578947368421, 0.6842105263157894, 0.7368421052631579, 0.7894736842105263, 0.8421052631578947, 0.894736842105263, 0.9473684210526315, 1.0] ; IncludeUnderflow=False
 
 jet2_pt   : Jet2_Pt                     : 20,30,190        ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="Subleading jet p_{T} (GeV)"
 jet2_eta  : Jet_eta[iJetSel30_Recl[1]]  : 15,-2.4,2.4      ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Subleading jet #eta"
 jet2_m    : Jet_mass_nom[iJetSel30_Recl[1]] : 12,0,60          ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Subleading jet mass (GeV)"
 jet2_phi  : Jet_phi[iJetSel30_Recl[1]]     : 40,-3.14,3.14  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Subleading jet #varphi (rad)"
-jet2_btag : Jet_btagDeepFlavB[iJetSel30_Recl[1]] : 20,0,1  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Subleading jet DeepFlavour b-tagging discr."
+jet2_btag : Jet_btagDeepFlavB[iJetSel30_Recl[1]] : 20,0,1  ; IncludeOverflows=False, LegendCutoff=0,  XTitle="Subleading jet DeepFlavour b-tagging discr."
+jet2_btagpnet : Jet_btagPNetB[iJetSel30_Recl[1]] : 20,0,1  ; IncludeOverflows=False, LegendCutoff=0,  XTitle="Subleading jet ParticleNet b-tagging discr."
+jet2_btagpartt : Jet_btagRobustParTAK4B[iJetSel30_Recl[1]] : 20,0,1  ; IncludeOverflows=False, LegendCutoff=0,  XTitle="Subleading jet ParticleTransformer b-tagging discr."
 
 jetfwd1_pt   : $DATA{Jet_pt[iFwdJetSel30_Recl[0]]} $MC{Jet_pt_nom[iFwdJetSel30_Recl[0]]}  : 13,20,150   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading forward jet p_{T} (GeV)"
 jetfwd1_eta  : Jet_eta[iFwdJetSel30_Recl[0]] : 15,-5.0,5.0 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading forward jet #eta"
@@ -53,7 +65,7 @@ met_phi      : METgood_phi           : 40,-3.14,3.14          ; IncludeUnderflow
 
 lep1lep2_dphi : Lep1Lep2_DPhi      : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#Delta#it{#varphi}(#it{e}^{#pm}\, #it{#mu}^{#mp})/#it{#pi}"
 lep1lep2_pt   : Lep1Lep2_Pt        : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}(\\ell_{1}\, \\ell_{2}) (GeV)"
-lep1lep2_m    : Mll                : 30,0,300 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m(\\ell_{1}\, \\ell_{2}) (GeV)"
+lep1lep2_m    : Mll                : 30,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m(\\ell_{1}\, \\ell_{2}) (GeV)", Logy
 lep1lep2_m_picu : Mll              : 40,70,100; IncludeUnderflow=False,IncludeOverflow=False,IncludeOverflows=False, LegendCutoff=0,  XTitle="m(\\ell_{1}\, \\ell_{2}) (GeV)"
 
 
@@ -75,6 +87,12 @@ lep12jet12_dr      : Lep12Jet12_DR       : 10,0,1   ; IncludeOverflows=False, In
 lep12jet12met_dr   : Lep12Jet12MET_DR    : 10,0,1   ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="\\Delta R (\\ell_{12}\, jet_{12} #it{p}_{T}^{miss})"
 lep1lep2jet1_c     : Lep1Lep2Jet1_C      : 20,0,1   ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="C (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j})"
 httot              : HTtot               : 20,0,600 ; IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=0,  XTitle="H_{T} (GeV)"
+
+
+#ele_eta : getElePt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_eta[0], LepGood_eta[1]) : 30,-2.4,2.4              ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Electron #eta", MoreY=1.3
+#muon_eta : getMuPt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_eta[0], LepGood_eta[1]) : 30,-2.4,2.4              ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Muon #eta", MoreY=1.3
+
+#passtrigger   : pass_trigger                : [-0.5,0.5,1.5]                      ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='', xBinLabels="Fail\,Pass"
 
 ### Object level plots 
 jet_eta  : if3(nJetSel30_Recl>0, Jet_eta[iJetSel30_Recl], -99) : 40,-5.0,5.0 ; XTitle="#eta(jet)", YTitle="Jets", LegendCutoff=0, YMin=0, YMax=30000

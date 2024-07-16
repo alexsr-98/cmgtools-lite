@@ -1,13 +1,16 @@
-syst_ttbar_matching_up  : TTTo2L2Nu_hdampUP_TuneCP5_PSweights_13TeV-powheg-pythia8*central*       : xsec ; genSumWeightName="genEventSumw"
-syst_ttbar_matching_dn  : TTTo2L2Nu_hdampDOWN_TuneCP5_PSweights_13TeV-powheg-pythia8_*central*    : xsec ; genSumWeightName="genEventSumw"
+syst_ttbar_matching_up  : TTto2L2Nu_Hdamp_418_TuneCP5_13p6TeV_powheg_pythia8*   : xsec ; 
+syst_ttbar_matching_dn  : TTto2L2Nu_Hdamp_158_TuneCP5_13p6TeV_powheg_pythia8*  : xsec ; 
 
-syst_ttbar_colour_erdon : TTTo2L2Nu_TuneCP5_PSweights_erdON_13TeV-powheg-pythia8_*central*        : xsec ; genSumWeightName="genEventSumw"
-syst_ttbar_colour_cr1   : TTTo2L2Nu_TuneCP5CR1_QCDbased_PSweights_13TeV-powheg-pythia8_*central*  : xsec ; genSumWeightName="genEventSumw"
-syst_ttbar_colour_cr2   : TTTo2L2Nu_TuneCP5CR2_GluonMove_PSweights_13TeV-powheg-pythia8_*central* : xsec ; genSumWeightName="genEventSumw"
+syst_ttbar_colour_erdon : TTto2L2Nu_TuneCP5_ERDOn_13p6TeV_powheg_pythia8*       : xsec ;
+syst_ttbar_colour_cr1   : TTto2L2Nu_TuneCP5CR1_13p6TeV_powheg_pythia8*          : xsec ;
+syst_ttbar_colour_cr2   : TTto2L2Nu_TuneCP5CR2_13p6TeV_powheg_pythia8*          : xsec ;
 
-syst_ttbar_ue_up        : TTTo2L2Nu_TuneCP5up_PSweights_13TeV-powheg-pythia8_*central*            : xsec ; genSumWeightName="genEventSumw"
-syst_ttbar_ue_dn        : TTTo2L2Nu_TuneCP5down_PSweights_13TeV-powheg-pythia8_*central*          : xsec ; genSumWeightName="genEventSumw"
+syst_ttbar_ue_up        : TTto2L2Nu_TuneCP5Up_13p6TeV_powheg_pythia8*           : xsec ;
+syst_ttbar_ue_dn        : TTto2L2Nu_TuneCP5Down_13p6TeV_powheg_pythia8*         : xsec ;
 
-syst_ttbar_mtop_2016_up : TTTo2L2Nu_TuneCP5_PSweights_mtop1755_13TeV-powheg-pythia8_*central*     : xsec ; genSumWeightName="genEventSumw"
-syst_ttbar_mtop_2016_dn : TTTo2L2Nu_TuneCP5_PSweights_mtop1695_13TeV-powheg-pythia8_*central*     : xsec ; genSumWeightName="genEventSumw"
-syst_ttbar_mtop_2016    : TTTo2L2Nudiv1_TuneCP5_PSweights_13TeV-powheg-pythia8_*topnano*          : 88.28769753 * 2 ;
+syst_ttbar_mtop_up : TTto2L2Nu_MT_173p5_TuneCP5_13p6TeV_powheg_pythia8*    : xsec ;
+syst_ttbar_mtop_dn : TTto2L2Nu_MT_171p5_TuneCP5_13p6TeV_powheg_pythia8*    : xsec ;
+
+syst_ttbar_3mtop_up : TTto2L2Nu_MT_175p5_TuneCP5_13p6TeV_powheg_pythia8*    : xsec ;
+syst_ttbar_3mtop_dn : TTto2L2Nu_MT_169p5_TuneCP5_13p6TeV_powheg_pythia8*    : xsec ;
+syst_ttbar_3mtop    : TTto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis_*   : xsec * 2;

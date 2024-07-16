@@ -1,8 +1,14 @@
 jet2_pt            : Jet2_Pt             : 20,30,200  ; LegendCutoff=0, MoreY=1.3, IncludeUnderflow=False, XTitle="Subleading jet p_{T} (GeV)"
-lep1jet1_dr        : Lep1Jet1_DR         : 20,0,5     ; LegendCutoff=0, MoreY=1.3, IncludeUnderflow=False, XTitle="\\Delta R (\\ell_{1}\, jet)"
-lep12jet12_dr      : Lep12Jet12_DR       : 20,0,5     ; LegendCutoff=0, MoreY=1.3, IncludeUnderflow=False, XTitle="\\Delta R (\\ell_{12}\, jet_{12})"
+lep1jet1_dr        : Lep1Jet1_DR         : 20,0,5     ; LegendCutoff=0, MoreY=1.3, IncludeUnderflow=False, XTitle="\\Delta R (\\ell_{1}\, #it{j}_{1})"
+lep12jet12_dr      : Lep12Jet12_DR       : 20,0,5     ; LegendCutoff=0, MoreY=1.3, IncludeUnderflow=False, XTitle="\\Delta R (\\ell_{12}\, #it{j}_{12})", Legend='TL'
 #lep12jet12met_dr   : Lep12Jet12MET_DR    : 20,0,5     ; LegendCutoff=0, MoreY=1.3, IncludeUnderflow=False, XTitle="\\Delta R (\\ell_{12}\, jet_{12} \\it{p}_{T}^{miss})"
-
+lep1lep2_m    : Mll                : 30,0,300 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#it{m}(#it{e}^{#pm}\, #it{#mu}^{#pm}) (GeV)", MoreY=1.3
+lep2_pt   : LepGood_pt_corrAll[1]  : 14,10,150             ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Subleading lepton #it{p}_{T} (GeV)"
+lep1lep2jet1_pt    : Lep1Lep2Jet1_Pt     : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#it{p}_{T} (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}) (GeV)", MoreY=1.1
+lep1lep2_dr   : Lep1Lep2_DR        : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#Delta#it{R}(#it{e}^{#pm}\, #it{#mu}^{#pm})"
+lep1lep2_ptsum  : Lep1Lep2_PtSum     : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#it{p}_{T}(#it{e}^{#pm}) + #it{p}_{T}(#it{#mu}^{#pm}) (GeV)", MoreY=1.3
+lep1lep2_dphi   : Lep1Lep2_DPhi      : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#Delta#it{#varphi}(#it{e}^{#pm}\, #it{#mu}^{#mp})/#it{#pi}", Legend='TL', MoreY=1.3
+lep1lep2jet1_c     : Lep1Lep2Jet1_C      : 20,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="C (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j})"
 
 #2j1b BDT
 #tmvaBDT_2j1b        : tmvaBDT_2j1b          : 12,-1,1   ; LegendCutoff=0, IncludeUnderflow=False, XTitle="BDT discriminant", MoreY=1.5
@@ -15,4 +21,4 @@ lep12jet12_dr      : Lep12Jet12_DR       : 20,0,5     ; LegendCutoff=0, MoreY=1.
 #2j1b RF
 mvaRF_2j1b        : mvaRF_2j1b          : 6,0,1   ; LegendCutoff=0, IncludeUnderflow=False, XTitle="RF discriminant", MoreY=1.5
 mvaRF_2j1b_smallb : mvaRF_2j1b          : 1000,0,1 ; LegendCutoff=0, IncludeUnderflow=False, XTitle="RF discriminant"
-mvaRF_2j1b_rebin  : getRFtWOther(mvaRF_2j1b) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5] ; LegendCutoff=0, IncludeUnderflow=False, XTitle="RF discriminant", MoreY=1.5
+mvaRF_2j1b_rebin  : getRF2j1b_topt_12bins(mvaRF_2j1b) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5] ; LegendCutoff=0, IncludeUnderflow=False, XTitle="RF discriminant", MoreY=1.5

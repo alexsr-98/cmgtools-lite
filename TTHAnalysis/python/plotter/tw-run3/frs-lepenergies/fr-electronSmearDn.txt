@@ -1,0 +1,73 @@
+change: \bchannel\b:              channel_elsigmaDown
+change: \bnLepGood\b:             nLepGoodelsigmaDown
+change: \bisSS\b:                 isSS_elsigmaDown
+change: \bMll\b:                  Mll_elsigmaDown
+change: \bminMllAFAS\b:           minMllAFAS_elsigmaDown
+change: \bLepGood_pt_corrAll\[:   LepGoodelsigmaDown_pt_elsigmaDown[
+change: \[iJetSel30_Recl\[:        [iJetSel30_elsigmaDown_Recl[
+change: \bnJetSel30_Recl\b:        nJetSel30_elsigmaDown_Recl
+change: \bnBJetSelMedium30_Recl\b: nBJetSelMedium30_elsigmaDown_Recl
+change: \[iJetSel20_Recl\[:        [iJetSel20_elsigmaDown_Recl[
+change: \bnJetSel20_Recl\b:        nJetSel20_elsigmaDown_Recl
+change: \bnBJetSelMedium20_Recl\b: nBJetSelMedium20_elsigmaDown_Recl
+change: \[iFwdJetSel30_Recl\[:     [iFwdJetSel30_elsigmaDown_Recl[
+change: \bnFwdJetSel30_Recl\b:     nFwdJetSel30_elsigmaDown_Recl
+change: \[iFwdJetSel20_Recl\[:     [iFwdJetSel20_elsigmaDown_Recl[
+change: \bnFwdJetSel20_Recl\b:     nFwdJetSel20_elsigmaDown_Recl
+
+change: \bbTagWeight\b:           bTagWeight_elsigmaDown
+change: MuonIDSF\b:               MuonIDSF_elsigmaDown
+change: MuonISOSF\b:              MuonISOSF_elsigmaDown
+change: ElecIDSF\b:               ElecIDSF_elsigmaDown
+change: ElecRECOSF\b:             ElecRECOSF_elsigmaDown
+change: TrigSF\b:                 TrigSF_elsigmaDown
+
+change: \bLep1Lep2_Pt\b:          Lep1Lep2_Pt_elsigmaDown
+change: \bLep1Lep2_PtSum\b:       Lep1Lep2_PtSum_elsigmaDown
+change: \bLep1Lep2_DR\b:          Lep1Lep2_DR_elsigmaDown
+change: \bLep1Lep2_DPhi\b:        Lep1Lep2_DPhi_elsigmaDown
+change: \bLep1Lep2_DEta\b:        Lep1Lep2_DEta_elsigmaDown
+
+change: \bLep1Lep2Jet1MET_Pz\b:          Lep1Lep2Jet1MET_Pz_elsigmaDown
+change: \bLep1Lep2Jet1MET_Pt\b:          Lep1Lep2Jet1MET_Pt_elsigmaDown
+change: \bLep1Lep2Jet1MET_M\b:           Lep1Lep2Jet1MET_M_elsigmaDown
+change: \bLep1Lep2Jet1MET_Mt\b:          Lep1Lep2Jet1MET_Mt_elsigmaDown
+change: \bLep1Lep2Jet1MET_PtOverHTtot\b: Lep1Lep2Jet1MET_PtOverHTtot_elsigmaDown
+change: \bLep1_PtLep2_PtOverHTtot\b:     Lep1_PtLep2_PtOverHTtot_elsigmaDown
+change: \bLep1Lep2Jet1_Pt\b:             Lep1Lep2Jet1_Pt_elsigmaDown
+change: \bLep1Lep2Jet1_M\b:              Lep1Lep2Jet1_M_elsigmaDown
+change: \bLep1Lep2Jet1_E\b:              Lep1Lep2Jet1_E_elsigmaDown
+change: \bLep1Jet1_Pt\b:                 Lep1Jet1_Pt_elsigmaDown
+change: \bLep1Jet1_M\b:                  Lep1Jet1_M_elsigmaDown
+change: \bLep2Jet1_Pt\b:                 Lep2Jet1_Pt_elsigmaDown
+change: \bLep2Jet1_M\b:                  Lep2Jet1_M_elsigmaDown
+change: \bJet1_E\b:                      Jet1_E_elsigmaDown
+change: \bJet1_Pt\b:                     Jet1_Pt_elsigmaDown
+change: \bJet2_Pt\b:                     Jet2_Pt_elsigmaDown
+change: \bJetLoose1_Pt\b:                JetLoose1_Pt_elsigmaDown
+
+change: \bLep1Jet1_DR\b:                 Lep1Jet1_DR_elsigmaDown
+change: \bLep12Jet12_DR\b:               Lep12Jet12_DR_elsigmaDown
+change: \bLep12Jet12MET_DR\b:            Lep12Jet12MET_DR_elsigmaDown
+change: \bLepJet11Lep2_DR\b:             LepJet11Lep2_DR_elsigmaDown
+change: \bLepJet11Lep2_DPhi\b:           LepJet11Lep2_DPhi_elsigmaDown
+change: \bLepJet11Lep2_DEta\b:           LepJet11Lep2_DEta_elsigmaDown
+change: \bLep1LepJet21_DR\b:             Lep1LepJet21_DR_elsigmaDown
+change: \bLep1LepJet21_DPhi\b:           Lep1LepJet21_DPhi_elsigmaDown
+change: \bLep1LepJet21_DEta\b:           Lep1LepJet21_DEta_elsigmaDown
+change: \bLep1Lep2Jet1_C\b:              Lep1Lep2Jet1_C_elsigmaDown
+change: \bHTtot\b    :                   HTtot_elsigmaDown
+
+change: \bminimax\b  :                   minimax_elsigmaDown
+change: \bLep1Jet2_M\b:                  Lep1Jet2_M_elsigmaDown
+change: \bLep2Jet2_M\b:                  Lep2Jet2_M_elsigmaDown
+
+change: \bSergioBDT_1j1b\b:               SergioBDT_1j1b_elsigmaDown
+change: \bSergioBDT_2j1b\b:               SergioBDT_2j1b_elsigmaDown
+change: \btmvaBDT_1j1b\b:                 tmvaBDT_1j1b_elsigmaDown
+change: \btmvaBDT_2j1b\b:                 tmvaBDT_2j1b_elsigmaDown
+change: \bmvaRF_1j1b\b:                  mvaRF_1j1b_elsigmaDown
+change: \bmvaRF_2j1b\b:                  mvaRF_2j1b_elsigmaDown
+change: \bmvaRF_1j1b_mm\b:               mvaRF_1j1b_mm_elsigmaDown
+change: \bmvaRF_1j1b_ee\b:               mvaRF_1j1b_ee_elsigmaDown
+weight: 1

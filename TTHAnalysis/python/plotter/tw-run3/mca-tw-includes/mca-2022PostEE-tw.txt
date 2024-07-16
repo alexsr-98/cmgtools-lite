@@ -1,5 +1,12 @@
 #tw+ : TbarWplus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_analysis_*   : xsec * 2; FillColor=798
 #tw+ : TWminus_DR_AtLeastOneLepton_TuneCP5_13p6TeV_powheg_pythia8_analysis_*     : xsec * 2; FillColor=798
 
-tw+ : TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis_*   : xsec * 2; FillColor=798
-tw+ : TWminusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis_*     : xsec * 2; FillColor=798
+tw+ : TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis_*   : xsec * 2; FillColor=ROOT.TColor.GetColor(248\,156\,32)
+tw+ : TWminusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis_*     : xsec * 2; FillColor=ROOT.TColor.GetColor(248\,156\,32)
+# Old color palette
+#tw+ : TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis_*   : xsec * 2; FillColor=798
+#tw+ : TWminusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis_*     : xsec * 2; FillColor=798
+
+# Semileptonic
+#tw+ : TWminustoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8_* : xsec; FillColor=ROOT.TColor.GetColor(248\,156\,32)
+#tw+ : TbarWplustoLNu2Q_TuneCP5_13p6TeV_powheg_pythia8_* : xsec; FillColor=ROOT.TColor.GetColor(248\,156\,32)

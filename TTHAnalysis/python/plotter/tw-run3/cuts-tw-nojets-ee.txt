@@ -6,3 +6,5 @@ metfilters: $DATA{Flag_eeBadScFilter && Flag_goodVertices && Flag_globalSuperTig
 ee:               channel == 3
 
 dilep:             (nLepGood >= 2) && (LepGood_pt_corrAll[0] > 25) && (LepGood_pt_corrAll[1] > 20) && isSS == 0 && (minMllAFAS > 20)
+
+#unprefirable: $DATA{(L1_UnprefireableEvent == 1)} $MC{(1)}

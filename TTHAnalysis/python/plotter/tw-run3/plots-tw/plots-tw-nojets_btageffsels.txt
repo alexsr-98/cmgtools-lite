@@ -2,9 +2,13 @@ btageff_deepjet_B  : EffSFJetB_deepJetIstag : 2,-0.5,1.5 ; IncludeUnderflow=Fals
 btageff_deepjet_C  : EffSFJetC_deepJetIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
 btageff_deepjet_L  : EffSFJetL_deepJetIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
 
-btageff_deepcsv_B  : EffSFJetB_deepCSVIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
-btageff_deepcsv_C  : EffSFJetC_deepCSVIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
-btageff_deepcsv_L  : EffSFJetL_deepCSVIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
+btageff_particlenet_B  : EffSFJetB_particleNetIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
+btageff_particlenet_C  : EffSFJetC_particleNetIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
+btageff_particlenet_L  : EffSFJetL_particleNetIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
+
+btageff_particletransformer_B  : EffSFJetB_robustParticleTransformerIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
+btageff_particletransformer_C  : EffSFJetC_robustParticleTransformerIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
+btageff_particletransformer_L  : EffSFJetL_robustParticleTransformerIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
 
 btagsf_deepjet_B   : EffSFJetB_deepJetSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
 btagsf_deepjet_C   : EffSFJetC_deepJetSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
@@ -18,14 +22,26 @@ btagsfdn_deepjet_B : EffSFJetB_deepJetSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=Fals
 btagsfdn_deepjet_C : EffSFJetC_deepJetSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
 btagsfdn_deepjet_L : EffSFJetL_deepJetSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
 
-btagsf_deepcsv_B   : EffSFJetB_deepCSVSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsf_deepcsv_C   : EffSFJetC_deepCSVSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsf_deepcsv_L   : EffSFJetL_deepCSVSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsf_particlenet_B   : EffSFJetB_particleNetSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsf_particlenet_C   : EffSFJetC_particleNetSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsf_particlenet_L   : EffSFJetL_particleNetSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
 
-btagsfup_deepcsv_B : EffSFJetB_deepCSVSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsfup_deepcsv_C : EffSFJetC_deepCSVSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsfup_deepcsv_L : EffSFJetL_deepCSVSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfup_particlenet_B : EffSFJetB_particleNetSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfup_particlenet_C : EffSFJetC_particleNetSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfup_particlenet_L : EffSFJetL_particleNetSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
 
-btagsfdn_deepcsv_B : EffSFJetB_deepCSVSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsfdn_deepcsv_C : EffSFJetC_deepCSVSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsfdn_deepcsv_L : EffSFJetL_deepCSVSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfdn_particlenet_B : EffSFJetB_particleNetSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfdn_particlenet_C : EffSFJetC_particleNetSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfdn_particlenet_L : EffSFJetL_particleNetSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
+
+btagsf_particletransformer_B   : EffSFJetB_robustParticleTransformerSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsf_particletransformer_C   : EffSFJetC_robustParticleTransformerSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsf_particletransformer_L   : EffSFJetL_robustParticleTransformerSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
+
+btagsfup_particletransformer_B : EffSFJetB_robustParticleTransformerSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfup_particletransformer_C : EffSFJetC_robustParticleTransformerSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfup_particletransformer_L : EffSFJetL_robustParticleTransformerSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
+
+btagsfdn_particletransformer_B : EffSFJetB_robustParticleTransformerSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfdn_particletransformer_C : EffSFJetC_robustParticleTransformerSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfdn_particletransformer_L : EffSFJetL_robustParticleTransformerSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False

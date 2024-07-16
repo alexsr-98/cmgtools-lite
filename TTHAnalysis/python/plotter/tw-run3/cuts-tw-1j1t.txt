@@ -14,6 +14,13 @@ metgood:    (channel == 1) || (METgood_pt > 40)
 1jet:       nJetSel30_Recl == 1;
 1btag:      nBJetSelMedium30_Recl == 1;
 
+#rfcut:      mvaRF_1j1b > 0.558721;
+
+#1jetloose:    nJetSel20_Recl == 1; 
+#1btagloose:   nBJetSelMedium20_Recl == 1;
+#1jet:         nJetSel30_Recl == 0;
+#1btag:        nBJetSelMedium30_Recl == 0;
+
 #bdtcut:     getBDtW20bins(tmvaBDT_1j1b) >= 17;
 
 #LOWnpvs:       PV_npvs <= 15;

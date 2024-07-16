@@ -1,27 +1,32 @@
-#syst_tw_matching_up  : ST_tW_antitop_5f_hdampup_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8_*central*   : xsec ;
-#syst_tw_matching_up  : ST_tW_top_5f_hdampup_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8_*central*       : xsec ;
-#syst_tw_matching_dn  : ST_tW_antitop_5f_hdampdown_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8_*central* : xsec ;
-#syst_tw_matching_dn  : ST_tW_top_5f_hdampdown_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8_*central*     : xsec ;
+#syst_tw_matching_up  : TWminusto2L2Nu_Hdamp_418_TuneCP5_13p6TeV_powheg_pythia8_*        : xsec ;
+#syst_tw_matching_up  : TbarWplusto2L2Nu_Hdamp_418_TuneCP5_13p6TeV_powheg_pythia8_*      : xsec ;
+#syst_tw_matching_dn  : TWminusto2L2Nu_Hdamp_158_TuneCP5_13p6TeV_powheg_pythia8_*        : xsec ;
+#syst_tw_matching_dn  : TbarWplusto2L2Nu_Hdamp_158_TuneCP5_13p6TeV_powheg_pythia8_*      : xsec ;
 
-syst_tw_colour_erdon  : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_erdON_PSweights_13TeV-powheg-pythia8_*central*     : xsec ;
-syst_tw_colour_erdon  : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_erdON_PSweights_13TeV-powheg-pythia8_*central*         : xsec ;
-syst_tw_colour_cr1    : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5CR1_PSweights_13TeV-powheg-pythia8_*central*        : xsec ;
-syst_tw_colour_cr1    : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5CR1_PSweights_13TeV-powheg-pythia8_*central*            : xsec ;
-syst_tw_colour_cr2    : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5CR2_PSweights_13TeV-powheg-pythia8_*central*        : xsec ;
-syst_tw_colour_cr2    : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5CR2_PSweights_13TeV-powheg-pythia8_*central*            : xsec ;
+syst_tw_colour_erdon  : TWminusto2L2Nu_TuneCP5_ERDOn_13p6TeV_powheg_pythia8_*           : xsec ;
+syst_tw_colour_erdon  : TbarWplusto2L2Nu_TuneCP5_ERDOn_13p6TeV_powheg_pythia8_*         : xsec ;
+syst_tw_colour_cr1    : TWminusto2L2Nu_TuneCP5CR1_13p6TeV_powheg_pythia8_*              : xsec ;
+syst_tw_colour_cr1    : TbarWplusto2L2Nu_TuneCP5CR1_13p6TeV_powheg_pythia8_*            : xsec ;
+syst_tw_colour_cr2    : TWminusto2L2Nu_TuneCP5CR2_13p6TeV_powheg_pythia8_*              : xsec ;
+syst_tw_colour_cr2    : TbarWplusto2L2Nu_TuneCP5CR2_13p6TeV_powheg_pythia8_*            : xsec ;
 
-syst_tw_ue_up         : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5up_PSweights_13TeV-powheg-pythia8_*central*         : xsec ;
-syst_tw_ue_up         : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5up_PSweights_13TeV-powheg-pythia8_*central*             : xsec ;
-syst_tw_ue_dn         : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5down_PSweights_13TeV-powheg-pythia8_*central*       : xsec ;
-syst_tw_ue_dn         : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5down_PSweights_13TeV-powheg-pythia8_*central*           : xsec ;
+syst_tw_ue_up         : TWminusto2L2Nu_TuneCP5Up_13p6TeV_powheg_pythia8_*               : xsec ;
+syst_tw_ue_up         : TbarWplusto2L2Nu_TuneCP5Up_13p6TeV_powheg_pythia8_*             : xsec ;
+syst_tw_ue_dn         : TWminusto2L2Nu_TuneCP5Down_13p6TeV_powheg_pythia8_*             : xsec ;
+syst_tw_ue_dn         : TbarWplusto2L2Nu_TuneCP5Down_13p6TeV_powheg_pythia8_*           : xsec ;
 
-syst_tw_mtop_up       : ST_tW_antitop_5f_NoFullyHadronicDecays_mtop1735_TuneCP5_PSweights_13TeV-powheg-pythia8*central*   : xsec ; genSumWeightName="genEventSumw"
-syst_tw_mtop_up       : ST_tW_top_5f_NoFullyHadronicDecays_mtop1735_TuneCP5_PSweights_13TeV-powheg-pythia8*central*       : xsec ; genSumWeightName="genEventSumw"
-syst_tw_mtop_dn       : ST_tW_antitop_5f_NoFullyHadronicDecays_mtop1715_TuneCP5_PSweights_13TeV-powheg-pythia8*central*   : xsec ; genSumWeightName="genEventSumw"
-syst_tw_mtop_dn       : ST_tW_top_5f_NoFullyHadronicDecays_mtop1715_TuneCP5_PSweights_13TeV-powheg-pythia8*central*       : xsec ; genSumWeightName="genEventSumw"
+syst_tw_mtop_up       : TWminusto2L2Nu_MT_173p5_TuneCP5_13p6TeV_powheg_pythia8_*        : xsec ;
+syst_tw_mtop_up       : TbarWplusto2L2Nu_MT_173p5_TuneCP5_13p6TeV_powheg_pythia8_*      : xsec ;
+syst_tw_mtop_dn       : TWminusto2L2Nu_MT_171p5_TuneCP5_13p6TeV_powheg_pythia8_*        : xsec ;
+syst_tw_mtop_dn       : TbarWplusto2L2Nu_MT_171p5_TuneCP5_13p6TeV_powheg_pythia8_*      : xsec ;
 
-syst_tw_ds            : ST_tW_antitop_5f_DS_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8*central*         : xsec ;
-syst_tw_ds            : ST_tW_top_5f_DS_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8*central*             : xsec ;
+syst_tw_3mtop_up      : TWminusto2L2Nu_MT_175p5_TuneCP5_13p6TeV_powheg_pythia8_*        : xsec ;
+syst_tw_3mtop_up      : TbarWplusto2L2Nu_MT_175p5_TuneCP5_13p6TeV_powheg_pythia8_*      : xsec ;
+syst_tw_3mtop_dn      : TWminusto2L2Nu_MT_169p5_TuneCP5_13p6TeV_powheg_pythia8_*        : xsec ;
+syst_tw_3mtop_dn      : TbarWplusto2L2Nu_MT_169p5_TuneCP5_13p6TeV_powheg_pythia8_*      : xsec ;
 
-syst_tw_pdf_2016      : ST_tW_antitop_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8_topnano*                  : xsec ;
-syst_tw_pdf_2016      : ST_tW_top_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8_topnano*                      : xsec ;
+syst_tw_3mtop         : TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis_*      : xsec * 2;
+syst_tw_3mtop         : TWminusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis_*        : xsec * 2;
+
+syst_tw_ds            : TWminusto2L2Nu_DS_TuneCP5_13p6TeV_powheg_pythia8_*              : xsec ;
+syst_tw_ds            : TbarWplusto2L2Nu_DS_TuneCP5_13p6TeV_powheg_pythia8_*            : xsec ;

@@ -3,6 +3,9 @@ from math import sqrt,hypot,log,exp
 from copy import copy
 from array import array
 import ROOT, sys
+# If this gives problems it is only needed for the LOWESS method
+import numpy as np
+import statsmodels.api as sm
 
 def _cloneNoDir(hist,name=''):
     ret = hist.Clone(name)
@@ -173,6 +176,19 @@ def buildVariationsFromAlternativesWithEnvelope(uncfile, ret):
     return
 
 
+def get_smoothed_scale_factor( smoothed_ratio_diff, nom_hist, var_hist, nom_var, var_var):
+    '''determine an overall systematic template smoothing which minimizes the chi-squared between
+        the smoothed systematic and the unsmoothed template it is derived from.
+        Taken from:
+             https://cms.cern.ch/iCMS/jsp/openfile.jsp?tp=draft&files=AN2018_077_v4.pdf'''
+
+    total_var = np.sqrt( nom_var + var_var)
+    unsmoothed_diff = var_hist - nom_hist
+    ratio_factor = smoothed_ratio_diff * nom_hist
+    numerator = np.sum( ratio_factor * unsmoothed_diff / total_var )
+    denominator = np.sum( (ratio_factor / np.sqrt(total_var))**2 )
+    return numerator/denominator
+
 def buildVariationsFromAlternative(uncfile, ret, theY):
     toremove = []
     for var in uncfile.uncertainty():
@@ -184,6 +200,8 @@ def buildVariationsFromAlternative(uncfile, ret, theY):
             if not var.procmatch().match(k): continue
 
             dosymm    = False
+            dosymm2   = False
+            doLOWESS  = False
             dolinear  = False
             addothers = False
             onlyone   = False
@@ -192,6 +210,12 @@ def buildVariationsFromAlternative(uncfile, ret, theY):
             if len(var.args) > 2:
                 if "symm" in var.args[2]:
                     dosymm = True
+                if "symm2" in var.args[2]:
+                    dosymm2 = True
+                    dosymm = True
+                if "LOWESS" in var.args[2]:
+                    doLOWESS = True
+                    #dosymm = True 
                 if "addothers" in var.args[2]:
                     addothers = True
                 if len(var.args) > 3:
@@ -259,9 +283,14 @@ def buildVariationsFromAlternative(uncfile, ret, theY):
                         if adaptBins:
                             newB   = central_rebin.FindBin(p.central.GetXaxis().GetBinCenter(ibin))
                             therat = up_rebin.GetBinContent(newB) / central_rebin.GetBinContent(newB) if central_rebin.GetBinContent(newB) != 0 else 0
+                            if dosymm2:
+                                therat = therat**0.5
                             thedif = p.central.GetBinContent(ibin) * abs(1 - therat) / normval
                         else:
-                            thedif = abs(ret[var.args[0]].raw().GetBinContent(ibin) - p.central.GetBinContent(ibin))/normval
+                            symm2factor = 1.
+                            if dosymm2:
+                                symm2factor = 0.5
+                            thedif = (abs(ret[var.args[0]].raw().GetBinContent(ibin) - p.central.GetBinContent(ibin))/normval)*symm2factor
 
                         up.SetBinContent(  ibin, p.central.GetBinContent(ibin)  + thedif )
                         down.SetBinContent(ibin, (p.central.GetBinContent(ibin) - thedif) if (p.central.GetBinContent(ibin) - thedif) >= 0 else 0 )
@@ -282,9 +311,14 @@ def buildVariationsFromAlternative(uncfile, ret, theY):
                             if adaptBins:
                                 newB   = centraltmp_rebin.FindBin(p.central.GetXaxis().GetBinCenter(ibin))
                                 therat = up_rebin.GetBinContent(newB) / centraltmp_rebin.GetBinContent(newB) if centraltmp_rebin.GetBinContent(newB) != 0 else 0
+                                if dosymm2:
+                                    therat = therat**0.5
                                 thedif = p.central.GetBinContent(ibin) * abs(1 - therat) / normval
                             else:
-                                thedif = abs(ret[var.args[0]].raw().GetBinContent(ibin) - p2.central.GetBinContent(ibin))/normval
+                                symm2factor = 1.
+                                if dosymm2:
+                                    symm2factor = 0.5
+                                thedif = (abs(ret[var.args[0]].raw().GetBinContent(ibin) - p2.central.GetBinContent(ibin))/normval)*symm2factor
 
                             up.SetBinContent(  ibin, p2.central.GetBinContent(ibin) + thedif )
                             down.SetBinContent(ibin, (p2.central.GetBinContent(ibin) - thedif) if (p2.central.GetBinContent(ibin) - thedif) >= 0 else 0 )
@@ -298,6 +332,55 @@ def buildVariationsFromAlternative(uncfile, ret, theY):
                 if var.args[0] not in toremove:
                     toremove.extend( [var.args[0]] )
                 hasBeenApplied = True
+
+            # ---------------
+            # We do lowess here 
+            elif doLOWESS:
+                up   = _cloneNoDir( p.central, var.name + 'Up' )
+                down = _cloneNoDir( p.central, var.name + 'Down' )
+
+                # Save the bins into arrays
+                xvalLowess = []
+                yvalUpLowess = []
+                yvalDnLowess = []
+                nominalLowess = []
+                for ibin in range(1, up.GetNbinsX() + 1):
+                    xvalLowess.append(up.GetBinCenter(ibin))
+                    yvalUpLowess.append(ret[var.args[0]].raw().GetBinContent(ibin))
+                    if onlyone:
+                        yvalDnLowess.append(2*p.central.GetBinContent(ibin)-ret[var.args[0]].raw().GetBinContent(ibin))
+                    else:
+                        yvalDnLowess.append(ret[var.args[1]].raw().GetBinContent(ibin))
+                    nominalLowess.append(p.central.GetBinContent(ibin))
+                xvalLowess = np.array(xvalLowess)
+                yvalUpLowess = np.array(yvalUpLowess)
+                yvalDnLowess = np.array(yvalDnLowess)
+                nominalLowess = np.array(nominalLowess)
+                
+                ratio_diff = (yvalUpLowess/nominalLowess - yvalDnLowess/nominalLowess)/2.
+                diff_smooth = sm.nonparametric.lowess(ratio_diff, xvalLowess)[:,1]
+
+                # Chi2 part
+                up_scale = get_smoothed_scale_factor( diff_smooth, nominalLowess, yvalUpLowess, np.var(nominalLowess), np.var(yvalUpLowess))
+                down_scale = get_smoothed_scale_factor( diff_smooth, nominalLowess, yvalDnLowess, np.var(nominalLowess), np.var(yvalDnLowess))
+
+                up_ratio = (1 + up_scale*diff_smooth)
+                down_ratio = ( 1 + down_scale*diff_smooth)
+                
+                new_var_up = nominalLowess * np.nan_to_num(up_ratio, nan=1.0)
+                new_var_down = nominalLowess * np.nan_to_num(down_ratio, nan=1.0)
+
+
+                for ibin in range(1, up.GetNbinsX() + 1):
+                    up.SetBinContent(ibin, new_var_up[ibin-1])
+                    down.SetBinContent(ibin, new_var_down[ibin-1])
+                
+                p.addVariation( var.name, 'up'  , up)
+                p.addVariation( var.name, 'down', down)
+                if var.args[0] not in toremove:
+                    toremove.extend( [var.args[0]] )
+                hasBeenApplied = True
+            # ---------------
 
             elif dolinear:
                 up   = _cloneNoDir( p.central, var.name + 'Up' )
@@ -362,6 +445,10 @@ def buildVariationsFromAlternative(uncfile, ret, theY):
                                 thedifup = (ret[var.args[0]].raw().GetBinContent(ibin) - p2.central.GetBinContent(ibin))/normval
                                 if not onlyone:
                                     thedifdn = (p2.central.GetBinContent(ibin) - ret[var.args[1]].raw().GetBinContent(ibin))/normval
+                                    # We symmetrise here
+                                    thediff = (thedifup + thedifdn)/2. 
+                                    thedifup = thediff
+                                    thedifdn = thediff
 
                             up.SetBinContent(  ibin, p2.central.GetBinContent(ibin) + thedifup )
                             if not onlyone:
@@ -1186,7 +1273,10 @@ class HistoWithNuisances:
                         #if cont >= nomVal: deltaUp += (cont - nomVal)**2
                         #else:              deltaDn += (nomVal - cont)**2
 
-                    alphaSunc = (self.getVariation(var)[nvars - 1].GetBinContent(ibin) - self.getVariation(var)[nvars - 2].GetBinContent(ibin)) / 2.
+                    if "v2" in unc.lower():
+                        alphaSunc = 0
+                    else:
+                        alphaSunc = (self.getVariation(var)[nvars - 1].GetBinContent(ibin) - self.getVariation(var)[nvars - 2].GetBinContent(ibin)) / 2.
 
                     up.SetBinContent(  ibin, nomVal + sqrt(deltaUp + alphaSunc**2))
                     down.SetBinContent(ibin, nomVal - sqrt(deltaUp + alphaSunc**2))

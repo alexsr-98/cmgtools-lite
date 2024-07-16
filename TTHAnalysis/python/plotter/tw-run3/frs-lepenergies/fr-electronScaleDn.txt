@@ -1,0 +1,73 @@
+change: \bchannel\b:              channel_elscaleDown
+change: \bnLepGood\b:             nLepGoodelscaleDown
+change: \bisSS\b:                 isSS_elscaleDown
+change: \bMll\b:                  Mll_elscaleDown
+change: \bminMllAFAS\b:           minMllAFAS_elscaleDown
+change: \bLepGood_pt_corrAll\[:   LepGoodelscaleDown_pt_elscaleDown[
+change: \[iJetSel30_Recl\[:        [iJetSel30_elscaleDown_Recl[
+change: \bnJetSel30_Recl\b:        nJetSel30_elscaleDown_Recl
+change: \bnBJetSelMedium30_Recl\b: nBJetSelMedium30_elscaleDown_Recl
+change: \[iJetSel20_Recl\[:        [iJetSel20_elscaleDown_Recl[
+change: \bnJetSel20_Recl\b:        nJetSel20_elscaleDown_Recl
+change: \bnBJetSelMedium20_Recl\b: nBJetSelMedium20_elscaleDown_Recl
+change: \[iFwdJetSel30_Recl\[:     [iFwdJetSel30_elscaleDown_Recl[
+change: \bnFwdJetSel30_Recl\b:     nFwdJetSel30_elscaleDown_Recl
+change: \[iFwdJetSel20_Recl\[:     [iFwdJetSel20_elscaleDown_Recl[
+change: \bnFwdJetSel20_Recl\b:     nFwdJetSel20_elscaleDown_Recl
+
+change: \bbTagWeight\b:           bTagWeight_elscaleDown
+change: MuonIDSF\b:               MuonIDSF_elscaleDown
+change: MuonISOSF\b:              MuonISOSF_elscaleDown
+change: ElecIDSF\b:               ElecIDSF_elscaleDown
+change: ElecRECOSF\b:             ElecRECOSF_elscaleDown
+change: TrigSF\b:                 TrigSF_elscaleDown
+
+change: \bLep1Lep2_Pt\b:          Lep1Lep2_Pt_elscaleDown
+change: \bLep1Lep2_PtSum\b:       Lep1Lep2_PtSum_elscaleDown
+change: \bLep1Lep2_DR\b:          Lep1Lep2_DR_elscaleDown
+change: \bLep1Lep2_DPhi\b:        Lep1Lep2_DPhi_elscaleDown
+change: \bLep1Lep2_DEta\b:        Lep1Lep2_DEta_elscaleDown
+
+change: \bLep1Lep2Jet1MET_Pz\b:          Lep1Lep2Jet1MET_Pz_elscaleDown
+change: \bLep1Lep2Jet1MET_Pt\b:          Lep1Lep2Jet1MET_Pt_elscaleDown
+change: \bLep1Lep2Jet1MET_M\b:           Lep1Lep2Jet1MET_M_elscaleDown
+change: \bLep1Lep2Jet1MET_Mt\b:          Lep1Lep2Jet1MET_Mt_elscaleDown
+change: \bLep1Lep2Jet1MET_PtOverHTtot\b: Lep1Lep2Jet1MET_PtOverHTtot_elscaleDown
+change: \bLep1_PtLep2_PtOverHTtot\b:     Lep1_PtLep2_PtOverHTtot_elscaleDown
+change: \bLep1Lep2Jet1_Pt\b:             Lep1Lep2Jet1_Pt_elscaleDown
+change: \bLep1Lep2Jet1_M\b:              Lep1Lep2Jet1_M_elscaleDown
+change: \bLep1Lep2Jet1_E\b:              Lep1Lep2Jet1_E_elscaleDown
+change: \bLep1Jet1_Pt\b:                 Lep1Jet1_Pt_elscaleDown
+change: \bLep1Jet1_M\b:                  Lep1Jet1_M_elscaleDown
+change: \bLep2Jet1_Pt\b:                 Lep2Jet1_Pt_elscaleDown
+change: \bLep2Jet1_M\b:                  Lep2Jet1_M_elscaleDown
+change: \bJet1_E\b:                      Jet1_E_elscaleDown
+change: \bJet1_Pt\b:                     Jet1_Pt_elscaleDown
+change: \bJet2_Pt\b:                     Jet2_Pt_elscaleDown
+change: \bJetLoose1_Pt\b:                JetLoose1_Pt_elscaleDown
+
+change: \bLep1Jet1_DR\b:                 Lep1Jet1_DR_elscaleDown
+change: \bLep12Jet12_DR\b:               Lep12Jet12_DR_elscaleDown
+change: \bLep12Jet12MET_DR\b:            Lep12Jet12MET_DR_elscaleDown
+change: \bLepJet11Lep2_DR\b:             LepJet11Lep2_DR_elscaleDown
+change: \bLepJet11Lep2_DPhi\b:           LepJet11Lep2_DPhi_elscaleDown
+change: \bLepJet11Lep2_DEta\b:           LepJet11Lep2_DEta_elscaleDown
+change: \bLep1LepJet21_DR\b:             Lep1LepJet21_DR_elscaleDown
+change: \bLep1LepJet21_DPhi\b:           Lep1LepJet21_DPhi_elscaleDown
+change: \bLep1LepJet21_DEta\b:           Lep1LepJet21_DEta_elscaleDown
+change: \bLep1Lep2Jet1_C\b:              Lep1Lep2Jet1_C_elscaleDown
+change: \bHTtot\b    :                   HTtot_elscaleDown
+
+change: \bminimax\b  :                   minimax_elscaleDown
+change: \bLep1Jet2_M\b:                  Lep1Jet2_M_elscaleDown
+change: \bLep2Jet2_M\b:                  Lep2Jet2_M_elscaleDown
+
+change: \bSergioBDT_1j1b\b:               SergioBDT_1j1b_elscaleDown
+change: \bSergioBDT_2j1b\b:               SergioBDT_2j1b_elscaleDown
+change: \btmvaBDT_1j1b\b:                 tmvaBDT_1j1b_elscaleDown
+change: \btmvaBDT_2j1b\b:                 tmvaBDT_2j1b_elscaleDown
+change: \bmvaRF_1j1b\b:                  mvaRF_1j1b_elscaleDown
+change: \bmvaRF_2j1b\b:                  mvaRF_2j1b_elscaleDown
+change: \bmvaRF_1j1b_mm\b:               mvaRF_1j1b_mm_elscaleDown
+change: \bmvaRF_1j1b_ee\b:               mvaRF_1j1b_ee_elscaleDown
+weight: 1

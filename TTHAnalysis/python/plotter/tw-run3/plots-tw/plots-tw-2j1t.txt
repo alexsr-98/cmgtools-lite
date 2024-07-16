@@ -2,10 +2,12 @@ channel       : channel           : [0.5,1.5,2.5,3.5]                      ; Inc
 tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", LegendCutoff=0, MoreY=2.0
 
 nloosejets: nJetSel20_Recl : [-0.5,0.5,1.5,2.5,3.5] ; LegendCutoff=0, XTitle='N(loose jet)', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
+nbloosejets                 : nBJetSelMedium20_Recl       : [-0.5,0.5,1.5,2.5,3.5]                 ; LegendCutoff=0, MoreY=1.2, XTitle='Number of loose b-tagged jets', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
 
 nfwdjets      : nFwdJetSel30_Recl : [-0.5,0.5,1.5,2.5,3.5]         ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='N(forward jet)', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
 nfwdloosejets : nFwdJetSel20_Recl : [-0.5,0.5,1.5,2.5,3.5]         ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='N(forward loose jet)', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
 
+minimax  : minimax : 15,0,450 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m_{bl}^{minimax} (GeV)", Logy
 
 jet1_pt   : Jet1_Pt                                              : 18,20,200     ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading jet p_{T} (GeV)"
 jet1_eta  : Jet_eta[iJetSel30_Recl[0]]           : 15,-2.4,2.4   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading jet #eta"

@@ -9,10 +9,11 @@ import varList as vl
 r.PyConfig.IgnoreCommandLineOptions = True
 r.gROOT.SetBatch(True)
 
-friendspath   = "/lustrefs/hdd_pool_dir/nanoAODv11/tw-run3/productions"
+friendspath   = "/lustrefs/hdd_pool_dir/nanoAODv12/tw-run3/productions"
+friendspath = "/pool/phedexrw/userstorage/asoto/tw-run3/productions"
 logpath       = friendspath + "/{p}/{y}/logs/cards_differential"
 
-friendsscaff = "--Fs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors"
+friendsscaff = "--Fs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors_full2022_comb --FMCs {P}/8_topPtReweight13to13p6"
 
 slurmscaff    = "sbatch -c {nth} -p {queue} -J {jobname} -e {logpath}/log.%j.%x.err -o {logpath}/log.%j.%x.out --wrap '{command}'"
 
@@ -21,7 +22,7 @@ commandscaff  = '''python3 makeShapeCards_TopRun2.py --tree NanoAOD {mcafile} {c
 # will have to divide by the second one. The first one is relevant becasue of the dividing of the files.
 # The second one, because of the proportions between MC simulations.
 
-nomweight     = '''-W "MuonIDSF * MuonISOSF * ElecIDSF * ElecRECOSF * TrigSF * bTagWeight * puWeight"'''
+nomweight     = '''-W "MuonIDSF * MuonISOSF * ElecIDSF * ElecRECOSF * TrigSF * puWeight * bTagWeight * TopPtWeightNNLO * TopPtWeight13to13p6"'''
 genweight     = ""
 
 
@@ -64,7 +65,7 @@ def ExecuteOrSubmitTask(tsk):
 
 def CardsCommand(prod, year, var, isAsimov, nthreads, outpath, region, noUnc, useFibre, extra):
     mcafile_   = "tw-run3/differential/mca-differential/mca-tw-diff.txt" if "forExtr" not in region and "control" not in region and region != "nonfiducialAll" else "tw-run3/mca-tw.txt"
-    cutsfile_  = "tw-run3/differential/cuts-differential/cuts-{reg}-{njnt}.txt".format(reg = region.replace("Response", "").replace("All", "") if ("forExtr" not in region and "but" not in region and "control" not in region) else "detectorparticle" if "but" in region else "detector",
+    cutsfile_  = "tw-run3/differential/cuts-differential/cuts-{reg}-{njnt}.txt".format(reg = region.replace("Response", "").replace("Square", "").replace("All", "") if ("forExtr" not in region and "but" not in region and "control" not in region) else "detectorparticle" if "but" in region else "detector",
                                                                                                   njnt = "1j1t" if "control" not in region else vl.diffControlReg )
 
     samplespaths_ = "-P " + friendspath + "/" + prod + ("/" + year) * (year != "run3")
@@ -79,6 +80,7 @@ def CardsCommand(prod, year, var, isAsimov, nthreads, outpath, region, noUnc, us
 
     thebins = (vl.varList[var]["bins_detector"] if (region == "detector" or region == "detectorparticlebutdetector" or "nonfiducial" in region or "forExtr" in region or "control" in region) else
                vl.varList[var]["bins_particle"] if (region == "particle" or region == "detectorparticle") else
+              (vl.varList[var]["bins_particle"], vl.varList[var]["bins_particle"]) if region == "detectorparticleResponseSquare" else
               (vl.varList[var]["bins_particle"], vl.varList[var]["bins_detector"]) )
 
     bins_      = ""
@@ -93,13 +95,15 @@ def CardsCommand(prod, year, var, isAsimov, nthreads, outpath, region, noUnc, us
                   vl.varList[var]["var_detector"] + ":" + vl.varList[var]["var_particle"])
     name_      = "--binname " + region
     weights_   = (nomweight if (region == "detector" or "forExtr" in region or region == "detectorparticlebutdetector" or "control" in region) else
-                  nomweight if region == "detectorparticleResponse" or "nonfiducial" in region else
+                  nomweight if region == "detectorparticleResponse" or "nonfiducial" in region or region == "detectorparticleResponseSquare" else
                   #nomweight if region == "detectorparticleResponse" else
                   genweight)
 
     extra_ = extra
     if region not in ["detector", "particle"]:
         extra_ += " --xp twds,twherwig,twamcatnlo_dr,twamcatnlo_dr2,twamcatnlo_ds,twamcatnlo_ds_is,twamcatnlo_ds_runningBW,twamcatnlo_ds_is_runningBW"
+    if region not in ["particle"]:
+        extra_ += ",bb4l,ttbardif"
 
     comm = commandscaff.format(outpath      = outpath_,
                                friends      = friends_,
@@ -113,7 +117,7 @@ def CardsCommand(prod, year, var, isAsimov, nthreads, outpath, region, noUnc, us
                                mcafile   = mcafile_,
                                cutsfile  = cutsfile_,
                                #uncs      = "" if region == "particle" else "--unc tw-run3/uncs-tw.txt --amc" if not noUnc and "Response" in region else "--unc tw-run3/uncs-tw_1j1tdiff_" + var.lower().replace("_", "") + ".txt --amc" if not noUnc else "--amc",
-                               uncs      = "" if region == "particle" else "--unc tw-run3/uncs-tw.txt --amc" if not noUnc and "Response" in region else "--unc tw-run3/uncs-tw.txt --amc" if not noUnc else "--amc",
+                               uncs      = "" if (region == "particle" or region == "detectorparticleResponseSquare") else "--unc tw-run3/uncs-tw.txt --amc" if not noUnc and "Response" in region else "--unc tw-run3/uncs-tw.txt --amc" if not noUnc else "--amc",
                                name      = name_,
                                weights   = weights_,
                                extra     = extra_)
@@ -156,7 +160,7 @@ if __name__=="__main__":
     theregs  = ["detector", "particle", "detectorparticleResponse", "detectorparticlebutdetector",
     ##theregs  = ["detector", "detectorparticleResponse", "detectorparticlebutdetector",
                 #"detectorparticle", "nonfiducial"]#, "forExtr", "controlReg"]
-                "detectorparticle", "nonfiducial", "forExtr"]
+                "detectorparticle", "nonfiducial", "forExtr", "detectorparticleResponseSquare"]
                 ##"detectorparticle", "nonfiducial", "forExtr", "controlReg"]
 
 

@@ -89,7 +89,7 @@ class Uncertainty:
                 raise RuntimeError("A set of FakeRates are needed for envelope")
             #print "\n",self.name, self._procpattern, self._options.year,
             self.fakerate = [ FakeRate( fr, loadFilesNow=False, year=self._options.year) for fr in self.extra['FakeRates'] ]
-        elif self.unc_type=='HessianPDFset':
+        elif self.unc_type=='HessianPDFset' or self.unc_type=='HessianPDFsetv2':
             if 'FakeRates' not in self.extra:
                 raise RuntimeError("A set of FakeRates are needed for HessianPDFset")
             #print "\n",self.name, self._procpattern, self._options.year,

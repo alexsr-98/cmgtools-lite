@@ -24,7 +24,9 @@ lumi     : $AllBkg : .* : normSymm : 1.014
 # Pile-up reweighting
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 pileup : $AllBkg : .* : templateAsymm; AddWeights=['puWeight_up/puWeight'\,'puWeight_dn/puWeight']
-#pileupnew : $AllBkg : .* : templateSymmAdditive ; AddWeight='(CentralPVWeight*AccepWeightPV)/(CentralCaloWeight*AccepWeight)'
+#centralcaloweight : $AllBkg : .* : templateSymmAdditive ; AddWeight='CentralCaloWeight', Normalize
+#centralcaloweight : $AllBkg : .* : templateSymmAdditive ; AddWeight='CentralCaloWeight/puWeight'
+#pileupnew : $AllBkg : .* : templateSymmAdditive ; AddWeight='sqrt((CentralPVWeight*AccepWeightPV)/(CentralCaloWeight*AccepWeight))'
 
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -87,7 +89,7 @@ jes_Absolute_2022PostEE       : $AllBkg : .* : templateAsymm; FakeRates=['tw-run
 
 
 ### Not symmetrising
-jer_2022 : $AllBkg : .* : templateAsymm; FakeRates=['tw-run3/frs-jecs/fr-jerUp.txt'\,'tw-run3/frs-jecs/fr-jerDn.txt'], year="2022"
+jer_2022 : $AllBkg : .* : templateAsymm; FakeRates=['tw-run3/frs-jecs/fr-jerUp.txt'\,'tw-run3/frs-jecs/fr-jerDn.txt'], year="2022", EstimateFromXbins=1
 jer_2022PostEE : $AllBkg : .* : templateAsymm; FakeRates=['tw-run3/frs-jecs/fr-jerUp.txt'\,'tw-run3/frs-jecs/fr-jerDn.txt'], year="2022PostEE"
 
 ### Symmetrising down
@@ -150,6 +152,7 @@ ttbar_norm   : ttbar   : .* : normSymm : 1.0346
 vvttv_norm   : vvttv   : .* : normSymm : 1.5
 dy_norm      : dy      : .* : normSymm : 1.1
 nonworz_norm : nonworz : .* : normSymm : 1.15
+#nonworz_lnU : nonworz : .* : normSymm : 1.5 ; lnU=True
 #nonworz_norm : nonworz : .* : normSymm : 1.04
 
 ### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -167,15 +170,16 @@ alphaS : $tWandttbar : .* : templateSymmAdditive; FakeRate='tw-run3/frs-pdfs/fr-
 #### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ##### Matrix element factorisation and renormalisation scales
 ##### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# Envelope method, not recommeded (Run3)
 #ttbar_scales : ttbar   : .* : envelope ; FakeRates=['tw-run3/frs-scales/fr-muR_0p5_muF_0p5.txt'\,'tw-run3/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'tw-run3/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'tw-run3/frs-scales/fr-muR_0p5_muF_1p0.txt'\,'tw-run3/frs-scales/fr-muR_1p0_muF_0p5.txt'\,'tw-run3/frs-scales/fr-muR_2p0_muF_2p0.txt']
 #tw_scales    : $tWProc : .* : envelope ; FakeRates=['tw-run3/frs-scales/fr-muR_0p5_muF_0p5.txt'\,'tw-run3/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'tw-run3/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'tw-run3/frs-scales/fr-muR_0p5_muF_1p0.txt'\,'tw-run3/frs-scales/fr-muR_1p0_muF_0p5.txt'\,'tw-run3/frs-scales/fr-muR_2p0_muF_2p0.txt']
 
-# Separate muR and muF variations
 ttbar_scales_muR : ttbar   : .* : templateAsymm; FakeRates=['tw-run3/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'tw-run3/frs-scales/fr-muR_0p5_muF_1p0.txt']
 tw_scales_muR    : $tWProc : .* : templateAsymm; FakeRates=['tw-run3/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'tw-run3/frs-scales/fr-muR_0p5_muF_1p0.txt']
 ttbar_scales_muF : ttbar   : .* : templateAsymm; FakeRates=['tw-run3/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'tw-run3/frs-scales/fr-muR_1p0_muF_0p5.txt']
 tw_scales_muF    : $tWProc : .* : templateAsymm; FakeRates=['tw-run3/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'tw-run3/frs-scales/fr-muR_1p0_muF_0p5.txt']
+
+#ttbar_scales_method2 : ttbar   : .* : templateAsymm; FakeRates=['tw-run3/frs-scales/fr-muR_2p0_muF_2p0.txt'\,'tw-run3/frs-scales/fr-muR_0p5_muF_0p5.txt']
+#tw_scales_method2    : $tWProc : .* : templateAsymm; FakeRates=['tw-run3/frs-scales/fr-muR_2p0_muF_2p0.txt'\,'tw-run3/frs-scales/fr-muR_0p5_muF_0p5.txt']
 
 ####### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ####### ISR/FSR
@@ -197,7 +201,6 @@ fsr        : $tWandttbar : .* : templateAsymm; FakeRates=['tw-run3/frs-PS/fr-fsr
 
 topptrew : ttbar : .* : templateSymmAdditive ; AddWeight='1./TopPtWeightNNLO*1./TopPtWeight13to13p6'
 
-
 ##### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ##### b-fragmentation function
 ##### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -211,7 +214,9 @@ topptrew : ttbar : .* : templateSymmAdditive ; AddWeight='1./TopPtWeightNNLO*1./
 ##### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ##### ME/PS matching (hDamp parameter)
 ##### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-ttbar_matching : ttbar   : .* : altSample : syst_ttbar_matching_up : syst_ttbar_matching_dn; 
+#ttbar_matching : ttbar   : .* : altSample : syst_ttbar_matching_up : syst_ttbar_matching_dn; EstimateFromXbins=4
+ttbar_matching : ttbar   : .* : altSample : syst_ttbar_matching_up : syst_ttbar_matching_dn : LOWESS;
+
 #####tw_matching    : $tWProc : .* : altSample : syst_tw_matching_up    : syst_tw_matching_dn ### NOT RECOMMENDED
 
 
@@ -219,40 +224,47 @@ ttbar_matching : ttbar   : .* : altSample : syst_ttbar_matching_up : syst_ttbar_
 ##### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ##### Colour reconnection schemes
 ##### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-colour_rec_erdon : ttbar   : .* : altSample : syst_ttbar_colour_erdon : : ; EstimateFromXbins=1
+#colour_rec_erdon : ttbar   : .* : altSample : syst_ttbar_colour_erdon : : ; EstimateFromXbins=1
 colour_rec_cr1   : ttbar   : .* : altSample : syst_ttbar_colour_cr1   : : ; EstimateFromXbins=1
 colour_rec_cr2   : ttbar   : .* : altSample : syst_ttbar_colour_cr2   : : ; EstimateFromXbins=1
-colour_rec_erdon : $tWProc : .* : altSample : syst_tw_colour_erdon    : : ; EstimateFromXbins=1
+#colour_rec_erdon : $tWProc : .* : altSample : syst_tw_colour_erdon    : : ; EstimateFromXbins=1
 colour_rec_cr1   : $tWProc : .* : altSample : syst_tw_colour_cr1      : : ; EstimateFromXbins=1
 colour_rec_cr2   : $tWProc : .* : altSample : syst_tw_colour_cr2      : : ; EstimateFromXbins=1
 
-#colour_rec_erdon : ttbar   : .* : altSample : syst_ttbar_colour_erdon : : symm ;
-#colour_rec_cr1   : ttbar   : .* : altSample : syst_ttbar_colour_cr1   : : symm ;
-#colour_rec_cr2   : ttbar   : .* : altSample : syst_ttbar_colour_cr2   : : symm ;
-#colour_rec_erdon : $tWProc : .* : altSample : syst_tw_colour_erdon    : : symm ;
-#colour_rec_cr1   : $tWProc : .* : altSample : syst_tw_colour_cr1      : : symm ;
-#colour_rec_cr2   : $tWProc : .* : altSample : syst_tw_colour_cr2      : : symm ;
+#colour_rec_erdon : ttbar   : .* : altSample : syst_ttbar_colour_erdon : : symm2 ;
+#colour_rec_cr1   : ttbar   : .* : altSample : syst_ttbar_colour_cr1   : : symm2 ;
+#colour_rec_cr2   : ttbar   : .* : altSample : syst_ttbar_colour_cr2   : : symm2 ;
+#colour_rec_erdon : $tWProc : .* : altSample : syst_tw_colour_erdon    : : symm2 ;
+#colour_rec_cr1   : $tWProc : .* : altSample : syst_tw_colour_cr1      : : symm2 ;
+#colour_rec_cr2   : $tWProc : .* : altSample : syst_tw_colour_cr2      : : symm2 ;
 
+colour_rec_erdon : ttbar   : .* : altSample : syst_ttbar_colour_erdon : : LOWESS ;
+#colour_rec_cr1   : ttbar   : .* : altSample : syst_ttbar_colour_cr1   : : LOWESS ;
+#colour_rec_cr2   : ttbar   : .* : altSample : syst_ttbar_colour_cr2   : : LOWESS ;
+colour_rec_erdon : $tWProc : .* : altSample : syst_tw_colour_erdon    : : LOWESS ;
+#colour_rec_cr1   : $tWProc : .* : altSample : syst_tw_colour_cr1      : : LOWESS ;
+#colour_rec_cr2   : $tWProc : .* : altSample : syst_tw_colour_cr2      : : LOWESS ;
 
 #### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #### Underlying event (tuning)
 #### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-ue : ttbar   : .* : altSample : syst_ttbar_ue_up : syst_ttbar_ue_dn ; 
-ue : $tWProc : .* : altSample : syst_tw_ue_up    : syst_tw_ue_dn   ; 
+#ue : ttbar   : .* : altSample : syst_ttbar_ue_up : syst_ttbar_ue_dn ; EstimateFromXbins=4
+#ue : $tWProc : .* : altSample : syst_tw_ue_up    : syst_tw_ue_dn   ; EstimateFromXbins=4
 
+ue : ttbar   : .* : altSample : syst_ttbar_ue_up : syst_ttbar_ue_dn : LOWESS ;
+ue : $tWProc : .* : altSample : syst_tw_ue_up    : syst_tw_ue_dn : LOWESS; 
 
 
 
 ##### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ##### Top quark mass
 ##### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# 1 GeV variations
-#mtop : ttbar   : .* : altSample : syst_ttbar_mtop_up : syst_ttbar_mtop_dn;
-#mtop : $tWProc : .* : altSample : syst_tw_mtop_up    : syst_tw_mtop_dn;  
+#mtop : ttbar   : .* : altSample : syst_ttbar_mtop_up : syst_ttbar_mtop_dn; EstimateFromXbins=4
+#mtop : $tWProc : .* : altSample : syst_tw_mtop_up    : syst_tw_mtop_dn; EstimateFromXbins=4
 
-# 3 GeV variations rescaled to 1 GeV (linear extrapolation from the nominal syst_ttbar_3mtop)
 mtop : ttbar   : .* : altSample : syst_ttbar_3mtop_up : syst_ttbar_3mtop_dn : addothers : syst_ttbar_3mtop : 9.09;
 mtop : $tWProc : .* : altSample : syst_tw_3mtop_up : syst_tw_3mtop_dn : addothers : syst_tw_3mtop : 9.09;
+
 
 
 #### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -260,4 +272,5 @@ mtop : $tWProc : .* : altSample : syst_tw_3mtop_up : syst_tw_3mtop_dn : addother
 #### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ds : $tWProc : .* : altSample : syst_tw_ds : : ; EstimateFromXbins=1
 #ds : $tWProc : .* : altSample : syst_tw_ds : : symm ;
+#ds : $tWProc : .* : altSample : syst_tw_ds : : LOWESS ;
 

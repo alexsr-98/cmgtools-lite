@@ -8,20 +8,27 @@ r.PyConfig.IgnoreCommandLineOptions = True
 r.gROOT.SetBatch(True)
 
 #### Settings
-friendspath  = "/lustrefs/hdd_pool_dir/nanoAODv11/tw-run3/productions"
+friendspath  = "/lustrefs/hdd_pool_dir/nanoAODv12/tw-run3/productions"
+
+friendspath = "/pool/phedexrw/userstorage/asoto/tw-run3/productions"
 
 logpath      = friendspath + "/{p}/{y}/logs/cards_inclusive"
 
-lumidict     = {"2022"       : 7.78,
-                "2022PostEE" : 20.67}
+#lumidict     = {"2022"       : 7.875,
+#                "2022PostEE" : 26.337,}
+#                #"2022PostEE" : 20.67}
 
-friendsscaff = "--Fs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors --Fs {P}/6_mvasRF" # --Fs {P}/5_mvas
+lumidict     = {"2022"       : 8.0,
+                "2022PostEE" : 26.67,}
+                #"2022PostEE" : 20.67}
 
-commandscaff = '''python3 makeShapeCards_TopRun2.py --tree NanoAOD {mcafile} {cutsfile} "{variable}" "{bins}" {samplespaths} {friends} --od {outpath} -l {lumi} {nth} -f -L tw-run3/functions_tw.cc --neg --threshold 0.01 -W "MuonIDSF * MuonISOSF * ElecIDSF * ElecRECOSF * TrigSF * bTagWeight * puWeight" --year {year} {asimovornot} {pseudodataorNot} {uncs} {extra} --AP --storeAll'''
+friendsscaff = "--Fs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors_full2022_comb --Fs {P}/6_mvasRF --FMCs {P}/8_topPtReweight13to13p6" # --Fs {P}/5_mvas #--FMCs {P}/7_caloWeight ## CentralCaloWeight
+
+commandscaff = '''python3 makeShapeCards_TopRun2.py --tree NanoAOD {mcafile} {cutsfile} "{variable}" "{bins}" {samplespaths} {friends} --od {outpath} -l {lumi} {nth} -f -L tw-run3/functions_tw.cc --neg --threshold 0.01 -W "MuonIDSF * MuonISOSF * ElecIDSF * ElecRECOSF * TrigSF * puWeight * bTagWeight * TopPtWeightNNLO * TopPtWeight13to13p6" --year {year} {asimovornot} {pseudodataorNot} {uncs} {extra} --AP --storeAll'''
 
 slurmscaff   = "sbatch -c {nth} -p {queue} -J {jobname} -e {logpath}/log.%j.%x.err -o {logpath}/log.%j.%x.out --wrap '{command}'"
 
-listofforcedshape = "btagging_2022PostEE,btagging_2022,btagging_corr,elecidsf,elecrecosf,fsr,isr_ttbar,isr_tw,jer,jes_Absolute,jes_Absolute_2022PostEE,jes_Absolute_2022,jes_BBEC1,jes_BBEC1_2022PostEE,jes_EC2,jes_EC2_2022PostEE,jes_EC2_2022,jes_FlavorQCD,jes_HF,jes_HF_2022PostEE,jes_HF_2022,jes_RelativeBal,jes_RelativeSample_2022PostEE,jes_RelativeSample_2022,lumi,mistagging_2022PostEE,mistagging_2022,mistagging_corr,mtop,muonidsf,pdfhessian,pileup,topptrew,triggereff,ttbar_scales,tw_scales,ds,colour_rec_erdon,colour_rec_cr1,colour_rec_cr2"
+listofforcedshape = "ttbar_scales_muR,tw_scales_muR,ttbar_scales_muF,tw_scales_muF,jes_FlavorQCD_charm,jes_FlavorQCD_bottom,jes_FlavorQCD_light,btagging,mistagging,btagging_2022PostEE,btagging_2022,btagging_corr,elecidsf,elecrecosf,fsr,isr_ttbar,isr_tw,jer,jer_2022,jer_2022PostEE,jes_Absolute,jes_Absolute_2022PostEE,jes_Absolute_2022,jes_BBEC1,jes_BBEC1_2022PostEE,jes_EC2,jes_EC2_2022PostEE,jes_EC2_2022,jes_FlavorQCD,jes_FlavorQCD_bottom,jes_FlavorQCD_charm,jes_FlavorQCD_light,jes_HF,jes_HF_2022PostEE,jes_HF_2022,jes_RelativeBal,jes_RelativeSample_2022PostEE,jes_RelativeSample_2022,mistagging_2022PostEE,mistagging_2022,mistagging_corr,mtop,muonidsf,pdfhessian,alphaS,pileup,topptrew,triggereff,triggereff_2022,triggereff_2022PostEE,ttbar_scales,tw_scales,ds,colour_rec_erdon,colour_rec_cr1,colour_rec_cr2,elecscale_2022,elecsmear_2022,elecscale_2022PostEE,elecsmear_2022PostEE,unclenergy_2022PostEE,unclenergy_2022,muonidsf_stat_2022PostEE,muonidsf_stat_2022,muonisosf_stat_2022PostEE,muonisosf_stat_2022,ue"
 
 
 
@@ -97,8 +104,8 @@ def CardsCommand(prod, year, var, bines, isAsimov, isPseudoData, nthreads, outpa
                                pseudodataorNot = "--pseudoData s+b" if isPseudoData else "",
                                mcafile   = mcafile_,
                                cutsfile  = cutsfile_,
-                               #uncs      = "--unc tw-run2/uncs-tw_{r}mvaNEW.txt --amc".format(r = region) if not noUnc else "--amc",
-                               uncs      = "--unc tw-run3/uncs-tw.txt --amc" if not noUnc else "--amc",
+                               uncs      = "--unc tw-run3/uncs-tw_inclFit_{r}.txt --amc".format(r = region) if not noUnc else "--amc",
+                               #uncs      = "--unc tw-run3/uncs-tw.txt --amc".format(r = region) if not noUnc else "--amc",
                                extra     = extra_)
 
     return comm
@@ -176,12 +183,12 @@ if __name__ == "__main__":
     #print CardsCommand(prod, year, variable, bines, asimov, nthreads, outpath, region, noUnc, useFibre, extra)
 
     theregs  = ["1j1t", "2j1t", "2j2t"]
-    #thevars  = ["getBDtW(tmvaBDT_1j1b)", "getBDtWOther(tmvaBDT_2j1b)", "min(max(Jet2_Pt, 30.), 189.)"] #Actual
-    thevars  = ["getRFtW(mvaRF_1j1b)", "getRFtWOther(mvaRF_2j1b)", "min(max(Jet2_Pt, 30.), 189.)"] #With RF
-    thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
-                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5]",
+    #thevars  = ["getRF1j1b_opt_20bins_FG_{year}(mvaRF_1j1b)", "getRF2j1b_opt_12bins_FG_{year}(mvaRF_2j1b)", "min(max(Jet2_Pt, 30.), 189.)"] #With RF
+    thevars  = ["getRF1j1b_topt_20bins{year}(mvaRF_1j1b)", "getRF2j1b_topt_12bins{year}(mvaRF_2j1b)", "min(max(Jet2_Pt, 30.), 189.)"]
+    thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5]",
+                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5]",
                 "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.,160.,170.,180.,190.]"]              
-    theyears = ["2022", "2022PostEE"]
+    theyears = ["2022", "2022PostEE","run3"]
     tasks    = []
     
     ##### Attempt without MVAs
@@ -191,46 +198,36 @@ if __name__ == "__main__":
     #            "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.,160.,170.,180.,190.]"]         
 
     ##### Attempt with SF channels also
-    theregs  = ["1j1t", "2j1t", "2j2t", "1j1t-mm", "1j1t-ee"]
-    thevars  = ["getRFtW(mvaRF_1j1b)", "getRFtWOther(mvaRF_2j1b)", "min(max(Jet2_Pt, 30.), 189.)", "getRFtW_mm(mvaRF_1j1b_mm)", "getRFtW_ee(mvaRF_1j1b_ee)"] #With RF
-    thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
-                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5]",
-                "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.,160.,170.,180.,190.]",
-                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
-                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]"]              
-    theyears = ["2022", "2022PostEE"]
-    tasks    = []
+    #theregs  = ["1j1t", "2j1t", "2j2t", "1j1t-mm", "1j1t-ee"]
+    #thevars  = ["getRFtW(mvaRF_1j1b)", "getRFtWOther(mvaRF_2j1b)", "min(max(Jet2_Pt, 30.), 189.)", "getRFtW_mm(mvaRF_1j1b_mm)", "getRFtW_ee(mvaRF_1j1b_ee)"] #With RF
+    #thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
+    #            "[0.5,1.5,2.5,3.5,4.5,5.5,6.5]",
+    #            "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.,160.,170.,180.,190.]",
+    #            "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
+    #            "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]"]              
+    #theyears = ["2022", "2022PostEE"]
+    #tasks    = []
 
     ##### Attempt with extra emu regions
-    theregs  = ["1j1t", "2j1t", "2j2t", "1j0t","3j1t","3j2t"]
-    thevars  = ["getRFtW(mvaRF_1j1b)", "getRFtWOther(mvaRF_2j1b)", "min(max(Jet2_Pt, 30.), 189.)", "getRFtW1j0b(mvaRF_1j1b)", "min(max(Jet_pt_nom[iJetSel30_Recl[1]], 30.), 149.)", "min(max(Jet_pt_nom[iJetSel30_Recl[2]], 30.), 149.)"] #With RF
-    thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
-                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5]",
-                "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.,160.,170.,180.,190.]",
-                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
-                "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.]",
-                "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.]"]              
-    theyears = ["2022", "2022PostEE"]
-    tasks    = []
+    #theregs  = ["1j1t", "2j1t", "2j2t", "1j0t","3j1t","3j2t"]
+    #thevars  = ["getRFtW(mvaRF_1j1b)", "getRFtWOther(mvaRF_2j1b)", "min(max(Jet2_Pt, 30.), 189.)", "getRFtW1j0b(mvaRF_1j1b)", "min(max(Jet_pt_nom[iJetSel30_Recl[1]], 30.), 149.)", "min(max(Jet_pt_nom[iJetSel30_Recl[2]], 30.), 149.)"] #With RF
+    #thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
+    #            "[0.5,1.5,2.5,3.5,4.5,5.5,6.5]",
+    #            "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.,160.,170.,180.,190.]",
+    #            "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
+    #            "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.]",
+    #            "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.]"]              
+    #theyears = ["2022", "2022PostEE"]
+    #tasks    = []
 
-    ##### Attempt with extra emu regions
-    theregs  = ["1j1t", "2j1t", "2j2t","3j2t"]
-    thevars  = ["getRF1j1b_opt_20bins(mvaRF_1j1b)", "getRF2j1b_opt_12bins(mvaRF_2j1b)", "min(max(minimax, 0.), 449.)", "min(max(Jet_pt_nom[iJetSel30_Recl[1]], 30.), 149.)"] #With RF
-    thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5]",
-                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5]",
-                "[0.0, 32.142857142857146, 64.28571428571429, 96.42857142857144, 128.57142857142858, 160.71428571428572, 192.8571428571429, 225.00000000000003, 257.14285714285717, 289.28571428571433, 321.42857142857144, 353.5714285714286, 385.7142857142858, 417.8571428571429, 450.0]",
-                "[30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.,140.,150.]"]              
-    theyears = ["2022", "2022PostEE"]
-    tasks    = []
-
-
-    ##### Attempt with SF channels also  (only SF)
-    ##theregs  = ["1j1t-mm", "1j1t-ee"]
-    ##thevars  = ["getRFtW_mm(mvaRF_1j1b_mm)", "getRFtW_ee(mvaRF_1j1b_ee)"] #With RF
-    ##thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]",
-    ##            "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]"]              
-    ##theyears = ["2022", "2022PostEE"]
-    ##tasks    = []
+    ##### Attempt with minimax!!
+#    theregs  = ["1j1t", "2j1t", "2j2t"]
+#    thevars  = ["getRF1j1b_topt_20bins(mvaRF_1j1b)", "getRF2j1b_topt_12bins(mvaRF_2j1b)", "min(max(minimax, 0.), 449.)"] #With RF
+#    thebins  = ["[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5]",
+#                "[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5]",
+#                "[0.0, 32.142857142857146, 64.28571428571429, 96.42857142857144, 128.57142857142858, 160.71428571428572, 192.8571428571429, 225.00000000000003, 257.14285714285717, 289.28571428571433, 321.42857142857144, 353.5714285714286, 385.7142857142858, 417.8571428571429, 450.0]",]              
+#    theyears = ["2022", "2022PostEE", "run3"]
+#    tasks    = []
     
     if variable.lower() != "all":
         if "," in variable:

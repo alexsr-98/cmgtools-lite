@@ -10,3 +10,7 @@ syst_ttbar_ue_dn        : TTto2L2Nu_TuneCP5Down_13p6TeV_powheg_pythia8*         
 
 syst_ttbar_mtop_up : TTto2L2Nu_MT_173p5_TuneCP5_13p6TeV_powheg_pythia8*    : xsec ;
 syst_ttbar_mtop_dn : TTto2L2Nu_MT_171p5_TuneCP5_13p6TeV_powheg_pythia8*    : xsec ;
+
+syst_ttbar_3mtop_up : TTto2L2Nu_MT_175p5_TuneCP5_13p6TeV_powheg_pythia8*    : xsec ;
+syst_ttbar_3mtop_dn : TTto2L2Nu_MT_169p5_TuneCP5_13p6TeV_powheg_pythia8*    : xsec ;
+syst_ttbar_3mtop    : TTto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_analysis_*   : xsec * 2;

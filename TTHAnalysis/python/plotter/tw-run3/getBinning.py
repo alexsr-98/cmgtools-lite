@@ -179,13 +179,19 @@ Float_t theBDT(Double_t BDT){
 #getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2023_02_01_Test_RF/2022/1j1t/MVAtrain/plots-tw-1j1t_MVAtrain.root", "tmvaBDT_1j1b_smallb_ttbar", 10)
 #getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2023_02_01_Test_RF/2022/2j1t/MVAtrain/plots-tw-2j1t_MVAtrain.root", "tmvaBDT_2j1b_smallb_ttbar", 6)
 
+#getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2024_01_10_smallb_FG_btagSF/2022PostEE/1j1t/MVAtrain/plots-tw-1j1t_MVAtrain.root", "mvaRF_1j1b_smallb_ttbar", 20)
+#getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2024_01_10_smallb_FG_btagSF/2022PostEE/2j1t/MVAtrain/plots-tw-2j1t_MVAtrain.root", "mvaRF_2j1b_smallb_ttbar", 12)
 # For the RF
-getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2023_09_30_smallb/2022PostEE/1j1t/MVAtrain/plots-tw-1j1t_MVAtrain.root", "mvaRF_1j1b_smallb_ttbar", 20)
-getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2023_09_30_smallb/2022PostEE/2j1t/MVAtrain/plots-tw-2j1t_MVAtrain.root", "mvaRF_2j1b_smallb_ttbar", 12)
-getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2023_09_26_smallB/2022PostEE/1j0t/MVAtrain/plots-tw-1j1t_MVAtrain.root", "mvaRF_1j0b_smallb_ttbar", 10)
+getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2024_02_28_smallb_topPtRew/2022PostEE/1j1t/MVAtrain/plots-tw-1j1t_MVAtrain.root", "mvaRF_1j1b_smallb_ttbar", 20)
+getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2024_02_28_smallb_topPtRew/2022PostEE/2j1t/MVAtrain/plots-tw-2j1t_MVAtrain.root", "mvaRF_2j1b_smallb_ttbar", 12)
+getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2024_02_28_smallb_topPtRew/2022/1j1t/MVAtrain/plots-tw-1j1t_MVAtrain.root", "mvaRF_1j1b_smallb_ttbar", 20)
+getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2024_02_28_smallb_topPtRew/2022/2j1t/MVAtrain/plots-tw-2j1t_MVAtrain.root", "mvaRF_2j1b_smallb_ttbar", 12)
+getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2024_02_28_smallb_topPtRew/run3/1j1t/MVAtrain/plots-tw-1j1t_MVAtrain.root", "mvaRF_1j1b_smallb_ttbar", 20)
+getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2024_02_28_smallb_topPtRew/run3/2j1t/MVAtrain/plots-tw-2j1t_MVAtrain.root", "mvaRF_2j1b_smallb_ttbar", 12)
+#getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2023_09_26_smallB/2022PostEE/1j0t/MVAtrain/plots-tw-1j1t_MVAtrain.root", "mvaRF_1j0b_smallb_ttbar", 10)
 # RF for mm and ee
-getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2023_09_30_smallb/2022PostEE/1j1t-mm/MVAtrain/plots-tw-1j1t_MVAtrain.root", "mvaRF_1j1b_mm_smallb_ttbar", 10)
-getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2023_09_30_smallb/2022PostEE/1j1t-ee/MVAtrain/plots-tw-1j1t_MVAtrain.root", "mvaRF_1j1b_ee_smallb_ttbar", 10)
+#getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2023_09_30_smallb/2022PostEE/1j1t-mm/MVAtrain/plots-tw-1j1t_MVAtrain.root", "mvaRF_1j1b_mm_smallb_ttbar", 10)
+#getBinningForThatVariable("/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_plots/2023_09_30_smallb/2022PostEE/1j1t-ee/MVAtrain/plots-tw-1j1t_MVAtrain.root", "mvaRF_1j1b_ee_smallb_ttbar", 10)
 
 
 

@@ -1,14 +1,25 @@
 alwaystrue: 1
 
 #lumijson:   $DATA{(isThisInTheJSON == 1)} $MC{(1)}
-trigger:           pass_trigger
+trigger:    pass_trigger
 metfilters: $DATA{Flag_eeBadScFilter && Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_ecalBadCalibFilter} $MC{Flag_eeBadScFilter && Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_ecalBadCalibFilter}
-emu:               channel == 1
+emu:        channel == 1
 
-dilep:             (nLepGood >= 2) && (LepGood_pt_corrAll[0] > 25) && (LepGood_pt_corrAll[1] > 20) && isSS == 0 && (minMllAFAS > 20)
-zveto:             (channel == 1) || (abs(Mll - 91) > 15)
+dilep:      (nLepGood >= 2) && (LepGood_pt_corrAll[0] > 25) && (LepGood_pt_corrAll[1] > 20) && isSS == 0 && (minMllAFAS > 20)
+zveto:      (channel == 1) || (abs(Mll - 91) > 15)
 
 #met:        $DATA{(channel == 1) || (MET_pt > 40)} $MC{(channel == 1) || (MET_pt_nom > 40)}
-metgood:           (channel == 1) || (METgood_pt > 40)
+metgood:    (channel == 1) || (METgood_pt > 40)
 
-#unprefirable: $DATA{(L1_UnprefireableEvent == 1)} $MC{(1)}
+1jet:       nJetSel30_Recl == 1;
+1btag:      nBJetSelMedium30_Recl == 1;
+0jetloose:  nJetSel20_Recl == 0;
+
+#bdtcut:     getBDtW20bins(tmvaBDT_1j1b) >= 17;
+
+#LOWnpvs:       PV_npvs <= 15;
+#HIGHnpvs:       PV_npvs >= 15; 
+
+#allMatch: NlooseJetsPU == 0 && nJetSel20_Recl >= 1;
+#atLeastNoMatch: NlooseJetsPU > 0;
+#noloosejet: nJetSel20_Recl == 0;

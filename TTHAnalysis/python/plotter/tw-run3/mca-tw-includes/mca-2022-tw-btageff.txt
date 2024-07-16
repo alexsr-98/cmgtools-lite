@@ -1,3 +1,2 @@
-tw+ : TbarWplus_DR_AtLeastOneLepton_CP5_13p6TeV_powheg_pythia8*    : xsec ; FillColor=798
-tw+ : TWminus_DR_AtLeastOneLepton_CP5_13p6TeV_powheg_pythia8_*     : xsec ; FillColor=798
-
+tw+ : TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_train_*   : xsec * 2; FillColor=ROOT.TColor.GetColor(248\,156\,32)
+tw+ : TWminusto2L2Nu_TuneCP5_13p6TeV_powheg_pythia8_train_*     : xsec * 2; FillColor=ROOT.TColor.GetColor(248\,156\,32)

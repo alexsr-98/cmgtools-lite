@@ -96,7 +96,9 @@ class beautifulUnfPlot:
         if not self.inited: self.initCanvasAndAll()
         if self.doRatio: self.canvas.cd(1)
         else:            self.canvas.cd()
-        
+        r.gPad.SetTickx()
+        r.gPad.SetTicky()
+        r.gPad.RedrawAxis()
         if isinstance(histos, list):
             histo = histos[0]
             asymhisto = r.TGraphAsymmErrors(histo)
@@ -161,6 +163,21 @@ class beautifulUnfPlot:
             if redrawaxis: asymhisto.Draw("axis,same")
         else:
             histo = histos
+            if idname == "data" and "DPhi" not in self.var:
+                self.graphForHorizontalBars = r.TGraphAsymmErrors()
+                for bin in range(1, histo.GetNbinsX() + 1):
+                    x = histo.GetBinCenter(bin)
+                    y = histo.GetBinContent(bin)
+                    # Set the error in y-axis to 0
+                    eyl = 0
+                    eyh = 0
+                    # Set the error in x-axis to bin width
+                    exl = histo.GetBinWidth(bin) / 2.0
+                    exh = histo.GetBinWidth(bin) / 2.0
+                    self.graphForHorizontalBars.SetPoint(bin - 1, x, y)
+                    self.graphForHorizontalBars.SetPointError(bin - 1, exl, exh, eyl, eyh)
+                self.graphForHorizontalBars.Draw("Psame")
+                
             if self.var in vl.varList:
                 histo.GetXaxis().SetTitle( vl.varList[self.var]['xaxis'] )
                 if self.isLCurve:
@@ -441,7 +458,7 @@ class beautifulUnfPlot:
                 #totalunc.GetYaxis().SetRangeUser(0.5, 1.5)
                 totalunc.GetYaxis().SetRangeUser(0.8, 1.2)
 
-            totalunc.GetYaxis().SetTitle('Pred./Data')
+            totalunc.GetYaxis().SetTitle('Pred. / Data')
             totalunc.GetYaxis().SetTitleFont(43)
             totalunc.GetYaxis().SetTitleSize(22)
             totalunc.GetYaxis().SetTitleOffset(self.yaxistitleoffset_wide if self.doWide else self.yaxistitleoffset)
@@ -452,6 +469,7 @@ class beautifulUnfPlot:
             #totalunc.GetYaxis().SetNdivisions(510, True)
             totalunc.GetYaxis().SetNdivisions(505, True)
             totalunc.GetYaxis().SetMaxDigits(self.maxdigits)
+            totalunc.GetXaxis().SetTickLength(0.08)
             
             # Drawing
             self.canvas.cd(2)
@@ -643,7 +661,7 @@ class beautifulUnfPlot:
                 totalunc.GetYaxis().SetRangeUser(0.8, 1.2)
                 #totalunc.GetYaxis().SetRangeUser(0, 2)
 
-            totalunc.GetYaxis().SetTitle('Pred./Data')
+            totalunc.GetYaxis().SetTitle('Pred. / Data  ')
             totalunc.GetYaxis().SetTitleFont(43)
             totalunc.GetYaxis().SetTitleSize(22)
             totalunc.GetYaxis().SetTitleOffset(self.yaxistitleoffset_wide if self.doWide else self.yaxistitleoffset)
@@ -655,6 +673,7 @@ class beautifulUnfPlot:
             #totalunc.GetYaxis().SetNdivisions(505, True)
             totalunc.GetYaxis().SetNdivisions(503, True)
             totalunc.GetYaxis().SetMaxDigits(self.maxdigits)
+            totalunc.GetXaxis().SetTickLength(0.08)
             
 
             datavalues.GetXaxis().SetTitle(vl.varList[self.var]['xaxis'])
@@ -678,7 +697,7 @@ class beautifulUnfPlot:
                 #datavalues.GetYaxis().SetRangeUser(0.5, 1.5)
                 datavalues.GetYaxis().SetRangeUser(0.8, 1.2)
 
-            datavalues.GetYaxis().SetTitle('Pred./Data')
+            datavalues.GetYaxis().SetTitle('Pred. / Data')
             datavalues.GetYaxis().SetTitleFont(43)
             datavalues.GetYaxis().SetTitleSize(22)
             datavalues.GetYaxis().SetTitleOffset(self.yaxistitleoffset_wide if self.doWide else self.yaxistitleoffset)
@@ -713,6 +732,8 @@ class beautifulUnfPlot:
             r.gPad.SetLogy()
             self.canvas.cd(2)
         """
+        r.gPad.SetTickx()
+        r.gPad.SetTicky()
         r.gPad.RedrawAxis()
 
         self.canvas.SaveAs(self.plotspath + "/" + self.name + suffix + '.pdf')

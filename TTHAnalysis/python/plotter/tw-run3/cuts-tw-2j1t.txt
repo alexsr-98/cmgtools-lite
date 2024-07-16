@@ -6,6 +6,7 @@ metfilters: $DATA{Flag_eeBadScFilter && Flag_goodVertices && Flag_globalSuperTig
 emu:        channel == 1
 
 dilep:      (nLepGood >= 2) && (LepGood_pt_corrAll[0] > 25) && (LepGood_pt_corrAll[1] > 20) && isSS == 0 && (minMllAFAS > 20)
+#dilep:      (nLepGood >= 2) && (LepGood_pt_corrAll[0] > 25) && (LepGood_pt_corrAll[1] > 20) && isSS == 1
 zveto:      (channel == 1) || (abs(Mll - 91) > 15)
 metgood:    (channel == 1) || (METgood_pt > 40)
 

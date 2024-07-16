@@ -158,7 +158,7 @@ def doTinyCmsPrelim(textLeft="_default_",textRight="_default_",hasExpo=False,tex
     if options.noExpoShift:
         hasExpo = False
     if TLleg and options.lspamShiftLegend and textLeft not in ['', None]:
-        doSpam(textLeft, .68, .855, .9, .895, align=32, textSize=textSize)
+        doSpam(textLeft, .71, .835, .93, .875, align=32, textSize=textSize)
     elif textLeft not in ['', None]:
         doSpam(textLeft, (.28 if hasExpo else 0.07 if doWide else textLeftPosition[0])+xoffs, textLeftPosition[1], textLeftPosition[2]+xoffs, textLeftPosition[3], align=12, textSize=textSize)
           
@@ -520,6 +520,7 @@ def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOn
     unity.GetYaxis().SetLabelOffset(0.01)
     unity.GetYaxis().SetDecimals(True) 
     unity.GetYaxis().SetTitle(ylabel)
+    unity.GetXaxis().SetTickLength(0.08)
     total.GetXaxis().SetLabelOffset(999) ## send them away
     total.GetXaxis().SetTitleOffset(999) ## in outer space
     total.GetYaxis().SetTitleSize(options.axisTitleSize if options.axisTitleSize!=-1.0 else 0.06)
@@ -630,7 +631,7 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
     if columns > 1: height = 1.3*height/columns
     (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .9 - height, .90, .91)
     if corner == "TR":
-        (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .9 - height, .90, .91)
+        (x1,y1,x2,y2) = (0.97-legWidth if doWide else .83-legWidth, .9 - height, .88, .91)
     elif corner == "TC":
         (x1,y1,x2,y2) = (.5, .9 - height, .55+legWidth, .91)
     elif corner == "TL":
@@ -896,6 +897,7 @@ class PlotMaker:
                     plot.SetLineWidth(2)
                     plot.SetLineColor(mca.getProcessOption(p, "FillColor", ROOT.kBlack))
                 elif plotmode == "stack":
+                    plot.SetLineWidth(options.histoLineWidth)
                     stack.Add(plot.raw())
                     if not mca.isSignal(p):
                         for subS in otherstacks:

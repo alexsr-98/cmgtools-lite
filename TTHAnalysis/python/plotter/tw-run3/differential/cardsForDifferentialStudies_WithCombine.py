@@ -11,17 +11,17 @@ import varList as vl
 r.gROOT.SetBatch(True)
 vl.SetUpWarnings()
 
-friendspath   = "/lustrefs/hdd_pool_dir/nanoAODv11/tw-run3/productions"
+friendspath   = "/lustrefs/hdd_pool_dir/nanoAODv12/tw-run3/productions"
 logpath       = friendspath + "/{p}/{y}/logs/cards_differential"
 
-friendsscaff = "--Fs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors"
+friendsscaff = "--Fs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors_full2022_comb"
 
 slurmscaff    = "sbatch -c {nth} -p {queue} -J {jobname} -e {logpath}/log.%j.%x.err -o {logpath}/log.%j.%x.out --wrap '{command}'"
 
 commandscaff  = '''python3 makeShapeCards_TopRun2.py --tree NanoAOD {mcafile} {cutsfile} "{variable}" "{bins}" {samplespaths} {friends} --od {outpath} -l {lumi} {nth} -f -L {func} --neg -W "{w}" --year {year} {asimovornot} {uncs} {extra} {name} --AP --storeAll --notVarsChanges --threshold 0.001'''
 
 
-theweights    = "MuonIDSF * MuonISOSF * ElecIDSF * ElecRECOSF * TrigSF * bTagWeight * puWeight"
+theweights    = "MuonIDSF * MuonISOSF * ElecIDSF * ElecRECOSF * TrigSF * bTagWeight * puWeight * TopPtWeight"
 minchunkbytes = 1000
 redofiles     = True
 #redofiles     = False

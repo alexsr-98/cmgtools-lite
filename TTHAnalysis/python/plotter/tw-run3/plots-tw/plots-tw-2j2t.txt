@@ -66,7 +66,7 @@ lep1jet1_dr        : Lep1Jet1_DR         : 20,0,5   ; IncludeUnderflow=False, Le
 lep2jet1_pt        : Lep2Jet1_Pt         : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="//it{p}_{T} (\\ell_{2}\, \\it{j}) (GeV)"
 lep2jet1_m         : Lep2Jet1_M          : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m (\\ell_{2}\, \\it{j}) (GeV)"
 
-minimax  : minimax : 15,0,450 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m_{bl}^{minimax} (GeV)"
+minimax  : minimax : 15,0,450 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m_{bl}^{minimax} (GeV)", Logy
 
 lep1jet1_dr        : Lep1Jet1_DR         : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta R (\\ell_{1}\, jet)"
 lep12jet12_dr      : Lep12Jet12_DR       : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta R (\\ell_{12}\, jet_{12})"
