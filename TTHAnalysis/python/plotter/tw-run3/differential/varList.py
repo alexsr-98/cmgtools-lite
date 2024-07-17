@@ -12,9 +12,9 @@ from array import array
 nuncs       = 3         # Number of uncs. shown in the relative uncertainty plots
 diffControlReg = "3j2t" # Control region used in the differential signal extraction step
 
-asimov      = True     # Use of Asimov dataset or data
+asimov      = False     # Use of Asimov dataset or data
 doxsec      = True      # Show events or diff. cross section in final results
-doPre       = True      # Show or not show the "Preliminary" in the plots
+doPre       = False      # Show or not show the "Preliminary" in the plots
 #doPre       = False      # Show or not show the "Preliminary" in the plots
 doSym       = True      # Symmetrise the uncertainties or not
 #doSym       = False      # Symmetrise the uncertainties or not
@@ -24,11 +24,13 @@ doArea      = False     # Apply area constraint in unfolding (general setting, c
 onlyTotal   = False      # Only show total unc. line in the differential relative unc. plots.
 
 vetolist = ["plots", "control", "tables", "response"]
-arXivtext = "arXiv:2208.06485"
+arXivtext = ""
 
 # === OTHER IMPORTANT DEFINITIONS ===
-LumiDict     = {"2022"       : 7.78,
-                "2022PostEE" : 20.67}
+LumiDict     = {"2022"       : 8.0,
+                #"2022PostEE" : 20.67,
+                "2022PostEE" : 26.67}
+
 TotalLumi   = LumiDict["2022"] + LumiDict["2022PostEE"] # In femtobarns
 
 plotlimits   = tuple([float(i) for i in "0.00, 0.25, 1.00, 1.00".split(',')]) # xlow, ylow, xup, yup
@@ -67,15 +69,23 @@ def mean(numbers):
 #    return ",".join(l)
 
 
-def giveMeOneComparison(thef, name, scalevalue, iV, part = False, normfid = False, normbin = False):
+def giveMeOneComparison(thef, name, scalevalue, iV, part = False, normfid = False, normbin = False, substract=None, add=None):
     #print name
     outH = deepcopy(thef.Get("x_" + name).Clone(name))
+    if substract != None:
+        subsH = deepcopy(thef.Get("x_" + substract).Clone(substract))
+        outH.Add(subsH, -1)
+    if add != None:
+        addH = deepcopy(thef.Get("x_" + add).Clone(add))
+        outH.Add(addH)
     outH.Scale(scalevalue)
     outH.SetMarkerSize(1.25)
     outH.SetMarkerColor(comparisonColourDict[name])
     outH.SetMarkerStyle(markersdict[name])
     outH.SetLineColor(0)
     outH.SetLineWidth(0)
+
+
 
     binstr = "bins_detector" if not part else "bins_particle"
     if normfid:
@@ -117,6 +127,12 @@ def giveMeOneComparison(thef, name, scalevalue, iV, part = False, normfid = Fals
         for iB in range(1, goodoutH.GetNbinsX() + 1):
             goodoutH.SetBinContent(iB, outH.GetBinContent(iB))
             goodoutH.SetBinError(iB, outH.GetBinError(iB))
+        
+        # Print the errors in the bins
+        #print(name)
+        #for iB in range(1, outH.GetNbinsX() + 1):
+        #    print(outH.GetBinContent(iB), outH.GetBinError(iB))
+
         del outH
         return goodoutH
     else:
@@ -541,7 +557,7 @@ varList['Lep1Lep2Jet1MET_Mt'] = {
     'legpos_detectoras':"BL",
     'legpos_detector' : "BL",
     'legpos_particlefid'  : "TL",
-    "legpos_particle"   : (.18, .26, .36, .03),
+    "legpos_particle"   : "TR",
     #"legpos_particle"  : "BL",
     'legpos_particleas': "TL",
     'legpos_detectorunc' : "TL",
@@ -553,19 +569,19 @@ varList['Lep1Lep2Jet1MET_Mt'] = {
     # 'legpos_particlefidbin': (.6, .9, .75, .55),
     #'legpos_particlefidbin': (.63, .88, .78, .53),
     'legpos_particlefidbin': (.51, .88, .78, .43),
-    'legpos_particlefidbinunc':"TL",
+    'legpos_particlefidbinunc':"TC",
     'resptxtsize' : 0.9,
     'txtsize_covdetector': 0.75,
     'txtsize_covparticle': 1.5,
     'txtangle_covparticle': 45,
     "txtsize_covparticlefidbin": 1.4,
     'txtangle_covparticlefidbin': 35,
-    "yaxisuplimitunf": 0.176,
+    "yaxisuplimitunf": 0.3,
     "yaxismax_particlefid" : 1.6,
 #    "yaxismax_particlefidbin": 0.007,
-    "yaxismax_particlefidbin": 0.0105,
+    "yaxismax_particlefidbin": 0.012,
     #"yaxismax_particlefidbinunc" : 1.8,
-    "yaxismax_particlefidbinunc" : 1.3,
+    "yaxismax_particlefidbinunc" : 1.2,
     "yaxismax_unf" : 2,
     #"yaxismax_particlebinunc": 2.0,
     "yaxismax_particlebinunc": 2.1,
@@ -574,7 +590,7 @@ varList['Lep1Lep2Jet1MET_Mt'] = {
     "yaxismax_particlebin": 0.0038,
     #"yaxismax_ratio_fidbin" : 4.0,
 #    "yaxismax_ratio_fidbin" : 2.5,
-    "yaxismax_ratio_fidbin" : 1.5,
+    "yaxismax_ratio_fidbin" : 2.0,
     "yaxismax_ratio_norm" : 5.0,
     # "particle_smoothing" : {"jes_FlavorQCD" : {-1 : "fitOrder=1, symmAfterFit=1",
     #                                            4  : "NOM",},
@@ -628,29 +644,29 @@ varList['Lep1Lep2Jet1_M'] = {
     'legpos_detectorunc' : "TC",
     'legpos_particlefidunc'  : "TC",
     'legpos_particleunc'  : "TL",
-    'legpos_particlefidbinunc': (.45, .615, .63, .9),
+    #'legpos_particlefidbinunc': (.45, .615, .63, .9),
     # 'legpos_particlefidbin': (.66, .9, .8, .6),
     # 'legpos_particlefidbin': (.6, .9, .75, .55),
     #'legpos_particlefidbin': (.63, .88, .78, .53),
     'legpos_particlefidbin': (.51, .88, .78, .43),
     #'legpos_particlefidbin': (.52, .9, .72, .65),
-    "legpos_particle"   : (.52, .9, .72, .65),
+    "legpos_particle"   : "TR",
     'txtsize_covdetector': 0.5,
     'txtsize_covparticle': 1.5,
     'txtangle_covparticle': 35,
     'txtsize_covparticlefidbin': 1.3,
     'txtangle_covparticlefidbin': 35,
-    "yaxisuplimitunf": 0.15,
+    "yaxisuplimitunf": 0.25,
     "yaxismax_particlefidunc" : 0.7,
-    "yaxismax_particlefidbinunc" : 1.3,
+    "yaxismax_particlefidbinunc" : 1.0,
 #    "yaxismax_particlefidbin" : 0.009,
-    "yaxismax_particlefidbin" : 0.01,
+    "yaxismax_particlefidbin" : 0.012,
     "yaxismax_unf" : 2.,
     "yaxismax_particlebin": 0.004,
     "legpos_particlebinunc" : (.18, .5, .31, .785),
-    "legpos_particlefidbinunc": (.4, .615, .58, .9),
+    "legpos_particlefidbinunc": "TC",
 #    "yaxismax_ratio_fidbin" : 2.5,
-    "yaxismax_ratio_fidbin" : 1.5,
+    "yaxismax_ratio_fidbin" : 2.0,
     # "particle_smoothing" : {"jes_BBEC1"       : {-1 : "fitOrder=1, symmAfterFit=1",
     #                                              0  : "NOM",
     #                                              5  : "NOM",},
@@ -721,23 +737,23 @@ varList['Lep1Lep2Jet1_M_control'] = {
     'txtangle_covparticlefidbin': 35,
     "yaxisuplimitunf": 0.15,
     "yaxismax_particlefidunc" : 0.7,
-    "yaxismax_particlefidbinunc" : 1.3,
+    "yaxismax_particlefidbinunc" : 1.0,
     "yaxismax_unf" : 1.55,
     "yaxismax_particlebin": 0.004,
     "legpos_particlebinunc" : (.18, .5, .31, .785),
     "legpos_particlefidbinunc": (.4, .615, .58, .9),
-    "yaxismax_ratio_fidbin" : 2.5,
+    "yaxismax_ratio_fidbin" : 2.0,
 }
 
 
 varList['Jet1_Pt'] = {
-    'printname'     : 'Leading jet \\pt (\\GeV)',
-    'printnamenodim': 'Leading jet \\pt',
-    'mathprintname' : '\\text{Leading jet }\\pt',
-    'xaxis'         : 'Leading jet #it{p}_{T} (GeV)',
-    'yaxis_particle': 'd#sigma/d(leading jet #it{p}_{T}) (pb)',
-    'yaxisfidbin'   : '(1/#sigma_{fid.})d#sigma/d(leading jet  #it{p}_{T}) (1/GeV)',
-    'yaxisbin'      : '(1/#sigma_{fid.})d#sigma/d(leading jet  #it{p}_{T}) (pb/GeV)',
+    'printname'     : 'Jet \\pt (\\GeV)',
+    'printnamenodim': 'Jet \\pt',
+    'mathprintname' : '\\text{Jet }\\pt',
+    'xaxis'         : 'Jet #it{p}_{T} (GeV)',
+    'yaxis_particle': 'd#sigma/d(Jet #it{p}_{T}) (pb)',
+    'yaxisfidbin'   : '(1/#sigma_{fid.})d#sigma/d(Jet  #it{p}_{T}) (1/GeV)',
+    'yaxisbin'      : '(1/#sigma_{fid.})d#sigma/d(Jet  #it{p}_{T}) (pb/GeV)',
     'yaxis_unc'     : 'Relative uncertainty',
     'bins_particle' : [30., 50., 70., 85., 110., 150.], # propuesta (5 bins)
     'bins_detector' : [30., 40., 45., 50., 55., 60., 65., 70., 85., 110., 150.], # propuesta (5 bins) SELECCTIONADA
@@ -760,7 +776,7 @@ varList['Jet1_Pt'] = {
     'legpos_detectorunc' : "TL",
     'legpos_particleunc'  : "TL",
     'legpos_particlefidunc'  : "TL",
-    'legpos_particlefidbinunc':"TL",
+    'legpos_particlefidbinunc':"TC",
     # 'legpos_particlefidbin': (.66, .9, .8, .6),
     # 'legpos_particlefidbin': (.6, .9, .75, .55),
     #'legpos_particlefidbin': (.63, .88, .78, .53),
@@ -773,17 +789,17 @@ varList['Jet1_Pt'] = {
     "txtsize_covparticlefidbin": 1.8,
     'txtangle_covparticle': 45,
     "txtangle_covparticlefidbin": 45,
-    "yaxisuplimitunf": 0.20,
-    "yaxismax_particlefidbin": 0.02,
+    "yaxisuplimitunf": 0.25,
+    "yaxismax_particlefidbin": 0.035,
     "yaxismax_particlefid" : 1.8,
     #"yaxismax_particlefidbinunc" : 1.2,
-    "yaxismax_particlefidbinunc" : 1.3,
+    "yaxismax_particlefidbinunc" : 1.0,
     "yaxismax_unf" : 1,
     "yaxismax_particlebinunc": 1.8,
     "yaxismax_particlebin": 0.010,
     "yaxismax_ratio_norm" : 3.5,
 #    "yaxismax_ratio_fidbin" : 2.5,
-    "yaxismax_ratio_fidbin" : 1.5,
+    "yaxismax_ratio_fidbin" : 2.0,
 }
 
 varList['Lep1_Pt'] = {
@@ -844,30 +860,30 @@ varList['Lep1_Pt'] = {
     'legpos_detectorunc' : "TL",
     'legpos_particlefidunc'  : "TL",
     #"legpos_particle"   : (.18, .3, .32, .05),
-    "legpos_particle"      : "TC",
+    "legpos_particle"      : "TR",
     #'legpos_particlefidbin': "TC",
     #'legpos_particlefidbin': (.18, .3, .32, .05),
     # 'legpos_particlefidbin': (.66, .9, .8, .6),
 #    'legpos_particlefidbin': (.63, .88, .78, .53),
     'legpos_particlefidbin': (.51, .88, .78, .43),
     'legpos_particleunc'   : "TL",
-    'legpos_particlefidbinunc': "TL",
+    'legpos_particlefidbinunc': "TC",
     'resptxtsize'  : 1.5,
     'txtsize_covdetector': 1.2,
     'txtsize_covparticle': 1.35,
     'txtangle_covparticle': 42.50,
     "txtsize_covparticlefidbin": 1.2,
     "txtangle_covparticlefidbin": 35,
-    "yaxisuplimitunf": 0.2,
+    "yaxisuplimitunf": 0.25,
     "yaxismax_particlefidbin": 0.03,
     "yaxismax_particlefid" : 1.1,
-    "yaxismax_particlefidbinunc" : 1.3,
+    "yaxismax_particlefidbinunc" : 1.0,
     #"yaxismax_particlefidbinunc" : 0.5,
     "yaxismax_unf" : 2.0,
     "yaxismax_particlebin": 0.0085,
     "legpos_particlebinunc" : "TL",
 #    "yaxismax_ratio_fidbin" : 2.5,
-   "yaxismax_ratio_fidbin" : 1.08,
+   "yaxismax_ratio_fidbin" : 2.0,
 }
 
 varList['Fiducial'] = {
@@ -881,6 +897,8 @@ varList['Fiducial'] = {
     'var_response'  : 'Fiducial',
     'var_particle'  : 'min(GenDressedLepton_pt[iDressSelLep[0]], 149.)',
     #'var_particle'  : 'min(DressJet1_Pt, 149.)',
+    'printname'   : "Fiducial",
+    'mathprintname'   : "Fiducial",
 }
 
 
@@ -916,7 +934,7 @@ varList['Lep1Lep2Jet1_Pz'] = {
     "legpos_particleunc" : "TL",
     'legpos_detectorunc' : "TL",
     'legpos_particlefidunc'  : "TL",
-    'legpos_particlefidbinunc': "TL",
+    'legpos_particlefidbinunc': "TC",
     # 'legpos_particlefidbin': (.66, .9, .8, .6),
     # 'legpos_particlefidbin': (.6, .9, .75, .55),
     #'legpos_particlefidbin': (.63, .88, .78, .53),
@@ -929,16 +947,16 @@ varList['Lep1Lep2Jet1_Pz'] = {
     'txtsize_covdetector': 1.4,
     "txtsize_covparticlefidbin": 1.2,
     "txtangle_covparticlefidbin": 45,
-    "yaxisuplimitunf": 0.1,
-    "yaxismax_particlefidbin": 0.005,
+    "yaxisuplimitunf": 0.2,
+    "yaxismax_particlefidbin": 0.0075,
     "yaxismax_particlefid" : 1,
     #"yaxismax_particlefidbinunc" : 1,
-    "yaxismax_particlefidbinunc" : 1.3,
+    "yaxismax_particlefidbinunc" : 1.0,
     "yaxismax_unf" : 2,
     "yaxismax_particlebin" : 0.002,
     "legpos_particlebinunc" : "TC",
 #    "yaxismax_ratio_fidbin" : 2.5,
-    "yaxismax_ratio_fidbin" : 1.5,
+    "yaxismax_ratio_fidbin" : 2.0,
     # "particle_smoothing" : {"jes_BBEC1" : {-1 : "fitOrder=1, symmAfterFit=1",
     #                                        0  : "NOM",
     #                                        1  : "NOM",
@@ -1007,6 +1025,9 @@ varList['Lep1Lep2_DPhi'] = {
     'bins_particle' : [0., .17, .33, .5, .67, .83, 1.0],                        # propuesta (6 bins)
     'bins_detector' : [0., 0.083, .17, 0.25, 0.33, 0.417, .5, 0.583, 0.67, 0.75, 0.83, 0.917, 1.0], # propuesta (6 bins)
 
+    #'bins_particle' : [0. ,  0.2,  0.4,  0.6,  0.8,  1.],                        # propuesta (5 bins)
+    #'bins_detector' : [ 0. ,  0.1,  0.2,  0.3,  0.4,  0.5,  0.6,  0.7,  0.8,  0.9,  1. ], # propuesta (5 bins)
+
     "var_detector"  : 'Lep1Lep2_DPhi',
     'var_response'  : 'Lep1Lep2_DPhi',
     'var_particle'  : 'DressLep1Lep2_DPhi',
@@ -1019,7 +1040,8 @@ varList['Lep1Lep2_DPhi'] = {
     'legpos_detector' : "TL",
     'legpos_particlefid'  : "BR",
     #'legpos_particle'  : "BC",
-    "legpos_particle"   : (.43, .255, .63, .04),
+    "legpos_particle"   : "TL",
+    "yaxisuplimitunf": 0.3,
     'legpos_detectoras':"TL",
     'legpos_particleas': "TL",
     # 'legpos_particlefidbin': (.65, .45, .8, .1),
@@ -1046,9 +1068,9 @@ varList['Lep1Lep2_DPhi'] = {
     'legpos_particlebin'        : (.4, .35, .78, .03),
     "yaxismax_ratio_bin"        : 1.5,
     "yaxismax_particlebin"      : 6.5,
-    "yaxismax_ratio_fidbin"     : 1.04,
+    "yaxismax_ratio_fidbin"     : 2.0,
     "yaxismax_particlebinunc"   : 0.1,
-    "yaxismax_particlefidbinunc": 1.3,
+    "yaxismax_particlefidbinunc": 1.0,
 }
 
 # Profiling things
@@ -1136,6 +1158,7 @@ varList['Lep1Lep2_DPhi'] = {
 UncsColourMap = {
     'fit'                 : r.kPink-7,
     'btagging_corr'       : r.TColor.GetColor("#b2df8a"),
+    'btagging'       : r.TColor.GetColor("#b2df8a"),
     'btagging_2016'       : r.TColor.GetColor("#b2df8a"),
     'btagging_2017'       : r.TColor.GetColor("#b2df8a"),
     'btagging_2018'       : r.TColor.GetColor("#b2df8a"),
@@ -1148,6 +1171,11 @@ UncsColourMap = {
     'muonen_2018'         : r.kYellow-12,
     'elecidsf'            : r.kGray+7,
     'elecrecosf'          : r.kGray+12,
+    'elecsmear_2022'      : r.kGray+12,
+    'elecsmear_2022postee': r.kGray+12,
+    'elecscale_2022'      : r.kGray+12,
+    'elecscale_2022postee': r.kGray+12,
+    'lumi'                : r.kAzure-9,
     'muonidsf_stat_2016'  : r.kBlue+5,
     'muonidsf_stat_2017'  : r.kBlue+8,
     'muonidsf_stat_2018'  : r.kBlue+11,
@@ -1161,10 +1189,12 @@ UncsColourMap = {
     'prefiring_2017'      : r.kBlue+3,
     'jes'                 : r.kPink+1,
     'jes_hf'              : r.kPink+1,
-    'jes_bbec1_2016'      : r.kPink+1,
-    'jes_bbec1_2017'      : r.kPink+1,
-    'jes_bbec1_2018'      : r.kPink+1,
+    'jes_bbec1_2022'      : r.kPink+1,
+    'jes_bbec1_2022postee': r.kPink+1,
     'jes_flavorqcd'       : r.kPink+1,
+    'jes_flavorqcd_bottom'       : r.kPink+1,
+    'jes_flavorqcd_charm'       : r.kPink+1,
+    'jes_flavorqcd_light'       : r.kPink+1,
     'jes_relativesample_2022'   : r.kPink+1,
     'jes_relativesample_2022postee'   : r.kPink+1,
     'jes_ec2'             : r.kPink+1,
@@ -1172,20 +1202,17 @@ UncsColourMap = {
     'jes_hf_2017'         : r.kPink+1,
     'jes_hf_2018'         : r.kPink+1,
     'jes_relativebal'     : r.kPink+1,
-    'jes_absolute_2016'   : r.kPink+1,
-    'jes_absolute_2017'   : r.kPink+1,
-    'jes_absolute_2018'   : r.kPink+1,
+    'jes_absolute_2022'   : r.kPink+1,
+    'jes_absolute_2022postee'   : r.kPink+1,
     'jes_bbec1'           : r.kPink+1,
     'jes_EC2_2016'        : r.kPink+1,
     'jes_ec2_2017'        : r.kPink+1,
     'jes_ec2_2018'        : r.kPink+1,
     'jes_absolute'        : r.kPink+1,
-    'jer_2016'            : r.TColor.GetColor("#1f77b4"),
-    'jer_2017'            : r.TColor.GetColor("#a6cee3"),
-    'jer_2018'            : r.TColor.GetColor("#33a02c"),
-    'triggereff_2016'     : r.kOrange-6,
-    'triggereff_2017'     : r.kSpring-9,
-    'triggereff_2018'     : r.kOrange-9,
+    'jer_2022'            : r.TColor.GetColor("#1f77b4"),
+    'jer_2022postee'      : r.TColor.GetColor("#a6cee3"),
+    'triggereff_2022'     : r.kOrange-6,
+    'triggereff_2022postee'     : r.kOrange-6,
     'isr_ttbar'           : r.TColor.GetColor("#cab2d6"),
     'isr_tw'              : r.kAzure-6,
     'fsr'                 : r.kGray+2,
@@ -1196,7 +1223,11 @@ UncsColourMap = {
     'ttbar_matching'      : r.kTeal,
     'scales'              : r.kGreen+4,
     'ttbar_scales'        : r.kGreen+4,
+    'ttbar_scales_mur'        : r.kGreen+4,
+    'ttbar_scales_muf'        : r.kGreen+4,
     'tw_scales'           : r.kYellow-6,
+    'tw_scales_mur'           : r.kYellow-6,
+    'tw_scales_muf'           : r.kYellow-6,
     'colour_rec'          : r.kViolet-2,
     'ttbar_norm'          : r.kBlue,
     'vvttv_norm'          : r.kAzure-9,
@@ -1204,6 +1235,10 @@ UncsColourMap = {
     'dy_norm'             : r.kMagenta,
     'mtop'                : r.kMagenta-3,
     'pdfhessian'          : r.kPink-7,
+    'alphas'          : r.kPink-7,
+    'colour_rec_cr1'      : r.kPink-7,
+    'colour_rec_cr2'      : r.kPink-7,
+    'colour_rec_erdon'    : r.kPink-7,
 }
 UncsColourMap["colour"] = UncsColourMap["colour_rec"]
 
@@ -1214,7 +1249,7 @@ UncGroupsColourMap = {
     'mistag'              : r.kYellow-2,
     'pdf'                 : r.kYellow-12,
     'elec'                : r.kGray+7,
-    'lumi'                : r.kGray+12,
+    'lumi'                : r.kAzure-9,
     'muon'                : r.kBlue+5,
     'pileup'              : r.TColor.GetColor("#fb9a99"),
     'prefiring'           : r.kGreen+1,
@@ -1230,8 +1265,12 @@ UncGroupsColourMap = {
     'ue'                  : r.kTeal-7,
     'matching'            : r.kTeal,
     'ttbar_scales'        : r.kPink+4,
+    'ttbar_scales_mur'        : r.kPink+4,
+    'ttbar_scales_muf'        : r.kPink+4,
     'modellingttbar'      : r.kPink+4,
     'tw_scales'           : r.kGreen-4,
+    'tw_scales_mur'           : r.kGreen-4,
+    'tw_scales_muf'           : r.kGreen-4,
     'modellingtw'         : r.kGreen-4,
     'colour'              : r.kViolet-2,
     'ttbar_norm'          : r.kBlue,
@@ -1288,6 +1327,7 @@ SysNameTranslator = {
     'Nominal'             : "Nominal",
     'btag'                : "B-tag.",
     'btagging_corr'       : "B-tag.",
+    'btagging'            : "B-tag.",
     'btagging_2016'       : "B-tag. (16)",
     'btagging_2017'       : "B-tag. (17)",
     'btagging_2018'       : "B-tag. (18)",
@@ -1297,6 +1337,7 @@ SysNameTranslator = {
     "lumi_corr"           : "Luminosity corr.",
     "lumi"                : "Luminosity",
     'mistagging_corr'     : "Mistag.",
+    'mistagging'          : "Mistag.",
     'mistagging_2016'     : "Mistag. (16)",
     'mistagging_2017'     : "Mistag. (17)",
     'mistagging_2018'     : "Mistag. (18)",
@@ -1306,6 +1347,10 @@ SysNameTranslator = {
     'elecidsf'            : "Electron ID eff.",
     'elecrecosf'          : "Electron reco. eff.",
     "elec"                : "Electron effs.",
+    'elecsmear_2022': "Electron smearing (2022)",
+    'elecsmear_2022PostEE': "Electron smearing (2022PostEE)",
+    'elecscale_2022': "Electron scale (2022)",
+    'elecscale_2022PostEE': "Electron scale (2022PostEE)",
     'muonidsf_stat_2016'  : "Muon ID eff. (16, stat.)",
     'muonidsf_stat_2017'  : "Muon ID eff. (17, stat.)",
     'muonidsf_stat_2018'  : "Muon ID eff. (18, stat.)",
@@ -1317,34 +1362,31 @@ SysNameTranslator = {
     'pileup'              : "Pile-up",
     'prefiring_2016'      : "Prefiring (16)",
     'prefiring_2017'      : "Prefiring (17)",
-    'jes'                 : "JES",
-    'jes_hf'              : "JES",
-    'jes_bbec1_2016'      : "JES",
-    'jes_bbec1_2017'      : "JES",
-    'jes_bbec1_2018'      : "JES",
-    'jes_flavorqcd'       : "JES",
-    'jes_relativesample_2022'   : "JES",
-    'jes_relativesample_2022postee'   : "JES",
-    'jes_ec2'             : "JES",
-    'jes_hf_2016'         : "JES",
-    'jes_hf_2017'         : "JES",
-    'jes_hf_2018'         : "JES",
-    'jes_relativebal'     : "JES",
-    'jes_absolute_2016'   : "JES",
-    'jes_absolute_2017'   : "JES",
-    'jes_absolute_2018'   : "JES",
-    'jes_bbec1'           : "JES",
-    'jes_ec2_2016'        : "JES",
-    'jes_ec2_2017'        : "JES",
-    'jes_ec2_2018'        : "JES",
-    'jes_absolute'        : "JES",
+    'jes'                   : "JES",
+    "jes_HF"                  : "JES - HF corr.",
+    "jes_HF_2022"             : "JES - HF uncorr. (2022)",
+    "jes_HF_2022PostEE"             : "JES - HF uncorr. (2022PostEE)",
+    "jes_BBEC1"               : "JES - BBEC1 corr.",
+    "jes_BBEC1_2022"          : "JES - BBEC1 uncorr. (2022)",
+    "jes_BBEC1_2022PostEE"          : "JES - BBEC1 uncorr. (2022PostEE)",
+    "jes_FlavorQCD"           : "JES - FlavourQCD",
+    "jes_FlavorQCD_bottom"           : "JES - FlavourQCD (b)",
+    "jes_FlavorQCD_charm"           : "JES - FlavourQCD (c)",
+    "jes_FlavorQCD_light"           : "JES - FlavourQCD (l)",
+    "jes_RelativeSample_2022" : "JES - Relative",
+    "jes_RelativeSample_2022PostEE" : "JES - Relative",
+    "jes_EC2"                 : "JES - EC2 corr.",
+    "jes_EC2_2022"            : "JES - EC2 uncorr. (2022)",
+    "jes_EC2_2022PostEE"            : "JES - EC2 uncorr. (2022PostEE)",
+    "jes_RelativeBal"         : "JES - RelativeBal",
+    "jes_Absolute"            : "JES - Absolute corr.",
+    "jes_Absolute_2022"       : "JES - Absolute corr. (2022)",
+    "jes_Absolute_2022PostEE"       : "JES - Absolute corr. (2022PostEE)",
     'jer'                 : "JER",
-    'jer_2016'            : "JER (16)",
-    'jer_2017'            : "JER (17)",
-    'jer_2018'            : "JER (18)",
-    'triggereff_2016'     : "Trigger eff. (16)",
-    'triggereff_2017'     : "Trigger eff. (17)",
-    'triggereff_2018'     : "Trigger eff. (18)",
+    'jer_2022'            : "JER (2022)",
+    'jer_2022PostEE'      : "JER (2022PostEE)",
+    'triggereff_2022'     : "Trigger eff. (22)",
+    'triggereff_2022PostEE'     : "Trigger eff. (22PostEE)",
     'isr_ttbar'           : "ISR (t#bar{t})",
     'isr_tw'              : "ISR (tW)",
     'fsr_ttbar'           : "FSR (t#bar{t})",
@@ -1355,14 +1397,22 @@ SysNameTranslator = {
     'ttbar_matching'      : "ME/PS matching (t#bar{t})",
     'scales'              : "#mu_{R}/#mu_{F}",
     'ttbar_scales'        : "t#bar{t} #mu_{R}/#mu_{F}",
+    'ttbar_scales_muR'    : "t#bar{t} #mu_{R}",
+    'ttbar_scales_muF'    : "t#bar{t} #mu_{F}",
     'tw_scales'           : "tW #mu_{R}/#mu_{F}",
+    'tw_scales_muR'       : "tW #mu_{R}",
+    'tw_scales_muF'       : "tW #mu_{F}",
     'colour_rec'          : "Colour rec.",
+    'colour_rec_cr1'      : "Colour rec. (CR1)",
+    'colour_rec_cr2'      : "Colour rec. (CR2)",
+    'colour_rec_erdon'    : "Colour rec. (MPI with ERD on)",
     'ttbar_norm'          : "t#bar{t} norm.",
     'vvttv_norm'          : "VVt#bar{t}V norm.",
     'nonworz_norm'        : "Non-W/Z norm.",
     'dy_norm'             : "DY norm.",
     'mtop'                : "Top mass",
-    "pdfhessian"          : "PDF + #alpha_{S}",
+    "pdfhessian"          : "PDF",
+    "alphaS"              : "#alpha_{S}",
     "mc_stat"             : "MC stat.",
     "normalisation"       : "Normalisation",
     "modelling"           : "Modelling",
@@ -1393,9 +1443,11 @@ PrintSysNameTranslator = {
     #'mistagging_2016'     : "Mistagging (2016)",
     #'mistagging_1718'     : "Mistagging (2017, 2018)",
     "btagging_corr"       : "B-tagging corr.",
+    "btagging"            : "B-tagging",
     'btagging_2022'       : "B-tagging uncorr. (2022)",
     'btagging_2022PostEE' : "B-tagging uncorr. (2022PostEE)",
     "mistagging_corr"     : "Mistagging corr.",
+    "mistagging"     : "Mistagging",
     'mistagging_2022'     : "Mistagging uncorr. (2022)",
     'mistagging_2022PostEE': "Mistagging uncorr. (2022PostEE)",
     #'muonen_2016'         : "Muon en. corr. (2016)",
@@ -1403,6 +1455,10 @@ PrintSysNameTranslator = {
     #'muonen_2018'         : "Muon en. corr. (2018)",
     'elecidsf'            : "Electron ID eff.",
     'elecrecosf'          : "Electron reco. eff.",
+    'elecscale_2022PostEE'          : "Electron scale (2022PostEE)",
+    'elecsmear_2022PostEE'          : "Electron smear (2022PostEE)",
+    'elecscale_2022'          : "Electron scale (2022)",
+    'elecsmear_2022'          : "Electron smear (2022)",
     'muonidsf_stat_2022'  : "Muon ID eff. (2022, stat.)",
     'muonidsf_stat_2022PostEE'  : "Muon ID eff. (2022PostEE, stat.)",
     'muonidsf_stat'  : "Muon ID eff. (2022PostEE, stat.)",
@@ -1422,6 +1478,9 @@ PrintSysNameTranslator = {
     "jes_BBEC1_2022"          : "JES - BBEC1 uncorr. (2022)",
     "jes_BBEC1_2022PostEE"          : "JES - BBEC1 uncorr. (2022PostEE)",
     "jes_FlavorQCD"           : "JES - Flavour QCD",
+    "jes_FlavorQCD_bottom"           : "JES - Flavour QCD (b)",
+    "jes_FlavorQCD_charm"           : "JES - Flavour QCD (c)",
+    "jes_FlavorQCD_light"           : "JES - Flavour QCD (l)",
     "jes_RelativeSample_2022" : "JES - Relative sample (2022)",
     "jes_RelativeSample_2022PostEE" : "JES - Relative sample (2022PostEE)",
     "jes_EC2"                 : "JES - EC2 corr.",
@@ -1432,13 +1491,20 @@ PrintSysNameTranslator = {
     "jes_Absolute_2022"       : "JES - Absolute corr. (2022)",
     "jes_Absolute_2022PostEE"       : "JES - Absolute corr. (2022PostEE)",
     'jer'            : "JER",
+    'jer_2022PostEE'            : "JER (2022PostEE)",
+    'jer_2022'            : "JER (2022)",
     'unclenergy'    : "Uncl. energy",
+    'unclenergy_2022PostEE'    : "Uncl. energy (2022PostEE)",
+    'unclenergy_2022'    : "Uncl. energy (2022)",
     #'jer_2017'            : "JER (2017)",
     #'jer_2018'            : "JER (2018)",
     'triggereff'     : "Trigger eff.",
+    'triggereff_2022PostEE'     : "Trigger eff. (2022PostEE)",
+    'triggereff_2022'     : "Trigger eff. (2022)",
     #'triggereff_2017'     : "Trigger eff. (2017)",
     #'triggereff_2018'     : "Trigger eff. (2018)",
-    "pdfhessian"          : "PDF + $\\alpha_{S}$",
+    "pdfhessian"          : "PDF",
+    "alphaS"          : "$\\alpha_{S}$",
     'isr_ttbar'           : "ISR (\\ttbar)",
     'isr_tw'              : "ISR (\\tw)",
     'fsr'                 : "FSR (\\ttbar, \\tw)",
@@ -1450,7 +1516,11 @@ PrintSysNameTranslator = {
     "ds"                  : "tW DR/DS",
     'ttbar_matching'      : "ME/PS matching (\\ttbar)",
     'ttbar_scales'        : "\\ttbar $\\mu_{R}$/$\\mu_{F}$",
+    'ttbar_scales_muR'    : "\\ttbar $\\mu_{R}$",
+    'ttbar_scales_muF'    : "\\ttbar $\\mu_{F}$",
     'tw_scales'           : "\\tw $\\mu_{R}$/$\\mu_{F}$",
+    'tw_scales_muR'       : "\\tw $\\mu_{R}$",
+    'tw_scales_muF'       : "\\tw $\\mu_{F}$",
     'colour_rec'          : "Colour rec.",
     'colour_rec_cr1'      : "Colour rec. (CR1)",
     'colour_rec_cr2'      : "Colour rec. (CR2)",
@@ -1477,8 +1547,7 @@ ProcessNameTranslator["VV+t#bar{t}V"] = ProcessNameTranslator["vvttv"]
 
 
 GOFTranslator = {
-    "bb4l"        : "PH b\\bar{b}l^{+}l^{-}\\nu\\bar{\\nu}",
-    "DR"          : "PH DR + P8",
+    "tW"          : "PH DR + P8",
     "DS"          : "PH DS + P8",
     "Herwig"      : "PH DR + H7",
     "aMC_dr"      : "aMC DR + P8",
@@ -1702,13 +1771,14 @@ global_list     = ['systematics']
 
 markersdict = {"tw"                         : 2,
                "twds"                     : 4,
-               "tru_herwig"                 : 26,
+               "twherwig"                 : 26,
                "twamcatnlo_dr"              : 32,
                "twamcatnlo_dr2"             : 24,
                "twamcatnlo_ds"              : 25,
                "twamcatnlo_ds_runningBW"    : 28,
                "twamcatnlo_ds_is"              : 30,
                "twamcatnlo_ds_is_runningBW" : 5,
+               "bb4l"               :66,
                 "tru"                : 2,
                "tru_DS"             : 4,
                "tru_herwig"         : 26,
@@ -1721,13 +1791,14 @@ markersdict = {"tw"                         : 2,
 
 spacingdict = {"tw"                          : -0.9,
                "twds"                      : -0.6,
-               "tru_herwig"                  : -0.3,
+               "twherwig"                  : -0.3,
                "twamcatnlo_dr"               : +0.0,
                "twamcatnlo_dr2"              : +0.3,
                "twamcatnlo_ds"               : +0.6,
                "twamcatnlo_ds_runningBW"     : +0.9,
                "twamcatnlo_ds_is"               : +0.93,
                "twamcatnlo_ds_is_runningBW"  : +0.97,
+               "bb4l" : -0.75,
                "tru"                : -0.9,
                "tru_DS"             : -0.6,
                "tru_herwig"         : -0.3,
@@ -1752,13 +1823,14 @@ comparisonColourDict = {"bb4l"                      : 880,
                         "twttbaramc_ds_is_runningBW": r.kViolet - 1}"""
 comparisonColourDict = {"tw"                        : r.kRed,
                         "twds"                    : r.kGreen+3,
-                        "tru_herwig"                : r.kMagenta,
+                        "twherwig"                : r.kMagenta,
                         "twamcatnlo_dr"             : r.kAzure,
                         "twamcatnlo_dr2"            : r.kAzure - 1,
                         "twamcatnlo_ds"             : r.kOrange + 3,
                         "twamcatnlo_ds_runningBW"   : r.kPink - 9,
                         "twamcatnlo_ds_is"             : r.kViolet - 4,
                         "twamcatnlo_ds_is_runningBW": r.kViolet - 1,
+                        "bb4l"                      : 880,
                         "tru"                : r.kRed,
                         "tru_DS"             : r.kGreen+3,
                         "tru_herwig"         : r.kMagenta,

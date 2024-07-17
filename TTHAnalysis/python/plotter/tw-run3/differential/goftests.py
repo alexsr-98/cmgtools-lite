@@ -153,25 +153,25 @@ def GiveMeMyGoodGOFTests(tsk):
     print("\n====== Performing tests for variable", var, "and with type", ty, "\n")
     if   ty == "particle":
         f1 = r.TFile.Open(pathtothings + "/particleOutput.root",        "read")
-        f2 = r.TFile.Open(pathtothings + "/CovMat_particle.root",       "read")
+        f2 = r.TFile.Open(pathtothings + "/particleOutput.root",       "read")
+        covname = "FullCovMat"
     elif ty == "particlefidbin":
         f1 = r.TFile.Open(pathtothings + "/particlefidbinOutput.root",  "read")
-        f2 = r.TFile.Open(pathtothings + "/CovMat_particlefidbin.root", "read")
+        f2 = r.TFile.Open(pathtothings + "/CovMat_particlefidbin_v2.root", "read")
+        covname = "CovMat_fidbin"
     else:
         raise RuntimeError("FATAL: type {t} is not implemented.".format(t = ty))
     
     hData     = deepcopy(f1.Get(var).Clone("hData"))
-    hbb4l        = deepcopy(f1.Get("bb4l").            Clone("hbb4l"))
-    hDR          = deepcopy(f1.Get("twttbardr").         Clone("hDR"))
-    hDS          = deepcopy(f1.Get("twttbards").         Clone("hDS"))
-    #hHerwig      = deepcopy(f1.Get("twttbarherwig").     Clone("hHerwig"))
-    hHerwig      = deepcopy(f1.Get("twttbards").     Clone("hHerwig"))
-    haMC_dr      = deepcopy(f1.Get("twttbaramc_dr").     Clone("haMC_dr"))
-    haMC_dr2     = deepcopy(f1.Get("twttbaramc_dr2").    Clone("haMC_dr2"))
-    haMC_ds      = deepcopy(f1.Get("twttbaramc_ds").     Clone("haMC_ds"))
-    haMC_ds_runn = deepcopy(f1.Get("twttbaramc_ds_runningBW").Clone("haMC_ds_runn"))
+    htW        = deepcopy(f1.Get("tw").            Clone("htW"))
+    hDS          = deepcopy(f1.Get("twds").         Clone("hDS"))
+    hHerwig      = deepcopy(f1.Get("twherwig").     Clone("hHerwig"))
+    haMC_dr      = deepcopy(f1.Get("twamcatnlo_dr").     Clone("haMC_dr"))
+    haMC_dr2     = deepcopy(f1.Get("twamcatnlo_dr2").    Clone("haMC_dr2"))
+    haMC_ds      = deepcopy(f1.Get("twamcatnlo_ds").     Clone("haMC_ds"))
+    haMC_ds_runn = deepcopy(f1.Get("twamcatnlo_ds_runningBW").Clone("haMC_ds_runn"))
         
-    hDataCov     = deepcopy(f2.Get("finalmat").Clone("hDataCov"))
+    hDataCov     = deepcopy(f2.Get(covname).Clone("hDataCov"))
     
     f1.Close(); f2.Close()
     
@@ -180,12 +180,12 @@ def GiveMeMyGoodGOFTests(tsk):
     hData.SetLineColor(r.kBlack)
     hData.SetLineStyle(2)
 
-    thelumi = vl.TotalLumi if iY == "run2" else vl.LumiDict[iY]
+    thelumi = vl.TotalLumi if iY == "run3" else vl.LumiDict[iY]
     scaleval = 1/thelumi/1000
 
-    hDR.SetFillColor(r.kWhite)
-    hDR.SetLineWidth(2)
-    hDR.SetLineColor(r.kRed)
+    htW.SetFillColor(r.kWhite)
+    htW.SetLineWidth(2)
+    htW.SetLineColor(r.kRed)
     
     hDS.SetFillColor(r.kWhite)
     hDS.SetLineWidth(2)
@@ -209,8 +209,7 @@ def GiveMeMyGoodGOFTests(tsk):
             ##if i != j: continue
             #covmat[i-1, j-1] = hDataCov.GetBinContent(i, j)
     
-    bb4lcovmat        = np.diag(np.array([hbb4l.GetBinError(bin)**2        for bin in range(1, hbb4l.GetNbinsX() + 1)],        dtype = np.double))
-    DRcovmat          = np.diag(np.array([hDR.GetBinError(bin)**2          for bin in range(1, hDR.GetNbinsX() + 1)],          dtype = np.double))
+    tWcovmat          = np.diag(np.array([htW.GetBinError(bin)**2        for bin in range(1, htW.GetNbinsX() + 1)],        dtype = np.double))
     DScovmat          = np.diag(np.array([hDS.GetBinError(bin)**2          for bin in range(1, hDS.GetNbinsX() + 1)],          dtype = np.double))
     Herwigcovmat      = np.diag(np.array([hHerwig.GetBinError(bin)**2      for bin in range(1, hHerwig.GetNbinsX() + 1)],      dtype = np.double))
     aMC_drcovmat      = np.diag(np.array([haMC_dr.GetBinError(bin)**2      for bin in range(1, haMC_dr.GetNbinsX() + 1)],      dtype = np.double))
@@ -230,13 +229,9 @@ def GiveMeMyGoodGOFTests(tsk):
     #print "\ncovmat de DR\n", DRcovmat
     
     coses = {}
-    coses["bb4l"] = {
-        "hist"   : deepcopy(hbb4l),
-        "covmat" : deepcopy(bb4lcovmat)
-    }
-    coses["DR"] = {
-        "hist"   : deepcopy(hDR),
-        "covmat" : deepcopy(DRcovmat)
+    coses["tW"] = {
+        "hist"   : deepcopy(htW),
+        "covmat" : deepcopy(tWcovmat)
     }
     coses["DS"] = {
         "hist"   : deepcopy(hDS),
@@ -294,10 +289,9 @@ def GiveMeMyGoodGOFTests(tsk):
     plot.plotspath = pathtothings + "/goftestplots"
     
     #hDS.GetYaxis().SetRangeUser(0, 1.1 * max( [hDS.GetMaximum(), hDR.GetMaximum(), haMCatNLO.GetMaximum(), hData.GetMaximum()] ))
-    hDR.GetYaxis().SetRangeUser(0, 1.1 * max( [hDR.GetMaximum(), hData.GetMaximum()] ))
+    htW.GetYaxis().SetRangeUser(0, 1.1 * max( [htW.GetMaximum(), hData.GetMaximum()] ))
     
-    plot.addHisto(hbb4l,        'hist',      'bb4l PH+P8',                   'L', 'mc')
-    plot.addHisto(hDR,          'hist,same', 'tW DR + t#bar{t} PH+P8 ',      'L', 'mc')
+    plot.addHisto(htW,          'hist',      'bb4l PH+P8',                   'L', 'mc')
     plot.addHisto(hDS,          'hist,same', 'tW DS + t#bar{t} PH+P8',       'L', 'mc')
     plot.addHisto(hHerwig,      'hist,same', 'tW DR + t#bar{t} PH+H7',       'L', 'mc')
     plot.addHisto(haMC_dr,      'hist,same', 'tW DR + t#bar{t} aMC+P8',      'L', 'mc')
@@ -308,10 +302,8 @@ def GiveMeMyGoodGOFTests(tsk):
     
     thelatxs = []
     
-    thelatxs.append(r.TLatex(0.65, 0.650, '#scale[0.4]{bb4l - p-val.:              %4.10f}'%coses["DR"]["p-value"]))
-    thelatxs.append(r.TLatex(0.65, 0.625, '#scale[0.4]{bb4l - stat.:               %4.10f}'%coses["DR"]["statistic"]))
-    thelatxs.append(r.TLatex(0.65, 0.650, '#scale[0.4]{DR - p-val.:                %4.10f}'%coses["DR"]["p-value"]))
-    thelatxs.append(r.TLatex(0.65, 0.625, '#scale[0.4]{DR - stat.:                 %4.10f}'%coses["DR"]["statistic"]))
+    thelatxs.append(r.TLatex(0.65, 0.650, '#scale[0.4]{DR - p-val.:                %4.10f}'%coses["tW"]["p-value"]))
+    thelatxs.append(r.TLatex(0.65, 0.625, '#scale[0.4]{DR - stat.:                 %4.10f}'%coses["tW"]["statistic"]))
     thelatxs.append(r.TLatex(0.65, 0.600, '#scale[0.4]{DS - p-val.:                %4.10f}'%coses["DS"]["p-value"]))
     thelatxs.append(r.TLatex(0.65, 0.575, '#scale[0.4]{DS - stat.:                 %4.10f}'%coses["DS"]["statistic"]))
     thelatxs.append(r.TLatex(0.65, 0.550, '#scale[0.4]{Herwig - p-val.:            %4.10f}'%coses["Herwig"]["p-value"]))
@@ -341,7 +333,7 @@ def GiveMeMyGoodGOFTests(tsk):
     outtxt += "=========================================\n"
     
     print("\n")
-    for key in ["bb4l", "DR", "DS", "Herwig", "aMC_dr", "aMC_dr2", "aMC_ds", "aMC_ds_runn"]:
+    for key in ["tW", "DS", "Herwig", "aMC_dr", "aMC_dr2", "aMC_ds", "aMC_ds_runn"]:
         outtxt += key + " / p-value: "        + str(coses[key]["p-value"])   + "\n"
         outtxt += key + " / test statistic: " + str(coses[key]["statistic"]) + "\n"
         print(key + ' - p-val.:', coses[key]["p-value"])
@@ -379,10 +371,10 @@ if __name__ == "__main__":
         if variable == "all":
             theyears = []
             presentyears = next(os.walk(inpath))[1]
-            if "2022" in presentyears:
-                theyears.append("2022")
-            if "2022PostEE" in presentyears:
-                theyears.append("2022PostEE")
+            #if "2022" in presentyears:
+            #    theyears.append("2022")
+            #if "2022PostEE" in presentyears:
+            #    theyears.append("2022PostEE")
             if "run3" in presentyears:
                 theyears.append("run3")
             for iY in theyears:
@@ -391,7 +383,7 @@ if __name__ == "__main__":
                 for iV in thevars:
                     if any(el in iV for el in vl.vetolist + ["Fiducial"]): continue
 
-                    for t in ["particle", "particlefidbin"]:
+                    for t in ["particle","particlefidbin"]:
                     #for t in ["particlefidbin"]:
                     #for t in ["particle"]:
                         tasks.append( (inpath, iY, iV, t) )
@@ -407,14 +399,23 @@ if __name__ == "__main__":
         for tsk in tasks:
             GiveMeMyGoodGOFTests(tsk)
 
-    tex.getgoftestsLaTeXtable(["Lep1Lep2_DPhi"],
-                                inpath + "/2016/tables/",
-                                inpath + "/2016/")
-"""
-    if year == "all" or year == "run2":
-        print "\nCreating LaTeX table with all the information...\n"
+    #tex.getgoftestsLaTeXtable(["Lep1Lep2_DPhi"],
+    #                            inpath + "/2016/tables/",
+    #                            inpath + "/2016/")
 
-        tex.getgoftestsLaTeXtable(vl.varList["Names"]["Variables"],
-                                  inpath + "/run2/tables/",
-                                  inpath + "/run2/")
-"""
+    if year == "all" or year == "run3":
+        print("\nCreating LaTeX table with all the information...\n")
+
+        cleanedvars = []
+        for var in vl.varList["Names"]["Variables"]:
+            if var != "Fiducial":
+                cleanedvars.append(var)
+        tex.getgoftestsLaTeXtable(cleanedvars,
+                                  inpath + "/run3/tables/",
+                                  inpath + "/run3/")
+        tex.getgoftestsLaTeXtable(cleanedvars,
+                                  inpath + "/run3/tables/",
+                                  inpath + "/run3/",
+                                  ty="particle")
+        
+    

@@ -82,6 +82,7 @@ class createTrainingMiniTree_TopRun3(Module):
                          "train_jet2_eta",
                          "train_jet2_phi",
                          "train_jet2_m",
+                         "train_minimax",
 
                          #"traiW_loosejet1_pt", # esta antes
                          "train_loosejet1_eta",
@@ -147,6 +148,7 @@ class createTrainingMiniTree_TopRun3(Module):
         allret["train_lep1jet1_dr"                ] = event.Lep1Jet1_DR                 if event.Lep1Jet1_DR                 >= 0 else 0
         allret["train_lep12jet12_dr"              ] = event.Lep12Jet12_DR               if event.Lep12Jet12_DR               >= 0 else 0
         allret["train_lep12jet12met_dr"           ] = event.Lep12Jet12MET_DR            if event.Lep12Jet12MET_DR            >= 0 else 0
+        allret["train_minimax"                    ] = event.minimax                     if event.minimax                     >= 0 else 0
 
         #### NUEVAS
         allret["train_lep1lep2jet1met_mt"         ] = event.Lep1Lep2Jet1MET_Mt          if event.Lep1Lep2Jet1MET_Mt          >= 0 else 0
@@ -252,7 +254,7 @@ class createTrainingMiniTree_TopRun3(Module):
             allret["train_fwdloosejet1_m"             ] = 0
 
         # Do we need to add the weights?
-        allret["allweights"]                        = (event.genWeight * event.MuonIDSF * event.ElecIDSF *
-                                                       event.TrigSF * event.puWeight * event.bTagWeight)
+        #allret["allweights"]                        = (event.genWeight * event.MuonIDSF * event.ElecIDSF *
+        #                                               event.TrigSF * event.puWeight * event.bTagWeight)
 
         return allret

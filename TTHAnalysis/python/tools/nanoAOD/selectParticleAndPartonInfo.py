@@ -23,7 +23,8 @@ class selectParticleAndPartonInfo(Module):
 
         self.branches = ["Top1_pt", "Top1_eta", "Top1_phi", ("Top1_charge", "I"),
                          "Top2_pt", "Top2_eta", "Top2_phi", ("Top2_charge", "I"),
-                         ("nDressBSelJet", "I"), ("nDressBSelLooseJet", "I")]
+                         ("nDressBSelJet", "I"), ("nDressBSelLooseJet", "I"),
+                         ("nDressPartBSelJet", "I"), ("nDressPartBSelLooseJet", "I")]
 
         self.vars_common       = ["pt", "eta", "phi", "mass"]
         self.vars_dressleptons = ["pdgId", "hasTauAnc"]
@@ -100,12 +101,14 @@ class selectParticleAndPartonInfo(Module):
                 #if self.isClean(event, jet):
                 if i not in self.vetoedjets:
                     self.listdressjet.append(i)
-                    if abs(jet.partonFlavour) == 5: otherVarsDict["nDressBSelJet"] += 1
+                    if jet.hadronFlavour == 5: otherVarsDict["nDressBSelJet"] += 1
+                    if abs(jet.partonFlavour) == 5: otherVarsDict["nDressPartBSelJet"] += 1
             elif self.dressloosejetSel(jet):
                 #if self.isClean(event, jet):
                 if i not in self.vetoedjets:
                     self.listdressloosejet.append(i)
-                    if abs(jet.partonFlavour) == 5: otherVarsDict["nDressBSelLooseJet"] += 1
+                    if jet.hadronFlavour == 5: otherVarsDict["nDressBSelLooseJet"] += 1
+                    if abs(jet.partonFlavour) == 5: otherVarsDict["nDressPartBSelLooseJet"] += 1
             elif self.dressfwdjetSel(jet):
                 #if self.isClean(event, jet):
                 if i not in self.vetoedjets:
@@ -133,7 +136,8 @@ class selectParticleAndPartonInfo(Module):
         partobjs = [p for p in Collection(event, "GenPart")]
         candtops = []
         for i, part in enumerate(partobjs):
-            if abs(part.pdgId) == 6 and part.status == 22:
+            #if abs(part.pdgId) == 6 and part.status == 22:
+            if abs(part.pdgId) == 6 and part.status == 62:
                 candtops.append(i)
 
         highptind = 0; lowptind = 1;

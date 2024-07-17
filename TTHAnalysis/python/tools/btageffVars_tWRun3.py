@@ -15,9 +15,10 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.TopRun3_modules import ch, tags, emass
 
 
 class btageffVars_tWRun3(Module):
-    def __init__(self, year_ = 2022, lepCollection = "LepGood", algo_ = 'deepJet', wp_ = "M", json_ = None, SFmeasReg = "mujets"):
+    def __init__(self, year_ = "2022", lepCollection = "LepGood", algo_ = 'deepJet', wp_ = "M", json_ = None, json_ptrel_ = None, SFmeasReg = "mujets"):
         self.selecsdict = {}
-        self.selecsdict[2022] = lambda jet: jet.jetId > 1 and abs(jet.eta) < 2.4 and (jet.idx_veto == -1)
+        self.selecsdict["2022"] = lambda jet: jet.jetId > 1 and abs(jet.eta) < 2.4 and (jet.idx_veto == -1)
+        self.selecsdict["2022PostEE"] = lambda jet: jet.jetId > 1 and abs(jet.eta) < 2.4 and (jet.idx_veto == -1)
         self.lc        = lepCollection
         self.isSet     = False
         self.year      = year_
@@ -32,24 +33,37 @@ class btageffVars_tWRun3(Module):
         else:
             self.algo = [algo_]
             
-        self.algodict   = {"deepJet" : "btagDeepFlavB",
-                           "deepCSV" : "btagDeepB",}
-        
-        self.branchbtag = [self.algodict[alg] for alg in self.algo]
+        self.algodict = {"deepJet" : "DeepFlav",
+                         "particleNet"     : "PNet",
+                         "robustParticleTransformer" : "RobustParTAK4"
+                         }        
+        self.branchbtag = [("btag" + self.algodict[alg] + "B") for alg in self.algo]
         self.wp         = wp_
         
+        if json_ == None: raise RuntimeError("FATAL: no json given.")
+        self.btvjson = core.CorrectionSet.from_file(json_)
+        if json_ptrel_ == None: raise RuntimeError("FATAL: no json_ptrel given.")
+        self.btvjson_ptrel = core.CorrectionSet.from_file(json_ptrel_)
+        
+        self.btaggingWPsEvaluators = {}
+        for algo in self.algodict:
+            self.btaggingWPsEvaluators[algo]    = self.btvjson[algo + "_wp_values"]
+    
         self.cutdict = {}
-        self.cutdict["deepCSV"] = {}; self.cutdict["deepJet"] = {}
-        self.cutdict["deepCSV"][2022] = {"L" : 0.1208, "M" : 0.4168, "T": 0.7665}
-        self.cutdict["deepJet"][2022] = {"L" : 0.0490, "M" : 0.2783, "T": 0.7100}
+        for algo in self.algodict:
+            for _wp_ in ["L", "M", "T"]:
+                self.cutdict[algo + "_{y}_{wp}".format(y = self.year, wp = _wp_)] = self.btaggingWPsEvaluators[algo].evaluate(_wp_)
+
+        #print(self.cutdict)
+
+        #self.cutdict["deepCSV"] = {}; self.cutdict["deepJet"] = {}
+        #self.cutdict["deepCSV"][2022] = {"L" : 0.1208, "M" : 0.4168, "T": 0.7665}
+        #self.cutdict["deepJet"][2022] = {"L" : 0.0490, "M" : 0.2783, "T": 0.7100}
         
         self.flavdict = {5 : "B",
                          4 : "C",
                          0 : "L"}
                 
-        if json_ == None: raise RuntimeError("FATAL: no json given.")
-        
-        self.btvjson = core.CorrectionSet.from_file(json_)
         
         return
 
@@ -86,11 +100,11 @@ class btageffVars_tWRun3(Module):
         return clist
 
     def configureCleaning(self, ev):
-        if   hasattr(ev, "year"):
+        if self.year != None:
+            self.selection = self.selecsdict[self.year]
+        elif   hasattr(ev, "year"):
             self.selection = self.selecsdict[ev.year]
             self.year_     = ev.year
-        elif self.year != None:
-            self.selection = self.selecsdict[self.year]
         return
 
 
@@ -126,6 +140,30 @@ class btageffVars_tWRun3(Module):
 
         return [SF, SFup, SFdn]
 
+    def getSFv2(self, pt, eta, flavour, algorithm):
+        '''
+        This v2 is for the preliminary version of the 2022 SFs, where they are not giving mujets and incl measurements
+        '''
+
+        eta = abs(eta)
+
+        #if flavour == 4: # is a charm jet
+        #    flavour = 5 # use the b flavour SFs (preliminary version)
+
+        if flavour != 0:
+            measurementRegion = self.SFmeasReg
+            theReader  = self.btvjson_ptrel[algorithm + "_" + measurementRegion]
+        else:
+            measurementRegion = "light"
+            theReader  = self.btvjson[algorithm + "_" + measurementRegion]
+
+        
+
+        SF = theReader.evaluate("central", self.wp, flavour, eta, pt)
+        SFup = theReader.evaluate("up", self.wp, flavour, eta, pt)
+        SFdn = theReader.evaluate("down", self.wp, flavour, eta, pt)
+
+        return [SF, SFup, SFdn]
 
     # Common processing
     def run(self, event, Collection):
@@ -158,8 +196,8 @@ class btageffVars_tWRun3(Module):
                 allret["EffSFJet{f}_Eta".format(f = self.flavdict[thefl])].append(self.jets[iJ].eta)
                 
                 for iA in range(len(self.algo)):
-                    SF = self.getSF(thept, self.jets[iJ].eta, thefl, self.algo[iA])
-                    allret["EffSFJet{f}_{a}Istag".format(f = self.flavdict[thefl], a = self.algo[iA])].append(int(getattr(self.jets[iJ], self.branchbtag[iA]) > self.cutdict[self.algo[iA]][self.year][self.wp]))
+                    SF = self.getSFv2(thept, self.jets[iJ].eta, thefl, self.algo[iA])
+                    allret["EffSFJet{f}_{a}Istag".format(f = self.flavdict[thefl], a = self.algo[iA])].append(int(getattr(self.jets[iJ], self.branchbtag[iA]) > self.cutdict[self.algo[iA] + "_{y}_{wp}".format(y=self.year, wp=self.wp)]))
                     allret["EffSFJet{f}_{a}SF".format(   f = self.flavdict[thefl], a = self.algo[iA])].append(SF[0])
                     allret["EffSFJet{f}_{a}SFup".format( f = self.flavdict[thefl], a = self.algo[iA])].append(SF[1])
                     allret["EffSFJet{f}_{a}SFdn".format( f = self.flavdict[thefl], a = self.algo[iA])].append(SF[2])

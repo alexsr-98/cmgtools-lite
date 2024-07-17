@@ -1,3 +1,4 @@
+import correctionlib._core as core
 import ROOT as r
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection
@@ -15,26 +16,27 @@ class pythonCleaningTopRun2UL(Module):
                  year_ = None, debug = False):
 
         self.label = "" if (label in ["", None]) else ("_" + label)
-
+        self.year      = year_
+        self.basepath     = os.environ["CMSSW_BASE"] + "/src/CMGTools/TTHAnalysis/data/TopRun3/"
+        self.basepathbtag  = self.basepath + "/btagging/"
+        self.jsonpathbtag  = {
+            "2022" : "/2022_Summer22/",
+            "2022PostEE" : "/2022_Summer22EE/",
+        }
+        self.btaggingWPsEvaluator    = core.CorrectionSet.from_file(self.basepathbtag + self.jsonpathbtag[self.year]  + "btagging.json")[algo + "_wp_values"]
         #### NOTE: here the tight selections for jet (excluding eta and pt requirements) are hardcoded per year
         self.selecsdict = {}
 
         # Con JetPUID (revisar con cuidao https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetIDUL)
         if isMC:
-            self.selecsdict[2016] = lambda jet: (jet.jetId > 1)
-            self.selecsdict[2017] = lambda jet: (jet.jetId > 1)
-            self.selecsdict[2018] = lambda jet: (jet.jetId > 1)
-            self.selecsdict[2022] = lambda jet: (jet.jetId > 1) and (jet.idx_veto == -1)
+            self.selecsdict["2022"] = lambda jet: (jet.jetId > 1) and (jet.idx_veto == -1)
+            self.selecsdict["2022PostEE"] = lambda jet: (jet.jetId > 1) and (jet.idx_veto == -1)
         else:
-            self.selecsdict[2016] = lambda jet: (jet.jetId > 1)
-            self.selecsdict[2017] = lambda jet: (jet.jetId > 1)
-            self.selecsdict[2018] = lambda jet: (jet.jetId > 1)
-            self.selecsdict[2022] = lambda jet: (jet.jetId > 1) and (jet.idx_veto == -1)
 
-        # Estandar
-        #self.selecsdict[2016] = lambda jet: jet.jetId > 1
-        #self.selecsdict[2017] = lambda jet: jet.jetId > 1
-        #self.selecsdict[2018] = lambda jet: jet.jetId > 1
+            self.selecsdict["2022"] = lambda jet: (jet.jetId > 1) and (jet.idx_veto == -1)
+            self.selecsdict["2022PostEE"] = lambda jet: (jet.jetId > 1) and (jet.idx_veto == -1)
+
+
 
         self.jc     = jetCollection
         self.lc     = lepCollection
@@ -52,52 +54,22 @@ class pythonCleaningTopRun2UL(Module):
             self.jecvars     = []
             self.lepenvars = []
 
-        self.year      = year_
         self.isSet     = False
         self.selection = lambda j : True
 
-        self.algodict = {"DeepFlav" : "DeepFlav",
-                         "DeepCSV"  : "Deep"}
+        self.algodict = {"deepJet" : "DeepFlav",
+                         "particleNet"     : "PNet",
+                         "robustParticleTransformer" : "RobustParTAK4"
+                         }
 
         self.algoscaff = algo + "_{y}_{wp}"
         self.jetBTag   = "btag" + self.algodict[algo] + "B"
         self.btagWP    = btagWP_
-        ### WP extracted on 2022-04-27 from:
-        # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL16preVFP  # APV
-        # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL16postVFP
-        # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL17
-        # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL18
-        self.btagWPs   = {"DeepCSV_2016apv_L" : 0.2027,
-                          "DeepCSV_2016apv_M" : 0.6001,
-                          "DeepCSV_2016apv_T" : 0.8819,
-                          "DeepCSV_2016_L"    : 0.1918,
-                          "DeepCSV_2016_M"    : 0.5847,
-                          "DeepCSV_2016_T"    : 0.8767,
-                          "DeepCSV_2017_L"    : 0.1355,
-                          "DeepCSV_2017_M"    : 0.4506,
-                          "DeepCSV_2017_T"    : 0.7738,
-                          "DeepCSV_2018_L"    : 0.1208,
-                          "DeepCSV_2018_M"    : 0.4168,
-                          "DeepCSV_2018_T"    : 0.7665,
-                          "DeepFlav_2016apv_L": 0.0508,
-                          "DeepFlav_2016apv_M": 0.2598,
-                          "DeepFlav_2016apv_T": 0.6502,
-                          "DeepFlav_2016_L"   : 0.0480,
-                          "DeepFlav_2016_M"   : 0.2489,
-                          "DeepFlav_2016_T"   : 0.6377,
-                          "DeepFlav_2017_L"   : 0.0532,
-                          "DeepFlav_2017_M"   : 0.3040,
-                          "DeepFlav_2017_T"   : 0.7476,
-                          "DeepFlav_2018_L"   : 0.0490,
-                          "DeepFlav_2018_M"   : 0.2783,
-                          "DeepFlav_2018_T"   : 0.7100,
-                          "DeepFlav_2022_L"   : 0.0490, #copied from 2018
-                          "DeepFlav_2022_M"   : 0.2783,
-                          "DeepFlav_2022_T"   : 0.7100,
-                          "DeepCSV_2022_L"    : 0.1208,
-                          "DeepCSV_2022_M"    : 0.4168,
-                          "DeepCSV_2022_T"    : 0.7665,
-                         }
+
+        self.btagWPs   = {}
+        for _wp_ in ["L", "M", "T"]: # We store the btagging wps from the json
+            self.btagWPs[self.algoscaff.format(y = self.year, wp = _wp_)] = self.btaggingWPsEvaluator.evaluate(_wp_)
+        #print(self.btagWPs)
         self.btagWPcut = 0.
         self.btagWPcutLoose = 0.
         self.deltaRcut = deltaRcut
@@ -327,12 +299,12 @@ class pythonCleaningTopRun2UL(Module):
     #### Other methods
     def configureCleaning(self, ev):
         if self.year != None:
-            self.selection = self.selecsdict[int(self.year) if not "apv" in self.year else 2016]
+            self.selection = self.selecsdict[self.year]
             self.btagWPcut = self.btagWPs[self.algoscaff.format(y = self.year, wp = self.btagWP)]
             self.btagWPcutLoose = self.btagWPs[self.algoscaff.format(y = self.year, wp = "L")]
         else:
             wr.warn("WARNING: as you did not choose year, we will use deepcsv as algorithm with random values for the working points.")
-            self.btagWPcut = self.btagWPs["DeepCSVM"]
+            #self.btagWPcut = self.btagWPs["DeepCSVM"]
         return
 
 

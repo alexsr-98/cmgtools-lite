@@ -81,7 +81,7 @@ Class implementation
 ---------------------------------------------------------------
 """
 class JetEnergyCorrector( Module ):
-    def __init__(self, year = "2022", jec = "Winter22Run3", isMC = True, era = "CD",
+    def __init__(self, year = "2022", jec = "Winter22Run3", jer = "Winter22Run3", jecveto = "Winter22Run3", isMC = True, era = "CD",
                  algo = "AK4PFPuppi", metbranchname = "PuppiMET", rhoBranchName = "Rho_fixedGridRhoFastjetAll",
                  hjetvetomap = "jetvetomap",
                  unc = "Total", saveMETUncs = ["T1", "T1Smear"], 
@@ -91,6 +91,8 @@ class JetEnergyCorrector( Module ):
         self.year = year
         self.jetvetopmap = hjetvetomap
         self.jec = jec
+        self.jer = jer
+        self.jecveto = jecveto
         self.isMC = isMC
         self.era = era
         self.runOn = "MC" if self.isMC else "DATA"
@@ -105,9 +107,25 @@ class JetEnergyCorrector( Module ):
         # This function is used to evaluate 
         self.evaluate = lambda corrector, inputs : corrector.evaluate(*inputs)
 
-    
+        # Dictionary with the JECs and JERs
+        self.jecs_jsons = {
+            "Summer22EE_22Sep2023" : "jet_jerc_2022PostEE_JEC.json",
+            "Summer22EEPrompt22" : "jet_jerc_2022PostEE_JR.json",
+            "Summer22_22Sep2023" : "jet_jerc_2022_JEC.json",
+            "JR_Winter22Run3" : "jet_jerc_2022_JR.json",
+        }
+        self.eraCorrection = { # This is how data corrections are grouped in the json
+            "CD" : ["CD"],
+            "EFG" : ["E", "F", "G"],
+        }
+
+        # Check if we need a different JSON for JER
+        self.differentJERjson = False
+        if self.jer != self.jec:
+            self.differentJERjson = True
+
         # Create the evaluators need to compute the SFs
-        self.jsonpath = os.path.join( os.environ["CMSSW_BASE"], "src/CMGTools/TTHAnalysis/data/jecs/{}/".format(year))
+        self.jsonpath = os.path.join( os.environ["CMSSW_BASE"], "src/CMGTools/TTHAnalysis/data/TopRun3/jecs/{}/".format(year))
         self.create_correctors()
         
         
@@ -174,8 +192,13 @@ class JetEnergyCorrector( Module ):
             + vetomaps: to veto regions of detector that were not used to compute JECs.
         -----------------------------------------------------------------------------
         """
+        jsonName = self.jecs_jsons[self.jec]
         print(" >> This is %s for year %s"%( "MC" if self.isMC else "Data", self.year))
-        self.jerc_corrs = core.CorrectionSet.from_file(os.path.join(self.jsonpath, "jet_jerc.json.gz"))
+        self.jerc_corrs = core.CorrectionSet.from_file(os.path.join(self.jsonpath, jsonName))
+
+        if self.differentJERjson:
+            jsonName = self.jecs_jsons[self.jer]
+            self.jerc_corrs_jer = core.CorrectionSet.from_file(os.path.join(self.jsonpath, jsonName))
 
         self.jes_corrs = {}
         self.jer_corrs = {}
@@ -186,7 +209,7 @@ class JetEnergyCorrector( Module ):
         corrList = ["L1FastJet", "L2Relative", "L2L3Residual"]
         if self.isMC:
             # + For MC it's easy, we just have an entry in the json with the corrections.
-            mainJECname = "{}_V1_{}_{}_{}".format(self.jec, self.runOn, "L1L2L3Res", self.algo)
+            mainJECname = "{}_V2_{}_{}_{}".format(self.jec, self.runOn, "L1L2L3Res", self.algo)
             print(" >> Applying %s"%mainJECname)
             for key in list(self.jerc_corrs):
                 if self.runOn not in key: continue
@@ -204,13 +227,23 @@ class JetEnergyCorrector( Module ):
                     saveOn = self.uncs
                 saveOn[sourcename] = corrector   
             self.jes_corrs["L1L2L3Res"] = self.jerc_corrs.compound[mainJECname]
+
+            if self.differentJERjson:
+                for key in list(self.jerc_corrs_jer):
+                    if self.runOn not in key: continue
+                    sourcename = key.split("_")[-2]
+                    corrector = self.jerc_corrs_jer[key]
+                    # JERs
+                    if "JR" in key:
+                        saveOn = self.jer_corrs
+                        saveOn[sourcename] = corrector
         
         else:
             # For corrections in data, we need to know at anytime which era we are considering. There's an entry
             # for each era in 2022: C or D so far (for EFG we also apply era D corrections...)
             # Solution: load all corrections into memory an select which one to use on the fly when looping over jets...
-            for era in ["F", "G"]:
-                mainJECname = "{}_{}_V1_{}_{}_{}".format(self.jec, "Run%s"%era, self.runOn, "L1L2L3Res", self.algo)
+            for era in self.eraCorrection[self.era]:
+                mainJECname = "{}_{}_V2_{}_{}_{}".format(self.jec, "Run%s"%era, self.runOn, "L1L2L3Res", self.algo)
                 print(" >> Applying %s"%mainJECname)
                 for key in list(self.jerc_corrs):
                     if self.runOn not in key: continue
@@ -230,9 +263,8 @@ class JetEnergyCorrector( Module ):
             # For the vetomaps we should use eras CD for preEE MC as well as E for postEE MC.
             # post: https://cms-talk.web.cern.ch/t/question-concerning-jme-recommendations-for-run3/23756/6
             # Open rootfile and load histogram
-            rfilename = "{}_Run{}_v1.root".format(self.jec, self.era)
+            rfilename = "{}_Run{}_v1.root".format(self.jecveto, self.era)
             print(" >> Applying %s for veto maps (era: %s)"%(rfilename, self.era))
-            rfilename = "Winter22Run3_RunE_v1.root" # FIXME: do this in a better way, for the summer corrections, the self.jec is summer and we dont have the veto maps
             rfile = ROOT.TFile.Open( os.path.join(self.jsonpath, rfilename) )
             self.vmap = deepcopy(rfile.Get("jetvetomap"))
             rfile.Close()
@@ -306,9 +338,11 @@ class JetEnergyCorrector( Module ):
             datasetname = "".join(event.DatasetName_name)
             era = None
             if "Run%sC"%self.year in datasetname: 
-                era = "C"
+                era = "CD"
             elif "Run%sD"%self.year in datasetname: 
-                era = "D"
+                era = "CD"
+            elif "Run%sE"%self.year in datasetname: 
+                era = "E"
             elif "Run%sF"%self.year in datasetname: 
                 era = "F"
             elif "Run%sG"%self.year in datasetname: 

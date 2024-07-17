@@ -66,33 +66,6 @@ remove_overlap_booleans = [ lambda ev : (
                             or (ev.channel == ch.Elec and (ev.Trigger_1e or ev.Trigger_2e)) )
                             if ev.datatag == tags.mc else
 
-                            (  (ev.channel == ch.ElMu and (not ev.Trigger_em) and ev.Trigger_1m)
-                            or (ev.channel == ch.Muon and (not ev.Trigger_2m) and ev.Trigger_1m))
-                            if ev.datatag == tags.singlemuon else
-
-                            (   ev.channel == ch.Muon and ev.Trigger_2m)
-                            if ev.datatag == tags.doublemuon else
-
-                            (  (ev.channel == ch.ElMu and (not ev.Trigger_em) and ev.Trigger_1m)
-                            or (ev.channel == ch.Muon and (ev.Trigger_2m or ev.Trigger_1m)))
-                            if ev.datatag == tags.muon else
-
-                            (   ev.channel == ch.ElMu and (not ev.Trigger_em) and (not ev.Trigger_1m) and ev.Trigger_1e)
-                            or (ev.channel == ch.Elec and (ev.Trigger_2e or ev.Trigger_1e))
-                            if ev.datatag == tags.egamma else
-
-                            (  ev.channel == ch.ElMu and ev.Trigger_em)
-                            if ev.datatag == tags.muoneg else
-
-                            (False)
-                        )]
-
-remove_overlap_booleans_ala_ttbarRun3 = [ lambda ev : (
-                            (  (ev.channel == ch.ElMu and (ev.Trigger_em or ev.Trigger_1m or ev.Trigger_1e))
-                            or (ev.channel == ch.Muon and (ev.Trigger_1m or ev.Trigger_2m))
-                            or (ev.channel == ch.Elec and (ev.Trigger_1e or ev.Trigger_2e)) )
-                            if ev.datatag == tags.mc else
-
                             # First emu dataset
                             (  ev.channel == ch.ElMu and ev.Trigger_em)
                             if ev.datatag == tags.muoneg else
@@ -119,7 +92,7 @@ remove_overlap_booleans_ala_ttbarRun3 = [ lambda ev : (
                             (False)
                         )]
 
-remove_overlap = lambda : EvtTagger('pass_trigger', remove_overlap_booleans_ala_ttbarRun3)
+remove_overlap = lambda : EvtTagger('pass_trigger', remove_overlap_booleans)
 
 triggerSeq = [Trigger_1e, Trigger_1m, Trigger_2e, Trigger_2m, Trigger_em, remove_overlap]
 
@@ -195,17 +168,17 @@ dressfwdloosejetID = lambda j : ( abs(j.eta) >= 2.4 and abs(j.eta) < 5.0 and (ab
 from CMGTools.TTHAnalysis.tools.nanoAOD.calculateJECS import JetEnergyCorrector
 from CMGTools.TTHAnalysis.tools.nanoAOD.jetMetGrouper_TopRun3 import jetMetCorrelate2022, groups
 
+# Important, the era selects the jet veto map, the jec selects the JEC version
 addJECs_2022_mc = lambda : JetEnergyCorrector(
-    year = 2022, era = "CD", jec = "Winter22Run3", isMC = True,
+    year = 2022, era = "CD", jec = "Summer22_22Sep2023", jer = "Summer22EEPrompt22", jecveto = "Summer22_23Sep2023", isMC = True,
     algo = "AK4PFPuppi", metbranchname = "PuppiMET", rhoBranchName = "Rho_fixedGridRhoFastjetAll",
     hjetvetomap = "jetvetomap",
     unc = "Total", saveMETUncs = ["T1", "T1Smear"], 
     splitJers = False, applyVetoMaps = True
 )
 
-# + In reality this only runs the jet vetos
 addJECs_2022_data = lambda : JetEnergyCorrector(
-    year = 2022, era = "CD", jec = "Winter22Run3", isMC = False,
+    year = 2022, era = "CD", jec = "Summer22_22Sep2023", jer = "Summer22EEPrompt22", jecveto = "Summer22_23Sep2023", isMC = False,
     algo = "AK4PFPuppi", metbranchname = "PuppiMET", rhoBranchName = "Rho_fixedGridRhoFastjetAll",
     hjetvetomap = "jetvetomap",
     unc = "Total", saveMETUncs = ["T1", "T1Smear"], 
@@ -213,24 +186,15 @@ addJECs_2022_data = lambda : JetEnergyCorrector(
 )
 
 addJECs_2022EE_mc = lambda : JetEnergyCorrector(
-    year = 2022, era = "E", jec = "Summer22EEPrompt22", isMC = True,
+    year = 2022, era = "EFG", jec = "Summer22EE_22Sep2023", jer = "Summer22EEPrompt22", jecveto = "Summer22EE_23Sep2023", isMC = True,
     algo = "AK4PFPuppi", metbranchname = "PuppiMET", rhoBranchName = "Rho_fixedGridRhoFastjetAll",
     hjetvetomap = "jetvetomap",
     unc = "Total", saveMETUncs = ["T1", "T1Smear"], 
     splitJers = False, applyVetoMaps = True
 )
-## For UL samples
-#addJECs_2022EE_mc = lambda : JetEnergyCorrector(
-#    year = 2022, era = "E", jec = "Winter22Run3", isMC = True,
-#    algo = "AK4PFPuppi", metbranchname = "PuppiMET", rhoBranchName = "fixedGridRhoFastjetAll",
-#    hjetvetomap = "jetvetomap",
-#    unc = "Total", saveMETUncs = ["T1", "T1Smear"], 
-#    splitJers = False, applyVetoMaps = True
-#)
 
-# + In reality this only runs the jet vetos
 addJECs_2022EE_data = lambda : JetEnergyCorrector(
-    year = 2022, era = "E", jec = "Summer22EEPrompt22", isMC = False,
+    year = 2022, era = "EFG", jec = "Summer22EE_22Sep2023", jer = "Summer22EEPrompt22", jecveto = "Summer22EE_23Sep2023", isMC = False,
     algo = "AK4PFPuppi", metbranchname = "PuppiMET", rhoBranchName = "Rho_fixedGridRhoFastjetAll",
     hjetvetomap = "jetvetomap",
     unc = "Total", saveMETUncs = ["T1", "T1Smear"],
@@ -256,9 +220,9 @@ cleaning_mc_2022 = lambda : pythonCleaningTopRun2UL(label  = "Recl",
                                              jecvars   = ['jesTotal', 'jer'] + ['jes' + v for v in groups],
                                              lepenvars = ["mu","elscale","elsigma"],
                                              isMC      = True,
-                                             year_     = "2022",
-                                             #debug     = True,
-                                             #algo      = "DeepCSV",
+                                             year_     = "2022", # Selects the correct json for the btag WPs
+                                             algo      = "robustParticleTransformer",
+                                             btagWP_ = "M",
 )
 cleaning_mc_2022PostEE = lambda : pythonCleaningTopRun2UL(label  = "Recl",
                                              jetPts = [IDDict["jets"]["pt"], IDDict["jets"]["pt2"]],
@@ -266,24 +230,26 @@ cleaning_mc_2022PostEE = lambda : pythonCleaningTopRun2UL(label  = "Recl",
                                              jecvars   = ['jesTotal', 'jer'] + ['jes' + v for v in groups],
                                              lepenvars = ["mu","elscale","elsigma"],
                                              isMC      = True,
-                                             year_     = "2022",
-                                             #debug     = True,
-                                             #algo      = "DeepCSV",
+                                             year_     = "2022PostEE", # Selects the correct json for the btag WPs
+                                             algo      = "robustParticleTransformer",
+                                             btagWP_ = "M",
 )
 
 cleaning_data_2022 = lambda : pythonCleaningTopRun2UL(label = "Recl",
                                                jetPts = [IDDict["jets"]["pt"], IDDict["jets"]["pt2"]],
                                                jetPtNoisyFwd = IDDict["jets"]["ptfwdnoise"],
                                                jecvars   = [], lepenvars = [], isMC = False,
-                                               year_     = "2022",
-                                               #algo      = "DeepCSV",
+                                               year_     = "2022", # Selects the correct json for the btag WPs
+                                               algo      = "robustParticleTransformer",
+                                               btagWP_ = "M",
 )
 cleaning_data_2022PostEE = lambda : pythonCleaningTopRun2UL(label = "Recl",
                                                jetPts = [IDDict["jets"]["pt"], IDDict["jets"]["pt2"]],
                                                jetPtNoisyFwd = IDDict["jets"]["ptfwdnoise"],
                                                jecvars   = [], lepenvars = [], isMC = False,
-                                               year_     = "2022",
-                                               #algo      = "DeepCSV",
+                                               year_     = "2022PostEE",  # Selects the correct json for the btag WPs
+                                               algo      = "robustParticleTransformer",
+                                               btagWP_ = "M",
 )
 
 #### Add Rochester corrections
@@ -324,6 +290,12 @@ varstrigger_data            = [eventVars_data] + triggerSeq
 from CMGTools.TTHAnalysis.tools.nanoAOD.TopPtWeight import TopPtWeight
 addTopPtWeight = lambda : TopPtWeight()
 
+# Reweight 13 to 13p6 weight
+from CMGTools.TTHAnalysis.tools.nanoAOD.TopPtWeight13to13p6 import TopPtWeight13to13p6
+addTopPtWeight13to13p6 = lambda : TopPtWeight13to13p6()
+
+
+
 ## PU weights
 #from CMGTools.TTHAnalysis.tools.nanoAOD.applyPuWeights import puWeighter
 #puweight_file = os.path.join( os.environ["CMSSW_BASE"], "src/CMGTools/TTHAnalysis/data/pileup/puWeights_UL_2022.root")
@@ -333,64 +305,92 @@ addTopPtWeight = lambda : TopPtWeight()
 from PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer import puWeightProducer
 pufile_data2022PostEE = "%s/src/PhysicsTools/NanoAODTools/python/postprocessing/data/pileup/MyDataPileupHistogram_2022PostEE.root" % os.environ[
     'CMSSW_BASE']
-puweighter = lambda : puWeightProducer(
+pufile_data2022PreEE = "%s/src/PhysicsTools/NanoAODTools/python/postprocessing/data/pileup/MyDataPileupHistogram_2022PreEE.root" % os.environ[
+    'CMSSW_BASE']
+puweighter2022 = lambda : puWeightProducer(
+    "auto", pufile_data2022PreEE, "pu_mc", "pileup", verbose=False)
+puweighter2022PostEE = lambda : puWeightProducer(
     "auto", pufile_data2022PostEE, "pu_mc", "pileup", verbose=False)
 
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.btag_weighterRun3 import btag_weighterRun3
 ## b-tagging
-btagpath = os.environ['CMSSW_BASE'] + "/src/CMGTools/TTHAnalysis/data/TopRun2UL/btagging"
-btagWeights_2022 = lambda : btag_weighterRun3(btagpath + "/" + "btagging.json.gz",
-                                            btagpath + "/" + "btagEffs_2023_06_06.root",
-                                            'deepJet',
+btagpath = os.environ['CMSSW_BASE'] + "/src/CMGTools/TTHAnalysis/data/TopRun3/btagging"
+btagWeights_2022       = lambda : btag_weighterRun3(json = btagpath + "/2022_Summer22/" + "btagging_v0.json",
+                                            eff = btagpath + "/btagEffs_2024_01_16_btagEff.root",
+                                            json_ptrel = btagpath + "/2022_Summer22/" + "btagging_v0.json",
+                                            algo = 'robustParticleTransformer',
                                             jecvars   = ['jesTotal', 'jer'] + ['jes' + v for v in groups],
                                             lepenvars = ["mu","elscale","elsigma"],
-                                            splitCorrelations = True,
-                                            year = "2022")
+                                            splitCorrelations = True, ## TEMPORAL
+                                            useCombnuisances = True, ## TEMPORAL
+                                            year = "2022",
+                                            SFmeasReg = "comb")
+btagWeights_2022PostEE = lambda : btag_weighterRun3(json = btagpath + "/2022_Summer22EE/" + "btagging_v0.json",
+                                            eff = btagpath + "/btagEffs_2024_01_16_btagEff.root",
+                                            json_ptrel = btagpath + "/2022_Summer22EE/" + "btagging_v0.json",
+                                            algo = 'robustParticleTransformer',
+                                            jecvars   = ['jesTotal', 'jer'] + ['jes' + v for v in groups],
+                                            lepenvars = ["mu","elscale","elsigma"],
+                                            splitCorrelations = True, ## TEMPORAL
+                                            useCombnuisances = True, ## TEMPORAL
+                                            year = "2022PostEE",
+                                            SFmeasReg = "comb")
 
 # Lepton & trigger SF
 from CMGTools.TTHAnalysis.tools.nanoAOD.lepScaleFactors_TopRun3 import lepScaleFactors_TopRun3
-leptrigSFs_2022    = lambda : lepScaleFactors_TopRun3(year_ = "2018",    lepenvars = ["mu","elscale","elsigma"])
-leptrigSFs_2022_ttbarRun3    = lambda : lepScaleFactors_TopRun3(year_ = "2022",    lepenvars = ["mu","elscale","elsigma"])
+leptrigSFs_2022    = lambda : lepScaleFactors_TopRun3(year_ = "2022",    lepenvars = ["mu","elscale","elsigma"])
+leptrigSFs_2022PostEE    = lambda : lepScaleFactors_TopRun3(year_ = "2022PostEE",    lepenvars = ["mu","elscale","elsigma"])
 
-sfSeq_2022      = [leptrigSFs_2022_ttbarRun3, btagWeights_2022, puweighter]
-sfSeq_2022PostEE      = sfSeq_2022
+sfSeq_2022            = [leptrigSFs_2022, puweighter2022, addTopPtWeight, btagWeights_2022]
+sfSeq_2022PostEE      = [leptrigSFs_2022PostEE, puweighter2022PostEE, addTopPtWeight, btagWeights_2022PostEE]
 
 
 ### BDT
-import importlib
-
-mvas_mc = [lambda : getattr(importlib.import_module("CMGTools.TTHAnalysis.tools.nanoAOD.MVA_tWRun3"), "MVA_tWRun3_")()]
-
-tmpstr = """mvas_mc.append(lambda : getattr(importlib.import_module("CMGTools.TTHAnalysis.tools.nanoAOD.MVA_tWRun3"), "MVA_tWRun3_{v}{sv}")() )"""
-
-for v in (['jesTotal', 'jer'] + ['jes' + v for v in groups] + ["mu"] + ["unclustEn"]):
-    for sv in ["Up", "Down"]:
-        eval(tmpstr.format(v = v, sv = sv))
-        
-mvas_data = lambda : getattr(importlib.import_module("CMGTools.TTHAnalysis.tools.nanoAOD.MVA_tWRun3"), "MVA_tWRun3_")()
+#import importlib
+#
+#mvas_mc = [lambda : getattr(importlib.import_module("CMGTools.TTHAnalysis.tools.nanoAOD.MVA_tWRun3"), "MVA_tWRun3_")()]
+#
+#tmpstr = """mvas_mc.append(lambda : getattr(importlib.import_module("CMGTools.TTHAnalysis.tools.nanoAOD.MVA_tWRun3"), "MVA_tWRun3_{v}{sv}")() )"""
+#
+#for v in (['jesTotal', 'jer'] + ['jes' + v for v in groups] + ["mu"] + ["unclustEn"]):
+#    for sv in ["Up", "Down"]:
+#        eval(tmpstr.format(v = v, sv = sv))
+#        
+#mvas_data = lambda : getattr(importlib.import_module("CMGTools.TTHAnalysis.tools.nanoAOD.MVA_tWRun3"), "MVA_tWRun3_")()
 
 
 ###### b-tagging efficiencies (Summary of JSON content: python3 -m correctionlib.cli summary btagging.json.gz)
 from CMGTools.TTHAnalysis.tools.btageffVars_tWRun3 import btageffVars_tWRun3
 btagEffFtree_2022 = lambda : btageffVars_tWRun3(wp_   = "M",
                                                 algo_ = ['deepJet',
-                                                         "deepCSV"],
-                                                json_  = btagpath + "/btagging.json.gz",
-                                                year_ = 2022)
-btagEffFtree_2022PostEE = btagEffFtree_2022
+                                                         "particleNet",
+                                                         "robustParticleTransformer"],
+                                                json_  = btagpath + "/2022_Summer22/" + "btagging_v0.json",
+                                                json_ptrel_ = btagpath + "/2022_Summer22/" + "btagging_v0.json",
+                                                year_ = "2022",
+                                                SFmeasReg = "comb")
+                            
+btagEffFtree_2022PostEE = lambda : btageffVars_tWRun3(wp_   = "M",
+                                                algo_ = ['deepJet',
+                                                         "particleNet",
+                                                         "robustParticleTransformer"],
+                                                json_  = btagpath + "/2022_Summer22EE/" + "btagging_v0.json",
+                                                json_ptrel_ = btagpath + "/2022_Summer22EE/" + "btagging_v0.json",
+                                                year_ = "2022PostEE",
+                                                SFmeasReg = "comb")
 
 
 
 ###### New MVA without TMVA: twRun3_MVA_SkLearn.py
 from CMGTools.TTHAnalysis.tools.nanoAOD.twRun3_MVA_SkLearn import tW_MVA
-path_1j1b_newMVA = "/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/tw-run3/MVA-Training/onnxConverter/rf1j1b.onnx"
-path_1j1b_mm_newMVA = "/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/tw-run3/MVA-Training/onnxConverter/rf1j1b_mm.onnx"
-path_1j1b_ee_newMVA = "/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/tw-run3/MVA-Training/onnxConverter/rf1j1b_ee.onnx"
-path_2j1b_newMVA = "/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/tw-run3/MVA-Training/onnxConverter/rf2j1b.onnx"
+path_1j1b_newMVA = "/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/tw-run3/MVA-Training/onnxConverter/rf1j1b_full2022.onnx"
+path_1j1b_mm_newMVA = "/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/tw-run3/MVA-Training/onnxConverter/rf1j1b_full2022.onnx"
+path_1j1b_ee_newMVA = "/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/tw-run3/MVA-Training/onnxConverter/rf1j1b_full2022.onnx"
+path_2j1b_newMVA = "/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/tw-run3/MVA-Training/onnxConverter/rf2j1b_full2022.onnx"
 mvaNew_mc   = [lambda : tW_MVA('', path_1j1b_newMVA, path_2j1b_newMVA, path_1j1b_mm_newMVA, path_1j1b_ee_newMVA,
                                               jecvars = ['jesTotal', 'jer'] + ['jes' + v for v in groups] + ["unclustEn"],
-                                              lepvars = ['mu'])]
+                                              lepvars = ['mu', 'elscale', 'elsigma'])]
 mvaNew_data = [lambda : tW_MVA('', path_1j1b_newMVA, path_2j1b_newMVA, path_1j1b_mm_newMVA, path_1j1b_ee_newMVA, isMC = False,
                                               jecvars = [],
                                               lepvars = [""])]
@@ -399,3 +399,10 @@ mvaNew_data = [lambda : tW_MVA('', path_1j1b_newMVA, path_2j1b_newMVA, path_1j1b
 from CMGTools.TTHAnalysis.tools.nanoAOD.createTrainingMiniTree_TopRun3 import createTrainingMiniTree_TopRun3
 
 createMVAMiniTree = lambda : createTrainingMiniTree_TopRun3()
+
+
+
+###### Test for Joscha PU reweighting (calorew)
+from CMGTools.TTHAnalysis.tools.nanoAOD.centralCaloWeightPU import centralCaloWeightPU
+addcentralCaloWeightPU_2022       = lambda : centralCaloWeightPU(year = "2022")
+addcentralCaloWeightPU_2022PostEE = lambda : centralCaloWeightPU(year = "2022PostEE")

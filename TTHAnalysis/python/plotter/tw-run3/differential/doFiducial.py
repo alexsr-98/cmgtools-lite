@@ -99,9 +99,11 @@ def calculateNormalisedValuesWithFF(inpath, iY, iV):
         dirvar[key.GetName()] = deepcopy(key.ReadObj().Clone(key.GetName()))
 
     covmat = deepcopy(fvar.Get("CovMat").Clone("covmat"))
+    fullcovmat = deepcopy(fvar.Get("FullCovMat").Clone("fullcovmat"))
     ffid.Close(); fvar.Close(); del ffid, fvar
+    drawANormalisedCovMat(fullcovmat, inpath, iY, iV, isnotfid = True)
 
-    normcovmat = BibhuFunctionForCovs(covmat, dirvar[iV], iV)
+    normcovmat = BibhuFunctionForCovs(fullcovmat, dirvar[iV], iV)
     normcovmat.Scale(1, "width")
 
     dirfinal = {}
@@ -132,7 +134,7 @@ def calculateNormalisedValuesWithFF(inpath, iY, iV):
     #sys.exit()
     return allHistos, histoForOnlyBin, normcovmat
 
-def drawANormalisedCovMat(finalmat, inpath, iY, var):
+def drawANormalisedCovMat(finalmat, inpath, iY, var, isnotfid = False):
     pathtothings = inpath + "/" + iY + "/" + var
 
     tdrstyle.setTDRStyle()
@@ -149,9 +151,9 @@ def drawANormalisedCovMat(finalmat, inpath, iY, var):
     r.gStyle.SetPadRightMargin(0.17)
     r.gStyle.SetPadTopMargin(0.05)
     r.gStyle.SetPadBottomMargin(0.1)
-    r.gStyle.SetPadLeftMargin(0.12)
-    finalmat.GetYaxis().SetTitleOffset(1.5)
-    finalmat.GetXaxis().SetTitleOffset(1.1)
+    r.gStyle.SetPadLeftMargin(0.14)
+    finalmat.GetYaxis().SetTitleOffset(1.7)
+    finalmat.GetXaxis().SetTitleOffset(1.15)
     finalmat.GetXaxis().SetTitleFont(43)
     finalmat.GetXaxis().SetTitleSize(22)
     finalmat.GetXaxis().SetLabelFont(43)
@@ -179,7 +181,10 @@ def drawANormalisedCovMat(finalmat, inpath, iY, var):
     else:
         CMS_lumi.lumi_13TeV = "%.1f fb^{-1}" %(thelumi)
 
+    # For Paper
     CMS_lumi.extraText  = "Supplementary" + ' Preliminary' * vl.doPre
+    # For PAS
+    #CMS_lumi.extraText  = 'Preliminary' * vl.doPre
     CMS_lumi.lumi_sqrtS = '#sqrt{s} = 13 TeV'
     #CMS_lumi.cmsTextSize += 0.1
     CMS_lumi.CMS_lumi(r.gPad, 4, 0, 0.05)
@@ -198,12 +203,18 @@ def drawANormalisedCovMat(finalmat, inpath, iY, var):
     plotsoutputpath = pathtothings + "/CovMatplots"
     if not os.path.isdir(plotsoutputpath):
         os.system('mkdir -p ' + plotsoutputpath)
-
-    c.SaveAs(plotsoutputpath + "/Cov_{vr}_fidbin.png" .format(vr = var))
-    c.SaveAs(plotsoutputpath + "/Cov_{vr}_fidbin.pdf" .format(vr = var))
-    c.SaveAs(plotsoutputpath + "/Cov_{vr}_fidbin.eps" .format(vr = var))
-    c.SaveAs(plotsoutputpath + "/Cov_{vr}_fidbin.root".format(vr = var))
-    c.Close();
+    if isnotfid:
+        c.SaveAs(plotsoutputpath + "/Cov_{vr}_part.png" .format(vr = var))
+        c.SaveAs(plotsoutputpath + "/Cov_{vr}_part.pdf" .format(vr = var))
+        c.SaveAs(plotsoutputpath + "/Cov_{vr}_part.eps" .format(vr = var))
+        c.SaveAs(plotsoutputpath + "/Cov_{vr}_part.root".format(vr = var))
+        c.Close();    
+    else:
+        c.SaveAs(plotsoutputpath + "/Cov_{vr}_fidbin.png" .format(vr = var))
+        c.SaveAs(plotsoutputpath + "/Cov_{vr}_fidbin.pdf" .format(vr = var))
+        c.SaveAs(plotsoutputpath + "/Cov_{vr}_fidbin.eps" .format(vr = var))
+        c.SaveAs(plotsoutputpath + "/Cov_{vr}_fidbin.root".format(vr = var))
+        c.Close();
     return
 
 #def calculateNormalisedValues(inpath, iY, iV):
@@ -322,13 +333,16 @@ def PlotParticleFidBinLevelResults(thedict, inpath, iY, varName, covmatnorm):
     tmptfile = r.TFile.Open(inpath + "/" + iY + "/" + varName + '/particle.root')
     tru                         = vl.giveMeOneComparison(tmptfile, "tw", scaleval, varName, part = True, normbin = True, normfid = True)
     twds                  = vl.giveMeOneComparison(tmptfile, "twds",                  scaleval, varName, part = True, normbin = True, normfid = True)
-    #twttbarherwig              = vl.giveMeOneComparison(tmptfile, "twttbarherwig",              scaleval, varName, part = True, normbin = True, normfid = True)
+    twherwig              = vl.giveMeOneComparison(tmptfile, "twherwig",              scaleval, varName, part = True, normbin = True, normfid = True)
     twamc_dr              = vl.giveMeOneComparison(tmptfile, "twamcatnlo_dr",              scaleval, varName, part = True, normbin = True, normfid = True)
     twamc_dr2             = vl.giveMeOneComparison(tmptfile, "twamcatnlo_dr2",             scaleval, varName, part = True, normbin = True, normfid = True)
     twamc_ds              = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds",              scaleval, varName, part = True, normbin = True, normfid = True)
     twamc_ds_runningBW    = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_runningBW",    scaleval, varName, part = True, normbin = True, normfid = True)
-    twamc_ds_is           = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is",           scaleval, varName, part = True, normbin = True, normfid = True)
-    twamc_ds_is_runningBW = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is_runningBW", scaleval, varName, part = True, normbin = True, normfid = True)  
+    ##twamc_ds_is           = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is",           scaleval, varName, part = True, normbin = True, normfid = True)
+    ##twamc_ds_is_runningBW = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is_runningBW", scaleval, varName, part = True, normbin = True, normfid = True)
+    #bb4l = vl.giveMeOneComparison(tmptfile, "bb4l", scaleval, varName, part = True, normbin = True, normfid = True,substract="ttbardif")
+    #bb4l = vl.giveMeOneComparison(tmptfile, "bb4l", scaleval, varName, part = True, normbin = True, normfid = True,substract=None)  
+    
     """
     tru                         = vl.giveMeOneComparison(tmptfile, "bb4l", scaleval, varName, part = True, normbin = True, normfid = True)
     twttbardr                   = vl.giveMeOneComparison(tmptfile, "twttbardr", scaleval, varName, part = True, normbin = True, normfid = True)
@@ -347,13 +361,18 @@ def PlotParticleFidBinLevelResults(thedict, inpath, iY, varName, covmatnorm):
     savetfile2 = r.TFile(inpath + "/" + iY + "/" + varName + "/particlefidbinOutput.root", "update")
     tru.Write()
     twds.Write()
-    #twttbarherwig.Write()
+    twherwig.Write()
     twamc_dr.Write()
     twamc_dr2.Write()
     twamc_ds.Write()
     twamc_ds_runningBW.Write()
-    twamc_ds_is.Write()
-    twamc_ds_is_runningBW.Write()
+    ##twamc_ds_is.Write()
+    ##twamc_ds_is_runningBW.Write()
+    # Save the stat unc and the total unc with names: varName_statUp, varName_statDown, varName_totalUp, varName_totalDown
+    statOnlyList[0].Write("{vn}_statUp".format(vn = varName))
+    statOnlyList[1].Write("{vn}_statDown".format(vn = varName))
+    nominal_withErrors[0].Write("{vn}_totalUp".format(vn = varName))
+    nominal_withErrors[1].Write("{vn}_totalDown".format(vn = varName))
     """twttbardr.Write()
     twttbards.Write()
     #twttbarherwig.Write()
@@ -371,7 +390,7 @@ def PlotParticleFidBinLevelResults(thedict, inpath, iY, varName, covmatnorm):
     for el in [tru, twttbardr, twttbards, twttbaramc_dr, twttbaramc_dr2, twttbaramc_ds, twttbaramc_ds_runningBW,
             thedict[""], nominal_withErrors[0], nominal_withErrors[1]]:
     """
-    for el in [tru, twamc_dr, twamc_dr2, twamc_ds, twamc_ds_runningBW,twamc_ds_is_runningBW,
+    for el in [tru, twamc_dr, twamc_dr2, twamc_ds, twamc_ds_runningBW,
             thedict[""], nominal_withErrors[0], nominal_withErrors[1]]:
         themaxs.append(vl.getAConservativeMaximum(el))
     tmpval = max(themaxs)
@@ -385,15 +404,17 @@ def PlotParticleFidBinLevelResults(thedict, inpath, iY, varName, covmatnorm):
 
     plot.addHisto(nominal_withErrors,      'A2',     'Total unc.',                     'F', 'total')
     plot.addHisto(statOnlyList,            '2',      'Stat unc.',                      'F', "stat")
-    plot.addHisto(tru,                     'P,same', 'tW PH + P8','P', 'mc')
-    plot.addHisto(twds,               'P,same', 'tW DS PH + P8',       'P', 'mc')
-    #plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
-    plot.addHisto(twamc_dr,                'P,same', 'tW DR aMC + P8',      'P', 'mc')
-    plot.addHisto(twamc_dr2,               'P,same', 'tW DR2 aMC + P8',     'P', 'mc')
-    plot.addHisto(twamc_ds,                'P,same', 'tW DS aMC + P8',      'P', 'mc')
-    plot.addHisto(twamc_ds_runningBW,      'P,same', 'tW DS dyn. aMC + P8', 'P', 'mc')
-    plot.addHisto(twamc_ds_is,        'P,same', 'tW DS  aMC + P8',      'P', 'mc')
-    plot.addHisto(twamc_ds_is_runningBW,   'P,same', 'tW DS dyn. aMC + P8', 'P', 'mc')
+    plot.addHisto(tru,                     'P,same', 'tW PH DR + P8',       'P', 'mc')
+    plot.addHisto(twds,                    'P,same', 'tW PH DS + P8',       'P', 'mc')
+    plot.addHisto(twherwig,                'P,same', 'tW PH DR + H7',       'P', 'mc')
+    plot.addHisto(twamc_dr,                'P,same', 'tW aMC DR + P8',      'P', 'mc')
+    plot.addHisto(twamc_dr2,               'P,same', 'tW aMC DR2 + P8',     'P', 'mc')
+    plot.addHisto(twamc_ds,                'P,same', 'tW aMC DS + P8',      'P', 'mc')
+    plot.addHisto(twamc_ds_runningBW,      'P,same', 'tW aMC DS dyn. + P8', 'P', 'mc')
+    ##plot.addHisto(twamc_ds_is,             'P,same', 'tW aMC DS IS + P8',      'P', 'mc')
+    ##plot.addHisto(twamc_ds_is_runningBW,   'P,same', 'tW aMC DS IS dyn. + P8', 'P', 'mc')
+    #plot.addHisto(bb4l,   'P,E,same', 'bb4l PH + P8', 'P', 'mc')
+    
     """
     plot.addHisto(tru,                     'P,same', 'b#bar{b}l^{+}#nu l^{-}#nu PH + P8','P', 'mc')
     plot.addHisto(twttbardr,               'P,same', 'tW DR + t#bar{t} PH + P8',       'P', 'mc')
@@ -408,9 +429,8 @@ def PlotParticleFidBinLevelResults(thedict, inpath, iY, varName, covmatnorm):
     dataHistoCopy = deepcopy(thedict[""].Clone("dataHistoCopy"))
     for iB in range(1, dataHistoCopy.GetNbinsX() + 1):
         dataHistoCopy.SetBinError(iB, 0.)
-    plot.addHisto(dataHistoCopy,           'P,E,same{s}'.format(s = ",X0" if "equalbinsunf" in vl.varList[varName] else ""),  vl.labellegend,                   'PE', 'data')
+    plot.addHisto(dataHistoCopy,           'P,E,same{s}'.format(s = ",X0" if "equalbinsunf" in vl.varList[varName] else ""),  vl.labellegend,                   "P" if "equalbinsunf" in vl.varList[varName] else "PL", 'data')
 
-    #plot.saveCanvas(legloc, woUnc = True)
     plot.saveCanvasv2(legloc)
 
     #plot.addHisto(nominal_withErrors, 'E2',     'Uncertainty',   'F')
@@ -499,13 +519,13 @@ def PlotParticleBinLevelResults(thedict, inpath, iY, varName):
     tmptfile = r.TFile.Open(inpath + "/" + iY + "/" + varName + '/particle.root')
     tru                         = vl.giveMeOneComparison(tmptfile, "tw", scaleval, varName, part = True, normbin = True)
     twds                  = vl.giveMeOneComparison(tmptfile, "twds",                  scaleval, varName, part = True, normbin = True)
-    #twttbarherwig              = vl.giveMeOneComparison(tmptfile, "twttbarherwig",              scaleval, varName, part = True, normbin = True)
+    twherwig         = vl.giveMeOneComparison(tmptfile, "twherwig",              scaleval, varName, part = True, normbin = True)
     twamc_dr              = vl.giveMeOneComparison(tmptfile, "twamcatnlo_dr",              scaleval, varName, part = True, normbin = True)
     twamc_dr2             = vl.giveMeOneComparison(tmptfile, "twamcatnlo_dr2",             scaleval, varName, part = True, normbin = True)
     twamc_ds              = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds",              scaleval, varName, part = True, normbin = True)
     twamc_ds_runningBW    = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_runningBW",    scaleval, varName, part = True, normbin = True)
-    twamc_ds_is           = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is",           scaleval, varName, part = True, normbin = True)
-    twamc_ds_is_runningBW = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is_runningBW", scaleval, varName, part = True, normbin = True)
+    ##twamc_ds_is           = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is",           scaleval, varName, part = True, normbin = True)
+    ##twamc_ds_is_runningBW = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is_runningBW", scaleval, varName, part = True, normbin = True)
     """
     tru                         = vl.giveMeOneComparison(tmptfile, "bb4l", scaleval, varName, part = True, normbin = True)
     twttbardr                   = vl.giveMeOneComparison(tmptfile, "twttbardr", scaleval, varName, part = True, normbin = True)
@@ -524,13 +544,13 @@ def PlotParticleBinLevelResults(thedict, inpath, iY, varName):
     savetfile2 = r.TFile(inpath + "/" + iY + "/" + varName + "/particlebinOutput.root", "update")
     tru.Write()
     twds.Write()
-    #twttbarherwig.Write()
+    twherwig.Write()
     twamc_dr.Write()
     twamc_dr2.Write()
     twamc_ds.Write()
     twamc_ds_runningBW.Write()
-    twamc_ds_is.Write()
-    twamc_ds_is_runningBW.Write()
+    ##twamc_ds_is.Write()
+    ##twamc_ds_is_runningBW.Write()
 
     savetfile2.Close(); del savetfile2
 
@@ -539,7 +559,7 @@ def PlotParticleBinLevelResults(thedict, inpath, iY, varName):
     """
     for el in [tru, twttbardr, twttbards, twttbaramc_dr, twttbaramc_dr2, twttbaramc_ds, twttbaramc_ds_runningBW,
             thedict[""], nominal_withErrors[0], nominal_withErrors[1]]:"""
-    for el in [tru, twamc_dr, twamc_dr2, twamc_ds, twamc_ds_runningBW,twamc_ds_is_runningBW,
+    for el in [tru, twamc_dr, twamc_dr2, twamc_ds, twamc_ds_runningBW,
             thedict[""], nominal_withErrors[0], nominal_withErrors[1]]:
         themaxs.append(vl.getAConservativeMaximum(el))
     tmpval = max(themaxs)
@@ -553,15 +573,15 @@ def PlotParticleBinLevelResults(thedict, inpath, iY, varName):
     
     plot.addHisto(nominal_withErrors,      'A2',     'Total unc.',                     'F', 'total')
     plot.addHisto(statOnlyList,            '2',      'Stat unc.',                      'F', "stat")
-    plot.addHisto(tru,                     'P,same', 'tW PH + P8',                   'P', 'mc')
-    plot.addHisto(twds,               'P,same', 'tW DS PH + P8',       'P', 'mc')
-    #plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
-    plot.addHisto(twamc_dr,                'P,same', 'tW DR aMC + P8',      'P', 'mc')
-    plot.addHisto(twamc_dr2,               'P,same', 'tW DR2 aMC + P8',     'P', 'mc')
-    plot.addHisto(twamc_ds,                'P,same', 'tW DS aMC + P8',      'P', 'mc')
-    plot.addHisto(twamc_ds_runningBW,      'P,same', 'tW DS dyn. aMC + P8', 'P', 'mc')
-    plot.addHisto(twamc_ds_is,        'P,same', 'tW DS aMC + P8',      'P', 'mc')
-    plot.addHisto(twamc_ds_is_runningBW,   'P,same', 'tW DS dyn. aMC + P8', 'P', 'mc')
+    plot.addHisto(tru,                     'P,same', 'tW PH DR + P8',       'P', 'mc')
+    plot.addHisto(twds,                    'P,same', 'tW PH DS + P8',       'P', 'mc')
+    plot.addHisto(twherwig,                'P,same', 'tW PH DR + H7',       'P', 'mc')
+    plot.addHisto(twamc_dr,                'P,same', 'tW aMC DR + P8',      'P', 'mc')
+    plot.addHisto(twamc_dr2,               'P,same', 'tW aMC DR2 + P8',     'P', 'mc')
+    plot.addHisto(twamc_ds,                'P,same', 'tW aMC DS + P8',      'P', 'mc')
+    plot.addHisto(twamc_ds_runningBW,      'P,same', 'tW aMC DS dyn. + P8', 'P', 'mc')
+    ##plot.addHisto(twamc_ds_is,             'P,same', 'tW aMC DS IS + P8',      'P', 'mc')
+    ##plot.addHisto(twamc_ds_is_runningBW,   'P,same', 'tW aMC DS IS dyn. + P8', 'P', 'mc')
     """
     plot.addHisto(tru,                     'P,same', 'bb4l PH + P8',                   'P', 'mc')
     plot.addHisto(twttbardr,               'P,same', 'tW DR + t#bar{t} PH + P8',       'P', 'mc')

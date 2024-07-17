@@ -9,11 +9,11 @@ import correctionlib._core as core
 
 
 class btag_weighterRun3(Module):
-    def __init__(self, json, eff, algo = 'deepJet', wp = "M", branchJet = "JetSel30", labelJet = "_Recl", branchbtag = 'btagDeepFlavB', branchflavour = 'hadronFlavour',
+    def __init__(self, json=None, eff=None, json_ptrel=None, algo = 'deepJet', wp = "M", branchJet = "JetSel30", labelJet = "_Recl", branchflavour = 'hadronFlavour',
                  label = "", year = "2022", SFmeasReg = "mujets",
                  minptlow = 20, minpthigh = 30, maxeta = 2.4,
                  jecvars = ["jesTotal", "jer"], lepenvars = ["mu"],
-                 splitCorrelations = False, debug = False):
+                 splitCorrelations = False, useCombnuisances = False, debug = False):
 
         self.algo      = algo
         self.wp        = wp
@@ -26,7 +26,7 @@ class btag_weighterRun3(Module):
         self.maxeta    = maxeta
         self.branchflavour = branchflavour
         self.splitCorr     = splitCorrelations
-        self.branchbtag    = branchbtag
+        self.useCombnuisances = useCombnuisances
         self.debug         = debug
         self.SFmeasReg    = SFmeasReg
 
@@ -35,7 +35,7 @@ class btag_weighterRun3(Module):
         self.systsCorr  = {}
         self.nominaljecscaff = "_nom"
 
-        if SFmeasReg != "mujets" and splitCorrelations:
+        if (SFmeasReg != "mujets" and SFmeasReg != "comb") and splitCorrelations:
             raise RuntimeError("FATAL: splitting corrs. for a b-tag. SF non-mujets measurement! This is not implemented :(.")
 
         if   len(jecvars):
@@ -46,36 +46,51 @@ class btag_weighterRun3(Module):
             for i, var in enumerate(lepenvars):
                 self.systsLepEn[i+1]    = "_%sUp"%var
                 self.systsLepEn[-(i+1)] = "_%sDown"%var
+
+        btagDefaultNuisances = ['btag_correlated', 'mistag_correlated', 'btag_uncorrelated', 'mistag_uncorrelated', "btag_jes", "btag_pileup", "btag_type3", "btag_stat"]
+        btagCombNuisances = ['btag_correlated', 'btag_uncorrelated', 'mistag_correlated', 'mistag_uncorrelated', 'btag_bfragmentation', 'btag_colorreconnection', 'btag_hdamp', 'btag_jer', 'btag_jes', 'btag_pdf', 'btag_pileup', 'btag_stat', 'btag_topmass', 'btag_type3']
+        if self.useCombnuisances:
+            btagNuisances = btagCombNuisances
+        else:
+            btagNuisances = btagDefaultNuisances
         if self.splitCorr:
-            for i, var in enumerate(['btag_correlated', 'mistag_correlated', 'btag_uncorrelated', 'mistag_uncorrelated', "btag_jes", "btag_pileup", "btag_type3", "btag_stat"]):
+            for i, var in enumerate(btagNuisances):
                 self.systsCorr[i+1]    = "_%sUp"%var
                 self.systsCorr[-(i+1)] = "_%sDown"%var
 
-        ### WP extracted on 2022-04-27 from:
-        # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL16preVFP  # APV
-        # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL16postVFP
-        # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL17
-        # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL18
-        self.btagWPs   = {"DeepFlav_2022_L"   : 0.0490, #copied from 2018
-                          "DeepFlav_2022_M"   : 0.2783,
-                          "DeepFlav_2022_T"   : 0.7100,
-                          "DeepCSV_2022_L"    : 0.1208,
-                          "DeepCSV_2022_M"    : 0.4168,
-                          "DeepCSV_2022_T"    : 0.7665,
-                         }
-        self.xuandict = {"deepCSV" : "DeepCSV",
-                         "deepJet" : "DeepFlav"}
 
-        self.cutVal = self.btagWPs[ self.xuandict[self.algo] + "_" + self.year + "_" + self.wp ]
+        #self.btagWPs   = {"DeepFlav_2022_L"   : 0.0490, #copied from 2018
+        #                  "DeepFlav_2022_M"   : 0.2783,
+        #                  "DeepFlav_2022_T"   : 0.7100,
+        #                  "DeepCSV_2022_L"    : 0.1208,
+        #                  "DeepCSV_2022_M"    : 0.4168,
+        #                  "DeepCSV_2022_T"    : 0.7665,
+        #                 }
+
+        self.algodict = {"deepJet" : "DeepFlav",
+                         "particleNet"     : "PNet",
+                         "robustParticleTransformer" : "RobustParTAK4"
+                         }    
+        self.branchbtag = "btag" + self.algodict[self.algo] + "B"
+
         self.ret = {}
 
         self.btvjson = core.CorrectionSet.from_file(json)
+        self.btaggingWPsEvaluator = self.btvjson[self.algo + "_wp_values"]
 
-        #### Eficiencias ### FORZADAS A DEEPFLAVOUR
+        self.btvjson_ptrel = core.CorrectionSet.from_file(json_ptrel)
+        
+
+        self.btagWPs = {}
+        for _wp_ in ["L", "M", "T"]:
+            self.btagWPs[self.algodict[self.algo] + "_{y}_{wp}".format(y = self.year, wp = _wp_)] = self.btaggingWPsEvaluator.evaluate(_wp_)
+        
+        self.cutVal = self.btagWPs[ self.algodict[self.algo] + "_" + self.year + "_" + self.wp ]
+        #### Eficiencias
         f_eff        = r.TFile.Open(eff, "read")
-        self.h_eff_b = deepcopy(f_eff.Get("BtagSFB_{}{}_{}".format(self.xuandict[self.algo], self.wp, self.year)).Clone())
-        self.h_eff_c = deepcopy(f_eff.Get("BtagSFC_{}{}_{}".format(self.xuandict[self.algo], self.wp, self.year)).Clone())
-        self.h_eff_l = deepcopy(f_eff.Get("BtagSFL_{}{}_{}".format(self.xuandict[self.algo], self.wp, self.year)).Clone())
+        self.h_eff_b = deepcopy(f_eff.Get("BtagSFB_{}{}_{}".format(self.algodict[self.algo], self.wp, self.year)).Clone())
+        self.h_eff_c = deepcopy(f_eff.Get("BtagSFC_{}{}_{}".format(self.algodict[self.algo], self.wp, self.year)).Clone())
+        self.h_eff_l = deepcopy(f_eff.Get("BtagSFL_{}{}_{}".format(self.algodict[self.algo], self.wp, self.year)).Clone())
         f_eff.Close()
 
         return
@@ -374,12 +389,22 @@ class btag_weighterRun3(Module):
         pt_cutoff  = max(20. , min(999., pt))
         eta_cutoff = min(2.49, abs(eta))
 
+#        if flavour != 0:
+#            measurementRegion = self.SFmeasReg
+#        else:
+#            measurementRegion = "incl"
+#
+#        theReader  = self.btvjson[self.algo + "_" + measurementRegion]
+
+        #if flavour == 4: # is a charm jet
+        #    flavour = 5 # use the b flavour SFs (preliminary version)
+
         if flavour != 0:
             measurementRegion = self.SFmeasReg
+            theReader  = self.btvjson_ptrel[self.algo + "_" + measurementRegion]
         else:
-            measurementRegion = "incl"
-
-        theReader  = self.btvjson[self.algo + "_" + measurementRegion]
+            measurementRegion = "light"
+            theReader  = self.btvjson[self.algo + "_" + measurementRegion]
 
         SF = theReader.evaluate("central", self.wp, flavour, eta_cutoff, pt_cutoff)
         SFup = theReader.evaluate("up", self.wp, flavour, eta_cutoff, pt_cutoff)
@@ -388,33 +413,77 @@ class btag_weighterRun3(Module):
         if not self.splitCorr:
             return [SF, SFup, SFdn]
         else:
-            SFupCorr   = theReader.evaluate("up_correlated",self.wp,     flavour, eta_cutoff, pt_cutoff)
-            SFdnCorr   = theReader.evaluate("down_correlated",self.wp,   flavour, eta_cutoff, pt_cutoff)
-            SFupUncorr = theReader.evaluate("up_uncorrelated",self.wp,   flavour, eta_cutoff, pt_cutoff)
-            SFdnUncorr = theReader.evaluate("down_uncorrelated",self.wp, flavour, eta_cutoff, pt_cutoff)
-            if flavour in [4, 5]:
-                SFupjes    = theReader.evaluate("up_jes", self.wp,           flavour, eta_cutoff, pt_cutoff)
-                SFdnjes    = theReader.evaluate("down_jes", self.wp,         flavour, eta_cutoff, pt_cutoff)
-                SFuppileup = theReader.evaluate("up_pileup", self.wp,        flavour, eta_cutoff, pt_cutoff)
-                SFdnpileup = theReader.evaluate("down_pileup", self.wp,      flavour, eta_cutoff, pt_cutoff)
-                SFuptype3  = theReader.evaluate("up_type3", self.wp,         flavour, eta_cutoff, pt_cutoff)
-                SFdntype3  = theReader.evaluate("down_type3", self.wp,       flavour, eta_cutoff, pt_cutoff)
-                SFupstat   = theReader.evaluate("up_statistic", self.wp,     flavour, eta_cutoff, pt_cutoff)
-                SFdnstat   = theReader.evaluate("down_statistic", self.wp,   flavour, eta_cutoff, pt_cutoff)
+            # PRELIMINARY PATH
+            if self.useCombnuisances:
+                if flavour in [4, 5]:
+                    SFupCorr   = theReader.evaluate("up_correlated",self.wp,     flavour, eta_cutoff, pt_cutoff)
+                    SFdnCorr   = theReader.evaluate("down_correlated",self.wp,   flavour, eta_cutoff, pt_cutoff)
+                    SFupUncorr = theReader.evaluate("up_uncorrelated",self.wp,   flavour, eta_cutoff, pt_cutoff)
+                    SFdnUncorr = theReader.evaluate("down_uncorrelated",self.wp, flavour, eta_cutoff, pt_cutoff)
+                    SFupjes    = theReader.evaluate("up_jes", self.wp,           flavour, eta_cutoff, pt_cutoff)
+                    SFdnjes    = theReader.evaluate("down_jes", self.wp,         flavour, eta_cutoff, pt_cutoff)
+                    SFuppileup = theReader.evaluate("up_pileup", self.wp,        flavour, eta_cutoff, pt_cutoff)
+                    SFdnpileup = theReader.evaluate("down_pileup", self.wp,      flavour, eta_cutoff, pt_cutoff)
+                    SFuptype3  = theReader.evaluate("up_type3", self.wp,         flavour, eta_cutoff, pt_cutoff)
+                    SFdntype3  = theReader.evaluate("down_type3", self.wp,       flavour, eta_cutoff, pt_cutoff)
+                    SFupstat   = theReader.evaluate("up_statistic", self.wp,     flavour, eta_cutoff, pt_cutoff)
+                    SFdnstat   = theReader.evaluate("down_statistic", self.wp,   flavour, eta_cutoff, pt_cutoff)
+                    #WIP falta incluir mas unc 'btag_bfragmentation', 'btag_colorreconnection', 'btag_hdamp'
+                    #SFupjer    = theReader.evaluate("up_jer", self.wp,           flavour, eta_cutoff, pt_cutoff)
+                    #SFdnjer    = theReader.evaluate("down_jer", self.wp,         flavour, eta_cutoff, pt_cutoff)
+                    #SFuppdf    = theReader.evaluate("up_pdf", self.wp,           flavour, eta_cutoff, pt_cutoff)
+                    #SFdnpdf    = theReader.evaluate("down_pdf", self.wp,         flavour, eta_cutoff, pt_cutoff)
+                    #SFuptopmass= theReader.evaluate("up_topmass", self.wp,           flavour, eta_cutoff, pt_cutoff)
+                    #SFdntopmass= theReader.evaluate("down_topmass", self.wp,         flavour, eta_cutoff, pt_cutoff)
+                    #SFuphdamp  = theReader.evaluate("up_hdamp", self.wp,           flavour, eta_cutoff, pt_cutoff)
+                    #SFdnhdamp  = theReader.evaluate("down_hdamp", self.wp,         flavour, eta_cutoff, pt_cutoff) 
+                else:
+                    SFupCorr   = 1.
+                    SFdnCorr   = 1.
+                    SFupUncorr = 1.
+                    SFdnUncorr = 1.
+                    SFupjes    = 1.
+                    SFdnjes    = 1.
+                    SFuppileup = 1.
+                    SFdnpileup = 1.
+                    SFuptype3  = 1.
+                    SFdntype3  = 1.
+                    SFupstat   = 1.
+                    SFdnstat   = 1.
+
+                return [SF, SFup, SFdn,
+                        SFupCorr, SFdnCorr, SFupUncorr, SFdnUncorr,
+                        SFupjes, SFdnjes, SFuppileup, SFdnpileup, SFuptype3, SFdntype3, SFupstat, SFdnstat]
+
+            #USUAL PATH
             else:
-                SFupjes    = 1.
-                SFdnjes    = 1.
-                SFuppileup = 1.
-                SFdnpileup = 1.
-                SFuptype3  = 1.
-                SFdntype3  = 1.
-                SFupstat   = 1.
-                SFdnstat   = 1.
-
-
-            return [SF, SFup, SFdn,
-                    SFupCorr, SFdnCorr, SFupUncorr, SFdnUncorr,
-                    SFupjes, SFdnjes, SFuppileup, SFdnpileup, SFuptype3, SFdntype3, SFupstat, SFdnstat]
+                SFupCorr   = theReader.evaluate("up_correlated",self.wp,     flavour, eta_cutoff, pt_cutoff)
+                SFdnCorr   = theReader.evaluate("down_correlated",self.wp,   flavour, eta_cutoff, pt_cutoff)
+                SFupUncorr = theReader.evaluate("up_uncorrelated",self.wp,   flavour, eta_cutoff, pt_cutoff)
+                SFdnUncorr = theReader.evaluate("down_uncorrelated",self.wp, flavour, eta_cutoff, pt_cutoff)
+                if flavour in [4, 5]:
+                    SFupjes    = theReader.evaluate("up_jes", self.wp,           flavour, eta_cutoff, pt_cutoff)
+                    SFdnjes    = theReader.evaluate("down_jes", self.wp,         flavour, eta_cutoff, pt_cutoff)
+                    SFuppileup = theReader.evaluate("up_pileup", self.wp,        flavour, eta_cutoff, pt_cutoff)
+                    SFdnpileup = theReader.evaluate("down_pileup", self.wp,      flavour, eta_cutoff, pt_cutoff)
+                    SFuptype3  = theReader.evaluate("up_type3", self.wp,         flavour, eta_cutoff, pt_cutoff)
+                    SFdntype3  = theReader.evaluate("down_type3", self.wp,       flavour, eta_cutoff, pt_cutoff)
+                    SFupstat   = theReader.evaluate("up_statistic", self.wp,     flavour, eta_cutoff, pt_cutoff)
+                    SFdnstat   = theReader.evaluate("down_statistic", self.wp,   flavour, eta_cutoff, pt_cutoff)
+                else:
+                    SFupjes    = 1.
+                    SFdnjes    = 1.
+                    SFuppileup = 1.
+                    SFdnpileup = 1.
+                    SFuptype3  = 1.
+                    SFdntype3  = 1.
+                    SFupstat   = 1.
+                    SFdnstat   = 1.
+    
+    
+                return [SF, SFup, SFdn,
+                        SFupCorr, SFdnCorr, SFupUncorr, SFdnUncorr,
+                        SFupjes, SFdnjes, SFuppileup, SFdnpileup, SFuptype3, SFdntype3, SFupstat, SFdnstat]
 
 
     def pogFlavor(self, hadronFlavor):

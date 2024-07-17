@@ -40,14 +40,14 @@ class tW_MVA(Module):
                          "Lep12Jet12_DR{v}"]
 
         # -- Variables to be used in the MVA - Multiclass
-        self.vars1j1b_jecs = ["JetLoose1_Pt{v}", "Lep1Lep2Jet1_Pt{v}", "Mll", "Lep1Lep2_DPhi", "Lep1Jet1_Pt{v}", "Lep1Lep2_DR", "Lep1_Pt", "Jet1_Pt{v}"]
+        self.vars1j1b_jecs = ["JetLoose1_Pt{v}", "Lep1Lep2Jet1_Pt{v}", "Mll", "Lep1Lep2_DPhi", "Lep1Jet1_Pt{v}", "Lep1_Pt", "Jet1_Pt{v}", "Lep1Lep2Jet1_M{v}"]
 
-        self.vars1j1b_leps = ["JetLoose1_Pt{v}", "Lep1Lep2Jet1_Pt{v}", "Mll{v}", "Lep1Lep2_DPhi{v}", "Lep1Jet1_Pt{v}", "Lep1Lep2_DR{v}", "Lep1_Pt{v}", "Jet1_Pt{v}"]
+        self.vars1j1b_leps = ["JetLoose1_Pt{v}", "Lep1Lep2Jet1_Pt{v}", "Mll{v}", "Lep1Lep2_DPhi{v}", "Lep1Jet1_Pt{v}", "Lep1_Pt{v}", "Jet1_Pt{v}", "Lep1Lep2Jet1_M{v}"]
 
         # -- Variables to be used in the MVA - Multiclass
-        self.vars2j1b_jecs = ["Mll", "Lep12Jet12_DR{v}", "Lep1Lep2Jet1_Pt{v}", "Lep1Jet1_DR{v}", "Lep1Lep2_DR", "Lep2_Pt", "Jet2_Pt{v}"]
+        self.vars2j1b_jecs = ["Mll", "Lep12Jet12_DR{v}", "Lep1Lep2Jet1_Pt{v}", "Lep1Jet1_DR{v}", "Lep1Lep2_DR", "Lep2_Pt", "Jet2_Pt{v}", "Lep1Lep2Jet1_C{v}"]
 
-        self.vars2j1b_leps = ["Mll{v}", "Lep12Jet12_DR{v}", "Lep1Lep2Jet1_Pt{v}", "Lep1Jet1_DR{v}", "Lep1Lep2_DR{v}", "Lep2_Pt{v}", "Jet2_Pt{v}"]
+        self.vars2j1b_leps = ["Mll{v}", "Lep12Jet12_DR{v}", "Lep1Lep2Jet1_Pt{v}", "Lep1Jet1_DR{v}", "Lep1Lep2_DR{v}", "Lep2_Pt{v}", "Jet2_Pt{v}", "Lep1Lep2Jet1_C{v}"]
         
         # -- Set ONNX options to be single threaded
         session_options = rt.SessionOptions()

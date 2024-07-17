@@ -19,17 +19,20 @@ verbose = True
 
 class DataContainer:
     ''' Class to store all the needed inputs: response matrices and varied input distributions'''
-    def __init__(self, var_, folderpath_, inputsfilename_ = "detectorsignal_bs.root", matricesfilename_ = "UnfoldingInfo.root", year_ = 2022):
+    def __init__(self, var_, folderpath_, inputsfilename_ = "detectorsignal_bs.root", matricesfilename_ = "UnfoldingInfo.root", forExtrfilename_ = "forExtr.root", year_ = 2022):
         self.var              = var_
         self.year             = year_
         self.folderpath       = folderpath_
         self.fileName         = self.folderpath + "/" + inputsfilename_
         self.fileNameResponse = self.folderpath + "/" + matricesfilename_
+        self.fileNameForExtr  = self.folderpath + "/" + forExtrfilename_
         self.listOfSysts      = []
         self.responseMatrices = {}
         self.unfoldingInputs  = {}
         self.covmatInput      = {}
         self.bkgs             = {}
+        self.unfoldingInputNoSub = {}
+        self.bkgsNoSub           = {}
         self.readAndStore()
 
     def readAndStore(self):
@@ -38,6 +41,8 @@ class DataContainer:
             raise RuntimeError('The rootfile with the post signal extraction information of variable {var} does not exist.'.format(var = self.var))
         if not os.path.isfile(self.fileNameResponse):
             raise RuntimeError('The rootfile with the response matrices information of variable {var} does not exist.'.format(var = self.var))
+        if not os.path.isfile(self.fileNameForExtr):
+            raise RuntimeError('The rootfile with the forExtr information of variable {var} does not exist.'.format(var = self.var))
 
         tfile = r.TFile.Open(self.fileName)
         for key in tfile.GetListOfKeys():
@@ -59,7 +64,7 @@ class DataContainer:
         if '' not in self.covmatInput and "fit" in self.fileName:
             raise RuntimeError("Covariance input for nominal sample is missing")
         tfile.Close()
-        
+
         # Getting uncertainties in the response matrix
         tfile = r.TFile.Open(self.fileNameResponse)
         for key in tfile.GetListOfKeys():
@@ -100,6 +105,39 @@ class DataContainer:
                 self.bkgs[sysName] = deepcopy(key.ReadObj())
                 #self.bkgs[sysName].Scale(scalevalone)
                 
+        tfile.Close()
+
+        #For the covariance matrix
+        tfile = r.TFile.Open(self.fileNameForExtr)
+        bkgdicttopropagate = {}
+        for key in tfile.GetListOfKeys():
+            """
+            #### ===========================================================
+            if "pdf" in key.GetName() or "scales" in key.GetName(): continue
+            #### ===========================================================
+            """
+            tmpnam = key.GetName()
+            if tmpnam.replace("x_", "").split("_")[0] == "tw":
+                continue
+            if 'data_obs' in key.GetName():
+                self.unfoldingInputNoSub[""] = deepcopy(key.ReadObj())
+            elif "Up" not in tmpnam and "Down" not in tmpnam: # It is the nominal value of a process
+                self.bkgsNoSub[tmpnam.replace("x_", "")] = deepcopy(tfile.Get(tmpnam).Clone(tmpnam.replace("x_", "") + "_"))
+                bkgdicttopropagate[tmpnam.replace("x_", "")] = {}
+                bkgdicttopropagate[tmpnam.replace("x_", "")][""] = deepcopy(tfile.Get(tmpnam).Clone(tmpnam.replace("x_", "") + "_"))
+            else:
+                tmpproc = tmpnam.replace("x_", "").split("_")[0]
+                tmpunc  = ("_".join(tmpnam.replace("x_", "").split("_")[1:]))
+                if "norm" in tmpunc:
+                    continue
+                bkgdicttopropagate[tmpproc][tmpunc]= deepcopy(tfile.Get(tmpnam).Clone(tmpproc + "_" + tmpunc))
+        
+        self.bkgsNoSub["tw_bkg"] = deepcopy(self.bkgs[""].Clone("tw_bkg"))
+        bkgdicttopropagate["tw_bkg"] = self.bkgs
+        for ibkg in bkgdicttopropagate:
+            bkg_witherrors = ep.propagateHisto(bkgdicttopropagate[ibkg], vl.doSym)
+            for ibin in range(1, self.bkgsNoSub[ibkg].GetNbinsX() + 1):
+                self.bkgsNoSub[ibkg].SetBinError(ibin, bkg_witherrors[1].GetBinError(ibin))
         tfile.Close()
 
         if '' not in self.responseMatrices:
@@ -239,6 +277,10 @@ class DataContainer:
             #return self.unfoldingInputs[nuis], self.responseMatrices[""], self.bkgs[nuis], retcovmat
 
 
+    def getFullCovInputs(self):
+        retcovmat = None
+        return self.unfoldingInputNoSub[""], self.responseMatrices, self.bkgsNoSub, retcovmat
+                
     def getResponse(self, nuis):
         if nuis not in self.responseMatrices:
             RuntimeError("%s is not in the list of varied response matrices nor in the blacklist of systs. w/o associated response matrices."%nuis)
@@ -283,7 +325,32 @@ class UnfolderHelper:
 
         self.tunfolder.SubtractBackground(self.bkg, "Events outside the fiducial region")
         return
-    
+
+    def makeFullCovUnfolderCore(self, unfInputNresponse):
+        self.unfInput, self.response, self.bkg, self.inputcovmat = unfInputNresponse
+        self.tunfolder = r.TUnfoldDensity(self.response[""],
+                                          r.TUnfold.kHistMapOutputHoriz,
+                                          r.TUnfold.kRegModeCurvature,
+                                          r.TUnfold.kEConstraintArea if self.doArea else r.TUnfold.kEConstraintNone,
+                                          r.TUnfoldDensity.kDensityModeNone)
+
+        self.tunfolder.SetInput(self.unfInput)
+        scale_bgr = 1.0
+        for iBkg in self.bkg:
+            dscales_backgrounds = {
+                'ttbar'    : 0.0346,   
+                'dy'       : 0.1,
+                'vvttv'    : 0.5,
+                'nonworz'  : 0.5,
+                'tw_bkg'   : 0.0,
+            } 
+            self.tunfolder.SubtractBackground(self.bkg[iBkg],iBkg,scale_bgr,dscales_backgrounds[iBkg])
+        for nuis in self.response:
+            if nuis == "":
+                continue
+            self.tunfolder.AddSysError(self.response[nuis], nuis, r.TUnfold.kHistMapOutputHoriz, r.TUnfoldDensity.kSysErrModeMatrix)
+        return
+
     
     def doLCurveScan(self):
         if self.nuis != '':
@@ -294,7 +361,7 @@ class UnfolderHelper:
         self.logTauCurv = r.TSpline3()
         self.lCurve     = r.TGraph(0)
 
-        self.themax = self.tunfolder.ScanLcurve(150, 1, 1, self.lCurve, self.logTauX, self.logTauY, self.logTauCurv)
+        self.themax = self.tunfolder.ScanLcurve(1000,1e-9, 1e-5, self.lCurve, self.logTauX, self.logTauY, self.logTauCurv)
         #self.themax = self.tunfolder.ScanLcurve(100, r.Double(1e-20), r.Double(5), self.lCurve, self.logTauX,  self.logTauY, self.logTauCurv)
         
         self.tau = self.tunfolder.GetTau()
@@ -352,8 +419,11 @@ class UnfolderHelper:
             self.lCurve.GetYaxis().SetNoExponent(True)
             self.lCurve.GetYaxis().SetRangeUser(self.lCurve.GetYaxis().GetXmin(),
                                                 (self.lCurve.GetYaxis().GetXmax() - self.lCurve.GetYaxis().GetXmin()) * 1.1 + self.lCurve.GetYaxis().GetXmin())
-            #self.lCurve.GetXaxis().SetTitle('log(#chi^{2}_{R})')    ### Del TFM
-            #self.lCurve.GetYaxis().SetTitle('log(#chi^{2}_{reg.})') ### Del TFM
+            self.lCurve.GetXaxis().SetTitle('log(#chi^{2}_{R})')    ### Del TFM
+            self.lCurve.GetYaxis().SetTitle('log(#chi^{2}_{reg.})') ### Del TFM
+            # Set x axis range to be able to see the minimum
+            #self.lCurve.GetYaxis().SetRangeUser(6.4,6.5)
+            #self.lCurve.GetXaxis().SetRangeUser(-13,-8)
             plot.addHisto(self.lCurve, 'ALnomin', '', 0)
         else:
             plot.addHisto(self.scanRes, 'ALnomin', 'L-curve', 0)
@@ -473,15 +543,16 @@ class UnfolderHelper:
 
 
 class Unfolder():
-    def __init__(self, var, folderpath_, year = 2022, inputsfilename_ = "detectorsignal_bs.root", matricesfilename_ = "UnfoldingInfo.root"):
+    def __init__(self, var, folderpath_, year = 2022, inputsfilename_ = "detectorsignal_bs.root", matricesfilename_ = "UnfoldingInfo.root", forExtrfilename_ = "forExtr.root"):
         self.var              = var
         self.folderpath       = folderpath_
         self.year             = year
-        self.Data             = DataContainer(var, self.folderpath, inputsfilename_, matricesfilename_, year)
+        self.Data             = DataContainer(var, self.folderpath, inputsfilename_, matricesfilename_, forExtrfilename_, year)
         self.sysList          = self.Data.listOfSysts
         self.helpers          = { nuis : UnfolderHelper(self.var, nuis, self.year) for nuis in self.sysList }
         self.helpers['']      = UnfolderHelper(self.var, '', self.year)
-        self.wearedoingasimov = (not vl.asimov and not 'asimov' in self.sysList)
+        self.helpers['FullCov'] = UnfolderHelper(self.var, '', self.year)
+        self.wearedoingasimov = (vl.asimov and not 'asimov' in self.sysList)
         self.helpers[''].wearedoingasimov = self.wearedoingasimov    # ONLY IMPLEMENTED FOR NOMINAL ONES!!!!!
         self.plotspath        = ""
         self.tablespath       = ""
@@ -514,6 +585,11 @@ class Unfolder():
         self.helpers[''].Init   = True
         return
 
+    def prepareFullCovHelper(self):
+        self.helpers['FullCov'].doArea = self.doAreaConstraint
+        self.helpers['FullCov'].makeFullCovUnfolderCore(self.Data.getFullCovInputs())
+        self.helpers['FullCov'].Init   = True
+        return        
 
     def doLCurveScan(self):      # Different taus for all the response matrices not implemented.
         self.helpers[''].doLCurveScan()
@@ -534,9 +610,9 @@ class Unfolder():
         return
 
 
-    def doClosure(self, tau = None):
-        if tau:
-            self.helpers[''].DoUnfold(tau)
+#    def doClosure(self, tau = None):
+#        if tau:
+#            self.helpers[''].DoUnfold(tau)
 
 
 #    def doNominalPlot(self, tau = None):
@@ -655,6 +731,11 @@ class Unfolder():
         thef.write(out)
         thef.close()
         return
+    
+    def computeFullCovarianceMatrix(self):
+        tauval = 0
+        self.prepareFullCovHelper()
+        self.helpers['FullCov'].tunfolder.DoUnfold(tauval)
 
 
     def doUnfoldingForAllNuis(self):
@@ -667,6 +748,7 @@ class Unfolder():
 
         allHistos = {}
         self.prepareAllHelpers()
+        self.computeFullCovarianceMatrix()
         tauval = 0
         if self.doRegularisation:
             print("> Performing regularisation...")
@@ -676,6 +758,9 @@ class Unfolder():
 
             tauval = self.taulist['']
 
+        #unfolderForCov = deepcopy(self.helpers[''].tunfolder)
+        #for nuis in self.sysList:
+        #    self.helpers[''].tunfolder.AddSysError(self.helpers[nuis].response, nuis, r.TUnfold.kHistMapOutputVert, r.TUnfoldDensity.kSysErrModeMatrix)
 
         if verbose: print('\n> Unfolding nominal distribution')
         self.helpers[''].tunfolder.DoUnfold(tauval)
@@ -696,7 +781,7 @@ class Unfolder():
             
             valor = ( ns - nf ) / mat
             inc   = incns/mat + incnf/mat + (ns - nf)/mat**2 * incmat
-            
+     
             print("ns", ns, "nf", nf, "mat", mat, "ns-nf", ns-nf)
             
             print("valor nom.", valor/thelumi/1000, "inc. nom.", inc/thelumi/1000, "\n")
@@ -725,6 +810,9 @@ class Unfolder():
             if verbose: print('    - Unfolding distribution of {sys} systematic'.format(sys = nuis))
             self.helpers[nuis].tunfolder.DoUnfold(tauval)
             allHistos[nuis] = self.helpers[nuis].tunfolder.GetOutput(self.var + '_' + nuis)
+            #if nuis in ["tw_scales_muFUp"]:
+            #    print("AAAAAAAAAAAA", nuis)
+            #unfolderForCov.AddSysError(self.helpers[nuis].response, nuis, r.TUnfold.kHistMapOutputHoriz, r.TUnfoldDensity.kSysErrModeMatrix) 
             if "Fiducial" in self.var:
                 mat    = self.helpers[nuis].response.GetBinContent(1, 1)
                 incmat = self.helpers[nuis].response.GetBinError(1, 1)
@@ -745,7 +833,10 @@ class Unfolder():
                 for bin in range(1, allHistos[nuis].GetNbinsX() + 1):
                     allHistos[nuis].SetBinError(bin, math.sqrt(tmpcov.GetBinContent(bin, bin)))
                 del tmpcov
-                
+
+        # Full covmatrix   
+        if "Fiducial" not in self.var:
+            fullcovnom = deepcopy(self.helpers['FullCov'].tunfolder.GetEmatrixTotal("FullCovMat"))
         
         scaleval = 1/thelumi/1000
         for key in allHistos:
@@ -757,6 +848,12 @@ class Unfolder():
 
         covnom.Scale(scaleval**2)
         covnom.Write()
+        if "Fiducial" not in self.var:
+            #fullcovnom.Scale(scaleval**2)
+            fullcovnom = ep.computeCovarianceFromResults(allHistos, fullcovnom)
+            fullcovnom.Scale(65)
+            fullcovnom.Add(covnom) # We add the stat unc
+            fullcovnom.Write()
         #covitwo = deepcopy(self.helpers[''].tunfolder.GetEmatrixInput("CovMatInput"))
         #covitwo.Scale(scaleval**2)
         #covitwo.Write()
@@ -813,8 +910,7 @@ class Unfolder():
         ##############################
         
         #if self.var != "Fiducial":
-            #tex.saveLaTeXfromhisto(allHistos[""], self.var, path = self.tablespath, errhisto = nominal_withErrors[0], ty = "particle")
-
+        tex.saveLaTeXfromhisto(allHistos[""], self.var, path = self.tablespath, errhisto = nominal_withErrors[0], ty = "particle")
         if   "legpos_particle"   in vl.varList[self.var] and not self.wearedoingasimov:
             legloc = vl.varList[self.var]["legpos_particle"]
         elif "legpos_particleas" in vl.varList[self.var] and     self.wearedoingasimov:
@@ -827,15 +923,15 @@ class Unfolder():
 
         tmptfile = r.TFile.Open(self.folderpath + '/particle.root')
 
-        tru                        = vl.giveMeOneComparison(tmptfile, "tw",                       scaleval, self.var, part = True)
-        twds                  = vl.giveMeOneComparison(tmptfile, "twds",                  scaleval, self.var, part = True)
-        #twttbarherwig              = vl.giveMeOneComparison(tmptfile, "twttbarherwig",              scaleval, self.var, part = True)
+        tru                   = vl.giveMeOneComparison(tmptfile, "tw",                         scaleval, self.var, part = True)
+        twds                  = vl.giveMeOneComparison(tmptfile, "twds",                       scaleval, self.var, part = True)
+        twherwig              = vl.giveMeOneComparison(tmptfile, "twherwig",                   scaleval, self.var, part = True)
         twamc_dr              = vl.giveMeOneComparison(tmptfile, "twamcatnlo_dr",              scaleval, self.var, part = True)
         twamc_dr2             = vl.giveMeOneComparison(tmptfile, "twamcatnlo_dr2",             scaleval, self.var, part = True)
         twamc_ds              = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds",              scaleval, self.var, part = True)
         twamc_ds_runningBW    = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_runningBW",    scaleval, self.var, part = True)
-        twamc_ds_is              = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is",           scaleval, self.var, part = True)
-        twamc_ds_is_runningBW = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is_runningBW", scaleval, self.var, part = True)        
+        ##twamc_ds_is           = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is",           scaleval, self.var, part = True)
+        ##twamc_ds_is_runningBW = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is_runningBW", scaleval, self.var, part = True)        
         """
         tru                        = vl.giveMeOneComparison(tmptfile, "bb4l",                       scaleval, self.var, part = True)
         twttbardr                  = vl.giveMeOneComparison(tmptfile, "twttbardr",                  scaleval, self.var, part = True)
@@ -853,13 +949,13 @@ class Unfolder():
         savetfile3 = r.TFile(self.folderpath + "/particleOutput.root", "update")
         tru.Write()
         twds.Write()
-        #twttbarherwig.Write()
+        twherwig.Write()
         twamc_dr.Write()
         twamc_dr2.Write()
         twamc_ds.Write()
         twamc_ds_runningBW.Write()
-        twamc_ds_is.Write()
-        twamc_ds_is_runningBW.Write()
+        ##twamc_ds_is.Write()
+        ##twamc_ds_is_runningBW.Write()
 
         savetfile3.Close()
 
@@ -869,26 +965,26 @@ class Unfolder():
         for el in [tru, twttbardr, twttbards, twttbaramc_dr, twttbaramc_dr2, twttbaramc_ds, twttbaramc_ds_runningBW,
                 allHistos[""], nominal_withErrors[0], nominal_withErrors[1]]:
         """
-        for el in [tru, twamc_dr, twamc_dr2, twamc_ds, twamc_ds_runningBW,twamc_ds_is_runningBW,
+        for el in [tru, twamc_dr, twamc_dr2, twamc_ds, twamc_ds_runningBW,
                 allHistos[""], nominal_withErrors[0], nominal_withErrors[1]]:
             themaxs.append(vl.getAConservativeMaximum(el))
         tmpval = max(themaxs)
 
-        nominal_withErrors[0].SetMaximum(tmpval)
-        nominal_withErrors[1].SetMaximum(tmpval)
-        allHistos[""].SetMaximum(tmpval)
+        #nominal_withErrors[0].SetMaximum(tmpval)
+        #nominal_withErrors[1].SetMaximum(tmpval)
+        #allHistos[""].SetMaximum(tmpval)
 
         plot.addHisto(nominal_withErrors,      'A2',     'Total unc.',                     'F', 'total')
         plot.addHisto(statOnlyList,            '2',      'Stat unc.',                      'F', "stat")
-        plot.addHisto(tru,                     'P,same', 'tW PH + P8','P', 'mc')
-        plot.addHisto(twds,               'P,same', 'tW DS + t#bar{t} PH + P8',       'P', 'mc')
-        #plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
-        plot.addHisto(twamc_dr,                'P,same', 'tW DR aMC + P8',      'P', 'mc')
-        plot.addHisto(twamc_dr2,               'P,same', 'tW DR2 aMC + P8',     'P', 'mc')
-        plot.addHisto(twamc_ds,                'P,same', 'tW DS aMC + P8',      'P', 'mc')
-        plot.addHisto(twamc_ds_runningBW,      'P,same', 'tW DS dyn. aMC + P8', 'P', 'mc')
-        plot.addHisto(twamc_ds_is,        'P,same', 'tW DS + t#bar{t} aMC + P8',      'P', 'mc')
-        plot.addHisto(twamc_ds_is_runningBW,   'P,same', 'tW DS dyn. aMC + P8', 'P', 'mc')
+        plot.addHisto(tru,                     'P,same', 'tW PH DR + P8',       'P', 'mc')
+        plot.addHisto(twds,                    'P,same', 'tW PH DS + P8',       'P', 'mc')
+        plot.addHisto(twherwig,                'P,same', 'tW PH DR + H7',       'P', 'mc')
+        plot.addHisto(twamc_dr,                'P,same', 'tW aMC DR + P8',      'P', 'mc')
+        plot.addHisto(twamc_dr2,               'P,same', 'tW aMC DR2 + P8',     'P', 'mc')
+        plot.addHisto(twamc_ds,                'P,same', 'tW aMC DS + P8',      'P', 'mc')
+        plot.addHisto(twamc_ds_runningBW,      'P,same', 'tW aMC DS dyn. + P8', 'P', 'mc')
+        ##plot.addHisto(twamc_ds_is,             'P,same', 'tW aMC DS IS + P8',      'P', 'mc')
+        ##plot.addHisto(twamc_ds_is_runningBW,   'P,same', 'tW aMC DS IS dyn. + P8', 'P', 'mc')
         """
         plot.addHisto(tru,                     'P,same', 'b#bar{b}l^{+}#nu l^{-}#nu PH + P8','P', 'mc')
         plot.addHisto(twttbardr,               'P,same', 'tW DR + t#bar{t} PH + P8',       'P', 'mc')
