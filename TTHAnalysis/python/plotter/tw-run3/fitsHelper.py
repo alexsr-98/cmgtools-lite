@@ -327,7 +327,7 @@ def makeGOF(task):
 
 
 def makeGOFplot(task):
-    year, region, inpath, verbose, pretend, extra, doPost, gofplotTitle = task
+    year, region, inpath, verbose, pretend, extra, doPost, gofplotTitle, drawChi2, ndofChi2  = task
     fitoutpath = inpath + "/" + year
     gofoutpath = fitoutpath + "/GOF{p}_{y}_{r}".format(y = year, r = region.replace(",", ""), p = "" if not doPost else "post")
     if not os.path.isdir(gofoutpath):
@@ -387,7 +387,9 @@ def makeGOFplot(task):
 
     hToys.SetLineColor(r.kBlue)
     hToys.GetXaxis().SetTitle("Saturated test statistic (adim.)")
-    hToys.GetYaxis().SetTitle("# toys (adim.)")
+    hToys.GetYaxis().SetTitle("Probability")
+    # Normalise
+    hToys.Scale(1. / hToys.Integral("width"))
     if gofplotTitle == "":
         hToys.SetTitle(("Pre-fit GOF test" if not doPost else "Post-fit GOF test") + " - {y} - {r}".format(y = year, r = region.replace(",", "")))
     else:
@@ -396,6 +398,20 @@ def makeGOFplot(task):
 
     lineData = r.TLine(valData, 0, valData, hToys.GetMaximum() * 1.05)
     lineData.Draw("same")
+
+    # Draw chi2
+    if drawChi2:
+        chi2 = r.TF1("chi2", "ROOT::Math::chisquared_pdf(x, {ndof}, 0)".format(ndof = ndofChi2), minX, maxX)
+        chi2.SetLineColor(r.kRed)
+        chi2.Draw("same")
+        # Draw also the same chi2 function but filling a histogram
+        #hchi2 = r.TH1F("hchi2", "hchi2", 100, minX, maxX)
+        #for i in range(10000):
+        #    hchi2.Fill(chi2.GetRandom())
+        #hchi2.Scale(1. / hchi2.Integral())
+        #hchi2.SetLineColor(r.kRed)
+        ## Draw hchi2 as a line
+        #hchi2.Draw("same")
 
     tl = r.TLegend(0.65, 0.6, 0.85, 0.85)
     tl.SetHeader("p-value = %1.4f"%(up / ((up + down)*1.)))
@@ -409,6 +425,11 @@ def makeGOFplot(task):
     c.SaveAs(gofoutpath + "/plots/GOF{p}_{y}_{r}.png".format(y = year, r = region.replace(",", ""), p = "" if not doPost else "post"))
     c.SaveAs(gofoutpath + "/plots/GOF{p}_{y}_{r}.pdf".format(y = year, r = region.replace(",", ""), p = "" if not doPost else "post"))
     c.Close(); del c
+    # Create a txt file with the p-value in the same folder as the plots
+    pval = up / ((up + down)*1.)
+    pvalfile = open(gofoutpath + "/plots/GOF{p}_{y}_{r}.txt".format(y = year, r = region.replace(",", ""), p = "" if not doPost else "post"), "w")
+    pvalfile.write(str(pval))
+    pvalfile.close()
     return
 
 
@@ -430,6 +451,8 @@ if __name__ == "__main__":
     parser.add_argument('--gofpostfit',   '-gF', action  = "store_true",  dest = "gofpostfit",   required = False, default = False) #Option to make gof test
     parser.add_argument('--gofplot',      '-gH', action  = "store_true",  dest = "gofhisto",     required = False, default = False) #Option to make gof test
     parser.add_argument('--gofplotTitle',    '-gT', metavar = 'gofplotTitle',     dest = "gofplotTitle",   required = False, default = "")
+    parser.add_argument('--drawChi2', '-dC', action  = "store_true",  dest = "drawChi2", required = False, default = False) # Option for the gof plot only
+    parser.add_argument('--ndofChi2',  '-nD', metavar = 'ndofChi2',   dest = "ndofChi2", required = False, default = 20, type = int) # Option for the gof plot only
     parser.add_argument('--extraSlurmArgs','-eS',metavar = 'extraslurm',  dest = "extraslurm",   required = False, default = "")
 
     args     = parser.parse_args()
@@ -450,6 +473,8 @@ if __name__ == "__main__":
     gofpost  = args.gofpostfit
     gofhisto = args.gofhisto
     gofplotTitle = args.gofplotTitle
+    drawChi2 = args.drawChi2
+    ndofChi2 = args.ndofChi2
 
     theyears = ["2016", "2017", "2018", "run2", "2022"]
     theregs  = ["1j1t", "2j1t", "2j2t", "1j1t,2j1t", "1j1t,2j2t", "2j1t,2j2t", "1j1t,2j1t,2j2t"]
@@ -485,7 +510,7 @@ if __name__ == "__main__":
     else:
         for yr in theyears:
             for rg in theregs:
-                tasks.append( (yr, rg, inpath, verbose, pretend, extra, gofpost, gofplotTitle) )
+                tasks.append( (yr, rg, inpath, verbose, pretend, extra, gofpost, gofplotTitle, drawChi2, ndofChi2) )
 
         for task in tasks:
             if verbose: print("\nProcessing " + str(task) + "\n")

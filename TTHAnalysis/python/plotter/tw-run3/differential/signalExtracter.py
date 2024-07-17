@@ -143,15 +143,15 @@ def PlotDetectorLevelResults(inpath, iY, iV, thedict):
         raise RuntimeError('The rootfile with the detector level information does not exist')
     
     tmptfile = r.TFile.Open(inpath + "/" + iY + "/" + iV + "/detector.root")
-    tru                         = vl.giveMeOneComparison(tmptfile, "tw", scaleval, iV)
-    twds                        = vl.giveMeOneComparison(tmptfile, "twds", scaleval, iV)
-    #twttbarherwig               = vl.giveMeOneComparison(tmptfile, "twttbarherwig", scaleval, iV)
+    tru                    = vl.giveMeOneComparison(tmptfile, "tw", scaleval, iV)
+    twds                   = vl.giveMeOneComparison(tmptfile, "twds", scaleval, iV)
+    twherwig               = vl.giveMeOneComparison(tmptfile, "twherwig", scaleval, iV)
     twamc_dr               = vl.giveMeOneComparison(tmptfile, "twamcatnlo_dr", scaleval, iV)
     twamc_dr2              = vl.giveMeOneComparison(tmptfile, "twamcatnlo_dr2", scaleval, iV)
     twamc_ds               = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds", scaleval, iV)
     twamc_ds_runningBW     = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_runningBW", scaleval, iV)
-    twamc_ds_is            = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is", scaleval, iV)
-    twamc_ds_is_runningBW  = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is_runningBW", scaleval, iV)
+    ##twamc_ds_is            = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is", scaleval, iV)
+    ##twamc_ds_is_runningBW  = vl.giveMeOneComparison(tmptfile, "twamcatnlo_ds_is_runningBW", scaleval, iV)
     """
     tru                         = vl.giveMeOneComparison(tmptfile, "bb4l", scaleval, iV)
     twttbardr                   = vl.giveMeOneComparison(tmptfile, "twttbardr", scaleval, iV)
@@ -171,7 +171,7 @@ def PlotDetectorLevelResults(inpath, iY, iV, thedict):
 #    for el in [tru, twttbardr, twttbards, twttbarherwig, twttbaramc_dr, twttbaramc_dr2, twttbaramc_ds, twttbaramc_ds_runningBW, 
 #               thedict[""], nominal_withErrors[0], nominal_withErrors[1]]:
     # Add here the additional samples
-    for el in [tru, twds, twamc_dr, twamc_dr2, twamc_ds, twamc_ds_runningBW, twamc_ds_is, twamc_ds_is_runningBW,
+    for el in [tru, twamc_dr, twamc_dr2, twamc_ds, twamc_ds_runningBW,
                thedict[""], nominal_withErrors[0], nominal_withErrors[1]]:
         themaxs.append(vl.getAConservativeMaximum(el))
     tmpval = max(themaxs)
@@ -185,15 +185,15 @@ def PlotDetectorLevelResults(inpath, iY, iV, thedict):
 
     plot.addHisto(nominal_withErrors,      'A2',     'Total unc.',                     'F', "total")
     plot.addHisto(statOnlyList,            '2,same', 'Stat unc.',                      'F', "stat")
-    plot.addHisto(tru,                     'P,same', 'tW PH + P8',                     'P', 'mc')
-    plot.addHisto(twds,                    'P,same', 'tW DS PH + P8',       'P', 'mc')
-    #plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
-    plot.addHisto(twamc_dr,                'P,same', 'tW DR aMC + P8',      'P', 'mc')
-    plot.addHisto(twamc_dr2,               'P,same', 'tW DR2 aMC + P8',     'P', 'mc')
-    plot.addHisto(twamc_ds,                'P,same', 'tW DS aMC + P8',      'P', 'mc')
-    plot.addHisto(twamc_ds_runningBW,      'P,same', 'tW DS dyn. aMC + P8', 'P', 'mc')
-    plot.addHisto(twamc_ds_is,                 'P,same', 'tW DS aMC + P8',      'P', 'mc')
-    plot.addHisto(twamc_ds_is_runningBW,   'P,same', 'tW DS dyn. aMC + P8', 'P', 'mc')
+    plot.addHisto(tru,                     'P,same', 'tW PH DR + P8',       'P', 'mc')
+    plot.addHisto(twds,                    'P,same', 'tW PH DS + P8',       'P', 'mc')
+    plot.addHisto(twherwig,                'P,same', 'tW PH DR + H7',       'P', 'mc')
+    plot.addHisto(twamc_dr,                'P,same', 'tW aMC DR + P8',      'P', 'mc')
+    plot.addHisto(twamc_dr2,               'P,same', 'tW aMC DR2 + P8',     'P', 'mc')
+    plot.addHisto(twamc_ds,                'P,same', 'tW aMC DS + P8',      'P', 'mc')
+    plot.addHisto(twamc_ds_runningBW,      'P,same', 'tW aMC DS dyn. + P8', 'P', 'mc')
+    ##plot.addHisto(twamc_ds_is,             'P,same', 'tW aMC DS IS + P8',      'P', 'mc')
+    ##plot.addHisto(twamc_ds_is_runningBW,   'P,same', 'tW aMC DS IS dyn. + P8', 'P', 'mc')
     
     """
     plot.addHisto(tru,                     'P,same', 'b#bar{b}l^{+}#nu l^{-}#nu PH + P8','P', 'mc')

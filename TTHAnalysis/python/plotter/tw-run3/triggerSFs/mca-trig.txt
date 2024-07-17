@@ -1,8 +1,8 @@
 ### Nominal samples
 
 #2022
-#incl_2022_ttbar   : + ; years="2022",IncludeMca="tw-run3/mca-tw-includes/mca-2022-ttbar.txt",   Label="t\\bar{t}"
-#incl_2022_data    : + ; years="2022",IncludeMca="tw-run3/mca-tw-includes/mca-2022-data.txt"
+incl_2022_ttbar         : + ; years="2022",IncludeMca="tw-run3/triggerSFs/mca-tw-includes/mca-2022-ttbar.txt",   Label="t\\bar{t}"
+incl_2022_data          : + ; years="2022",IncludeMca="tw-run3/triggerSFs/mca-tw-includes/mca-2022-data.txt"
 
 #2022PostEE
 incl_2022PostEE_ttbar   : + ; years="2022PostEE",IncludeMca="tw-run3/triggerSFs/mca-tw-includes/mca-2022PostEE-ttbar.txt",     Label="t\\bar{t}"

@@ -1,0 +1,14 @@
+alwaystrue: 1
+
+trigger:    (Trigger_2m || Trigger_1m) && (HLT_PFMET120_PFMHT120_IDTight || HLT_PFMET120_PFMHT120_IDTight_PFHT60 || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60 || HLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60 || HLT_PFMETTypeOne120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_FilterHF || HLT_PFMET200_NotCleaned || HLT_PFMET200_BeamHaloCleaned || HLT_PFMETTypeOne200_BeamHaloCleaned || HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60 || HLT_PFHT500_PFMET100_PFMHT100_IDTight || HLT_PFHT500_PFMET110_PFMHT110_IDTight || HLT_PFHT700_PFMET85_PFMHT85_IDTight || HLT_PFHT800_PFMET75_PFMHT75_IDTight)
+
+metfilters: $DATA{Flag_eeBadScFilter && Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_ecalBadCalibFilter} $MC{Flag_eeBadScFilter && Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_ecalBadCalibFilter}
+mm:        channel == 2
+
+dilep:      (nLepGood >= 2) && (LepGood_pt_corrAll[0] > 25) && (LepGood_pt_corrAll[1] > 20) && isSS == 0 && (minMllAFAS > 20)
+
+metgood:    (METgood_pt > 100)
+
+1jet:       nJetSel30_Recl >= 3;
+1btag:      nBJetSelLoose30_Recl >= 1;
+

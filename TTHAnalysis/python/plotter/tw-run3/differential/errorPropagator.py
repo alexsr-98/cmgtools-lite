@@ -3,6 +3,7 @@ import math, sys
 from copy  import deepcopy
 from array import array
 import varList as vl
+import numpy as np
 ###############################################################################
 
 def quadSum(elements):
@@ -16,6 +17,26 @@ def GetMaxUnc(nominal, uncUp, uncDown):
 def GetSymUnc(nominal, uncUp, uncDown):
     return vl.mean([abs(nominal - uncUp), abs(nominal - uncDown)])**2 # Applying the AVERAGE of the uncs.
     #return max    ([abs(nominal - uncUp), abs(nominal - uncDown)])**2 # Applying the MAXIMUM of the uncs.
+
+def histogram_to_vector(hist):
+    """Convert TH1 histogram to a 1D NumPy array."""
+    return np.array([hist.GetBinContent(i) for i in range(1, hist.GetNbinsX() + 1)])
+
+def computeCovarianceFromResults(histograms, covnomi):
+    # Convert each histogram to a vector
+    hist_vectors = [histogram_to_vector(histograms[hist]) for hist in histograms]
+
+    # Concatenate vectors into a single 2D array
+    data_matrix = np.vstack(hist_vectors)
+
+    # Compute the covariance matrix
+    covariance_matrix = np.cov(data_matrix, rowvar=False)    
+
+    n_bins = covariance_matrix.shape[0]
+    for i in range(n_bins):
+        for j in range(n_bins):
+            covnomi.SetBinContent(i+1, j+1, covariance_matrix[i, j])
+    return covnomi
 
 
 def propagateQuantity(nom, varDict, case = 0):
@@ -649,16 +670,16 @@ def drawTheRelUncPlot(listWithHistos, thedict, thePlot, yaxismax = "auto", doSym
                 if len(uncList) == 1: break
                 continue
 
-            if "lumi" in uncList[iS][0].lower():
-                uncList[iS][1].SetLineColor(r.kBlack)
-                uncList[iS][1].SetLineStyle( 4 )
+            #if "lumi" in uncList[iS][0].lower():
+            #    uncList[iS][1].SetLineColor(r.kBlack)
+            #    uncList[iS][1].SetLineStyle( 4 )
             else:
                 #uncList[iS][1].SetLineColor( vl.ColorMapList[iS] )
                 uncList[iS][1].SetLineColor( vl.UncsColourMap[uncList[iS][0].lower().replace("resp_", "")] )
                 uncList[iS][1].SetLineWidth( 2 )
 
             uncList[iS][1].SetFillColorAlpha(r.kBlue, 0.)
-            thePlot.addHisto(uncList[iS][1], 'H,same', vl.SysNameTranslator[uncList[iS][0].lower().replace("resp_", "")] + (" (resp.)" if "resp" in uncList[iS][0].lower() else ""), 'L')
+            thePlot.addHisto(uncList[iS][1], 'H,same', vl.SysNameTranslator[uncList[iS][0].replace("resp_", "")] + (" (resp.)" if "resp" in uncList[iS][0].lower() else ""), 'L')
             plottedsysts += 1
 
             #print iS, uncList[iS][0]

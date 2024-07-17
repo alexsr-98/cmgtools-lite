@@ -1,11 +1,18 @@
 lep1_pt   : LepGood_pt_corrAll[0]  : 14,10,150              ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading lepton p_{T} (GeV)", MoreY=1.3
 lep2_pt   : LepGood_pt_corrAll[1]  : 14,10,150              ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Subleading lepton p_{T} (GeV)"
 
-e_pt   : getElePt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_pt[0], LepGood_pt[1])  : [20, 40, 60, 80, 100, 150, 200, 500]              ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Electron p_{T} (GeV)", MoreY=1.3
-m_pt   : getMuPt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_pt[0], LepGood_pt[1])  : [20, 30, 45, 60, 80, 100, 150, 200, 500]             ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Muon p_{T} (GeV)", MoreY=1.3
+e_pt   : getElePt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_pt_corrAll[0], LepGood_pt_corrAll[1])  : [20, 40, 60, 80, 100, 150, 200, 500]              ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Electron p_{T} (GeV)", MoreY=1.3
+m_pt   : getMuPt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_pt_corrAll[0], LepGood_pt_corrAll[1])  : [20, 30, 45, 60, 80, 100, 150, 200, 500]             ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Muon p_{T} (GeV)", MoreY=1.3
+e_eta  : getElePt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_eta[0], LepGood_eta[1]) : [-2.4, -1.6, -1.2, -0.8, -0.4, 0. , 0.4, 0.8, 1.2, 1.6, 2.4]              ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Electron #eta", MoreY=1.3
+m_eta  : getMuPt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_eta[0], LepGood_eta[1]) : [-2.4, -1.6, -1.2, -0.8, -0.4, 0. , 0.4, 0.8, 1.2, 1.6, 2.4]              ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Muon #eta", MoreY=1.3
 
 # 2D plot: var_y\:var_x : binning_x*binning_y
-ept_mpt : getMuPt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_pt[0], LepGood_pt[1])\:getElePt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_pt[0], LepGood_pt[1]) : [20, 40, 60, 80, 100, 150, 200, 500]*[20, 30, 45, 60, 80, 100, 150, 200, 500] ; IncludeOverflows=False
+ept_mpt : getMuPt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_pt_corrAll[0], LepGood_pt_corrAll[1])\:getElePt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_pt_corrAll[0], LepGood_pt_corrAll[1]) : [20, 40, 60, 80, 100, 150, 200, 500]*[20, 30, 45, 60, 80, 100, 150, 200, 500] ; IncludeOverflows=False
+mpt_meta : getMuPt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_eta[0], LepGood_eta[1])\:getMuPt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_pt_corrAll[0], LepGood_pt_corrAll[1]) : [20, 40, 60, 80, 100, 150, 200, 500]*[-2.4, -1.6, -1.2, -0.8, -0.4, 0. , 0.4, 0.8, 1.2, 1.6, 2.4] ; IncludeOverflows=False
+ept_eeta : getElePt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_eta[0], LepGood_eta[1])\:getElePt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_pt_corrAll[0], LepGood_pt_corrAll[1]) : [20, 40, 60, 80, 100, 150, 200, 500]*[-2.4, -1.6, -1.2, -0.8, -0.4, 0. , 0.4, 0.8, 1.2, 1.6, 2.4] ; IncludeOverflows=False
+meta_eeta : getMuPt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_eta[0], LepGood_eta[1])\:getElePt(LepGood_pdgId[0], LepGood_pdgId[1], LepGood_eta[0], LepGood_eta[1]) : [-2.4, -1.6, -1.2, -0.8, -0.4, 0. , 0.4, 0.8, 1.2, 1.6, 2.4]*[-2.4, -1.6, -1.2, -0.8, -0.4, 0. , 0.4, 0.8, 1.2, 1.6, 2.4] ; IncludeOverflows=False
 
 
 met          : METgood_pt          : 30,0,300               ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}^{miss} (GeV)"
+
+tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", LegendCutoff=0, MoreY=2.0

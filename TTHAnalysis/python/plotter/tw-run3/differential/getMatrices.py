@@ -101,7 +101,10 @@ def GetAndPlotResponseMatrix(iY, var, key, theresponseh, theparticleh, thepath):
     r.gStyle.SetPaintTextFormat("4.3f")
     CMS_lumi.lumi_13TeV = ""
     #CMS_lumi.extraText  = 'Simulation Supplementary'
+    # For paper
     CMS_lumi.extraText  = 'Simulation Supplementary' + ' Preliminary' * vl.doPre
+    # For PAS
+    #CMS_lumi.extraText  = 'Simulation' + ' Preliminary' * vl.doPre
 #    CMS_lumi.lumi_sqrtS = '#sqrt{s} = 13 TeV'
     CMS_lumi.lumi_sqrtS = '(13.6 TeV)'
     #CMS_lumi.cmsTextSize += 0.1
@@ -157,31 +160,10 @@ def GetAndPlotPuritiesAndStabilities(var, theresponseh, theparticleh, thedetecto
     particlebins  = array("d", particlebins)
     detectorbins  = array("d", detectorbins)
 
-    # print " > Calculating stabilities..."
-
-    # print "under,under:", theresponseh.GetBinContent(0, 0)
-    # print "under,over:",  theresponseh.GetBinContent(0, ndetectorbins + 2)
-    # print "over,under:",  theresponseh.GetBinContent(nparticlebins + 2, 0)
-    # print "over,over:",   theresponseh.GetBinContent(nparticlebins + 2, ndetectorbins + 2)
-    # print "underparticle:", theparticleh.GetBinContent(0)
-    # print "overparticle:", theparticleh.GetBinContent(nparticlebins + 2)
-
-    # print theparticleh.GetName(), theresponseh.GetName(), thedetectorparticleh.GetName()
 
     for i in range(1, nparticlebins + 1):
-        sumstab = 0
-        # print "underflow :",   theresponseh.GetBinContent(i, 0)
-        for j in range(1, ndetectorbins + 1):
-            # print j, ":", theresponseh.GetBinContent(i, j)
-            sumstab += theresponseh.GetBinContent(i, j)
+        sumstab = theresponseh.GetBinContent(i, i)
 
-        # print "overflow :", theresponseh.GetBinContent(i, ndetectorbins + 2)
-        # print "num:", sumstab
-        # print "den:", theparticleh.GetBinContent(i)
-        # print "coc:", sumstab / theparticleh.GetBinContent(i), "\n"
-
-        # print "den2:", thedetectorparticleh.GetBinContent(i)
-        # print "coc2:", sumstab / thedetectorparticleh.GetBinContent(i), "\n"
         ## CON EFICIENCIA DE RECONSTRUCCION
         try:
             stabilities.append(sumstab / theparticleh.GetBinContent(i))
@@ -189,36 +171,25 @@ def GetAndPlotPuritiesAndStabilities(var, theresponseh, theparticleh, thedetecto
             stabilities.append(0)
 
         ## SIN EFICIENCIA DE RECONSTRUCCION
+        denom = sum([ theresponseh.GetBinContent(i, j) for j in range(1, 1+nparticlebins)])
         try:
-            stabilities_woeff.append(sumstab / thedetectorparticleh.GetBinContent(i))
+            stabilities_woeff.append(sumstab / denom)
         except ZeroDivisionError:
             stabilities_woeff.append(0)
 
-    #print " > Calculating purities..."
-    #print "underreco:", thedetectorh.GetBinContent(0)
-    #print "overreco:",  thedetectorh.GetBinContent(ndetectorbins + 2)
-    for j in range(1, ndetectorbins + 1):
-        sumpur = 0
-        #print "underflow :",   theresponseh.GetBinContent(0, j)
-        for i in range(1, nparticlebins + 1):
-            #print i, ":", theresponseh.GetBinContent(i, j)
-            sumpur += theresponseh.GetBinContent(i, j)
+    for j in range(1, nparticlebins + 1):
+        sumpur = theresponseh.GetBinContent(j, j)
+        denom = sum([ theresponseh.GetBinContent(i, j) for i in range(1, 1+nparticlebins)])
 
-        #print "overflow :", theresponseh.GetBinContent(nparticlebins + 2, j)
-        #print "num:", sumpur
-        #print "den:", thedetectorh.GetBinContent(j)
-        #print "coc:", sumpur / thedetectorh.GetBinContent(j), "\n"
         try:
-            purities.append(sumpur / thedetectorh.GetBinContent(j))
+            purities.append(sumpur / denom)
         except ZeroDivisionError:
             purities.append(0)
 
-    #sys.exit()
-    #print " > Fixing values of histograms..."
-    #print nparticlebins, particlebins, ndetectorbins, detectorbins
+
     hStab       = r.TH1D('hStab',       '', nparticlebins, particlebins)
     hStab_woeff = r.TH1D('hStab_woeff', '', nparticlebins, particlebins)
-    hPur        = r.TH1D('hPur',        '', ndetectorbins, detectorbins)
+    hPur        = r.TH1D('hPur',        '', nparticlebins, particlebins)
     for i in range(1, hStab.GetNbinsX() + 1):
         hStab.SetBinContent(i, stabilities[i - 1])
         hStab_woeff.SetBinContent(i, stabilities_woeff[i - 1])
@@ -237,7 +208,7 @@ def GetAndPlotPuritiesAndStabilities(var, theresponseh, theparticleh, thedetecto
     hPur.SetYTitle("Purities and stabilities")
     hStab.SetLineColor(r.kBlue)
     hPur.SetLineColor(r.kRed)
-    hPur.SetMaximum(1.)
+    hPur.SetMaximum(1.1)
     hPur.SetMinimum(0.)
     #hPur.SetMinimum(0.6)
     hPur.GetXaxis().SetTitleFont(43)
@@ -288,7 +259,7 @@ def GetAndPlotPuritiesAndStabilities(var, theresponseh, theparticleh, thedetecto
     textSize      = 0.035
     (x1,y1,x2,y2) = (.75, .45, .85, .65)
     l             = r.TLegend(x1, y1, x2, y2);
-    l.AddEntry(hStab_woeff, 'Stability (w/o rec. eff.)')
+    l.AddEntry(hStab_woeff, 'Stability')
     l.AddEntry(hPur,  'Purity')
     l.SetTextFont(42)
     l.SetTextSize(textSize)
@@ -429,6 +400,9 @@ def CalculateAndPlotResponseMatrices(tsk):
     if not os.path.isfile(inpath + "/" + iY + "/" + iV + "/detectorparticleResponse.root"):
         raise RuntimeError('The rootfile with the signal region and fiducial cuts information in 2D does not exist')
 
+    if not os.path.isfile(inpath + "/" + iY + "/" + iV + "/detectorparticleResponseSquare.root"):
+        raise RuntimeError('The rootfile with the signal region and fiducial cuts information in 2D does not exist')
+
     if not os.path.isfile(inpath + "/" + iY + "/" + iV + "/detectorparticlebutdetector.root"):
         raise RuntimeError('The rootfile with the signal region and fiducial cuts information with detector binning does not exist')
 
@@ -438,17 +412,18 @@ def CalculateAndPlotResponseMatrices(tsk):
     fDetector         = r.TFile(inpath + "/" + iY + "/" + iV + "/detector.root", "READ")
     fDetectorParticle = r.TFile(inpath + "/" + iY + "/" + iV + "/detectorparticle.root", "READ")
     fResponse         = r.TFile(inpath + "/" + iY + "/" + iV + "/detectorparticleResponse.root", "READ")
+    fResponseSquare   = r.TFile(inpath + "/" + iY + "/" + iV + "/detectorparticleResponseSquare.root", "READ")
     fDetectorParticleButDetector  = r.TFile(inpath + "/" + iY + "/" + iV + "/detectorparticlebutdetector.root", "READ")
     fNonFiducial      = r.TFile(inpath + "/" + iY + "/" + iV + "/nonfiducial.root", "READ")
 
     detectordict = {}; detectorparticledict = {}; detectorparticlebutdetectordict = {};
-    responsedict = {}; nonfiducialdict = {};
+    responsedict = {}; nonfiducialdict = {}; responsesquaredict = {};
     condnumdict = {}
     for key in fDetector.GetListOfKeys():
         tmpnam = key.GetName()
         #print "\ntmpnam:", tmpnam
 
-        if any([el in tmpnam for el in ["ds", "dr", "data", "herwig", "amc"]]) and "sf" not in tmpnam:   # CUIDADO CON NO SALTARSE LAS INCERTIDUMBRES DE LOS SFs
+        if any([el in tmpnam for el in ["ds", "dr", "data", "herwig", "amc","ttbardif","bb4l"]]) and "sf" not in tmpnam:   # CUIDADO CON NO SALTARSE LAS INCERTIDUMBRES DE LOS SFs
             print("WARNING: Skipping", tmpnam, "because it is a data or MC sample of alternative signal")
             continue
 
@@ -458,6 +433,7 @@ def CalculateAndPlotResponseMatrices(tsk):
             detectorparticledict[""] = deepcopy(fDetectorParticle.Get(tmpnam).Clone(""))
             detectorparticlebutdetectordict[""] = deepcopy(fDetectorParticleButDetector.Get(tmpnam).Clone(""))
             responsedict[""]         = deepcopy(fResponse.Get(tmpnam).Clone(""))
+            responsesquaredict[""]   = deepcopy(fResponseSquare.Get(tmpnam).Clone(""))
             nonfiducialdict[""]      = deepcopy(fNonFiducial.Get(tmpnam).Clone(""))
         else:
             tmpunc  = tmpnam.replace("x_tw_", "")
@@ -475,6 +451,7 @@ def CalculateAndPlotResponseMatrices(tsk):
     fDetector.Close();         del fDetector
     fDetectorParticle.Close(); del fDetectorParticle
     fResponse.Close();         del fResponse
+    fResponseSquare.Close();   del fResponseSquare
     fNonFiducial.Close();      del fNonFiducial
     fDetectorParticleButDetector.Close(); del fDetectorParticleButDetector
 
@@ -489,7 +466,7 @@ def CalculateAndPlotResponseMatrices(tsk):
     for key in detectordict:
         # if key != "": continue
         if key == "":
-            GetAndPlotPuritiesAndStabilities(iV, responsedict[key], hParticle, detectorparticledict[key], detectordict[key], tmpoutpath)
+            GetAndPlotPuritiesAndStabilities(iV, responsesquaredict[key], hParticle, detectorparticledict[key], detectordict[key], tmpoutpath)
 
         hResponse, theoverlap = GetAndPlotResponseMatrix(iY, iV, key, responsedict[key], hParticle, tmpoutpath)
 
