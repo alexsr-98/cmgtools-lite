@@ -56,12 +56,12 @@ dictRegions = {
 }
 
 dictRegionsXaxisLabels = {
-    "ch1"      : "RF discriminant",
-    "ch2"      : "RF discriminant",
+    "ch1"      : "RF discriminant bin",
+    "ch2"      : "RF discriminant bin",
     "ch3"      : "Subleading jet #it{p}_{T} (GeV)",
     ##"ch3"      : "m_{bl}^{minimax} (GeV)",
-    "ch4"      : "RF discriminant",
-    "ch5"      : "RF discriminant",
+    "ch4"      : "RF discriminant bin",
+    "ch5"      : "RF discriminant bin",
 }
 
 dictRegionsYaxisLabels = {
@@ -380,7 +380,10 @@ def producePlots(year, region, path):
       else:
         hAuxForAxis.GetYaxis().SetRangeUser(0.8 if dire=="ch3" else 0.94 , 1.2 if dire=="ch3" else 1.06)
       hAuxForAxis.GetYaxis().SetNdivisions(503)
-      hAuxForAxis.GetXaxis().SetNdivisions(410)
+      if dire != "ch3":
+        hAuxForAxis.GetXaxis().SetNdivisions(210)
+      else:
+        hAuxForAxis.GetXaxis().SetNdivisions(410)
       hAuxForAxis.GetYaxis().CenterTitle(True)
       # Set the tick lenght
       hAuxForAxis.GetXaxis().SetTickLength(tick_length * (p2.GetWh() * p2.GetAbsHNDC()) / (p1.GetWh() * p1.GetAbsHNDC()))
