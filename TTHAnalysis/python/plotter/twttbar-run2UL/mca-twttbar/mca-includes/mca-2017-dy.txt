@@ -4,6 +4,6 @@
 
 # NLO
 #dy : DYJetsToLL_M_50_TuneCP5_13TeV_amcatnloFXFX_pythia8*    : xsec ; FillColor=852
-dy : DYJetsToLL_0J_TuneCP5_13TeV_amcatnloFXFX_pythia8*      : xsec ; FillColor=852
-dy : DYJetsToLL_1J_TuneCP5_13TeV_amcatnloFXFX_pythia8*      : xsec ; FillColor=852
-dy : DYJetsToLL_2J_TuneCP5_13TeV_amcatnloFXFX_pythia8*      : xsec ; FillColor=852
+dy : DYJetsToLL_0J_TuneCP5_13TeV_amcatnloFXFX_pythia8*      : xsec ; FillColor=ROOT.TColor.GetColor(87\,144\,252)
+dy : DYJetsToLL_1J_TuneCP5_13TeV_amcatnloFXFX_pythia8*      : xsec ; FillColor=ROOT.TColor.GetColor(87\,144\,252)
+dy : DYJetsToLL_2J_TuneCP5_13TeV_amcatnloFXFX_pythia8*      : xsec ; FillColor=ROOT.TColor.GetColor(87\,144\,252)

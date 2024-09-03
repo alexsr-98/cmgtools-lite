@@ -1,1 +1,1 @@
-ttbar+ : TTTo2L2Nu_TuneCP5_13TeV_powheg_pythia8* : xsec ; FillColor=633
+ttbar+ : TTTo2L2Nu_TuneCP5_13TeV_powheg_pythia8* : xsec ; FillColor=ROOT.TColor.GetColor(228\,37\,54)

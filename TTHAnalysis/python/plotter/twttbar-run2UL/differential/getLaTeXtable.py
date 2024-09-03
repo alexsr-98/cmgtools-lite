@@ -6,8 +6,8 @@ from copy import deepcopy
 import sys, os, argparse
 from collections import OrderedDict
 
-sys.path.append('{cmsswpath}/src/CMGTools/TTHAnalysis/python/plotter/tw-run2/differential/'.format(cmsswpath = os.environ['CMSSW_BASE']))
-from . import varList as vl
+sys.path.append('{cmsswpath}/src/CMGTools/TTHAnalysis/python/plotter/twttbar-run2UL/differential/'.format(cmsswpath = os.environ['CMSSW_BASE']))
+import varList as vl
 from tableFormats import latexTable
 r.gROOT.SetBatch(True)
 
@@ -455,6 +455,7 @@ if __name__ == "__main__":
                 actualvars = []
                 for iV in thevars:
                     if any([el in iV for el in vl.vetolist]): continue
+                    if iV == "Fiducial": continue
                     actualvars.append(iV)
                 tasks.append( (inpath + "/" + iY, actualvars) )
 

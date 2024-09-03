@@ -24,7 +24,7 @@ doArea      = False     # Apply area constraint in unfolding (general setting, c
 onlyTotal   = False      # Only show total unc. line in the differential relative unc. plots.
 
 vetolist = ["plots", "control", "tables", "response"]
-
+arXivtext = ""
 # === OTHER IMPORTANT DEFINITIONS ===
 LumiDict     = {"2016apv": 19.52,
                 "2016"   : 16.81,
@@ -41,17 +41,16 @@ legpos       = (0.82, 0.65, 0.93, 0.93)
 if asimov: labellegend = 'Asimov dataset'
 else:      labellegend = 'Data'
 
-storagepath = "/pool/phedex/userstorage/vrbouza/proyectos/twttbar/"
 
-def GetLastFolder(stpth):
-    savefolders   = next(os.walk(stpth))[1]
-    saveyears     = list(map(int, [i[6:]  for i in savefolders]))
-    savefolders   = [i for i in savefolders if int(i[6:]) == max(saveyears)]
-    savemonths    = list(map(int, [i[3:5] for i in savefolders]))
-    savefolders   = [i for i in savefolders if int(i[3:5]) == max(savemonths)]
-    savedays      = list(map(int, [i[:2]  for i in savefolders]))
-    savefolders   = [i for i in savefolders if int(i[:2]) == max(savedays)]
-    return (stpth + savefolders[0] + "/")
+#def GetLastFolder(stpth):
+#    savefolders   = next(os.walk(stpth))[1]
+#    saveyears     = list(map(int, [i[6:]  for i in savefolders]))
+#    savefolders   = [i for i in savefolders if int(i[6:]) == max(saveyears)]
+#    savemonths    = list(map(int, [i[3:5] for i in savefolders]))
+#    savefolders   = [i for i in savefolders if int(i[3:5]) == max(savemonths)]
+#    savedays      = list(map(int, [i[:2]  for i in savefolders]))
+#    savefolders   = [i for i in savefolders if int(i[:2]) == max(savedays)]
+#    return (stpth + savefolders[0] + "/")
 
 def SetUpWarnings():
     wr.simplefilter("always", UserWarning)
@@ -61,17 +60,23 @@ def SetUpWarnings():
 def mean(numbers):
     return float(sum(numbers)) / max(len(numbers), 1)
 
-def GiveMeTheExpNamesWOJER(inl):
-    l = []
-    for el in inl:
-        if "JER" in el or "Down" in el: continue
-        l.append(el.replace("Up", ""))
-    return ",".join(l)
+#def GiveMeTheExpNamesWOJER(inl):
+#    l = []
+#    for el in inl:
+#        if "JER" in el or "Down" in el: continue
+#        l.append(el.replace("Up", ""))
+#    return ",".join(l)
 
 
-def giveMeOneComparison(thef, name, scalevalue, iV, part = False, normfid = False, normbin = False):
+def giveMeOneComparison(thef, name, scalevalue, iV, part = False, normfid = False, normbin = False, substract=None, add=None):
     #print name
     outH = deepcopy(thef.Get("x_" + name).Clone(name))
+    if substract != None:
+        subsH = deepcopy(thef.Get("x_" + substract).Clone(substract))
+        outH.Add(subsH, -1)
+    if add != None:
+        addH = deepcopy(thef.Get("x_" + add).Clone(add))
+        outH.Add(addH)
     outH.Scale(scalevalue)
     outH.SetMarkerSize(1.25)
     outH.SetMarkerColor(comparisonColourDict[name])
@@ -159,78 +164,78 @@ def parseRelUncs(path, verbose = False):
     return theres
 
 
-def prepareCards(thef):
-    tmpdict = {}
-
-    #### Get the histos
-    tmpf = r.TFile(thef, "READ")
-    for key in tmpf.GetListOfKeys():
-        tmpdict[key.GetName()] = deepcopy(tmpf.Get(key.GetName()).Clone(key.GetName()))
-
-    tmpf.Close(); del tmpf
-
-    #### Process them
-    # tW PH+P8 DR + ttbar PH+P8
-    tmpdict["twttbardr"] = deepcopy(tmpdict["ttbar"].Clone("twttbardr"))
-    tmpdict["twttbardr"].Add(tmpdict["twdr"])
-
-    # tW PH+P8 DS + ttbar PH+P8
-    tmpdict["twttbards"] = deepcopy(tmpdict["ttbar"].Clone("twttbards"))
-    tmpdict["twttbards"].Add(tmpdict["twds"])
-
-    # tW PH+H7 DR + ttbar PH+H7
-    tmpdict["twttbarherwig"] = deepcopy(tmpdict["ttbarherwig"].Clone("twttbarherwig"))
-    tmpdict["twttbarherwig"].Add(tmpdict["twherwig"])
-
-    # tW aMC+P8 DR + ttbar aMC+P8
-    tmpdict["twttbaramc_dr"] = deepcopy(tmpdict["ttbaramc"].Clone("twttbaramc_dr"))
-    tmpdict["twttbaramc_dr"].Add(tmpdict["twamc_dr"])
-
-    # tW aMC+P8 DR2 + ttbar aMC+P8
-    tmpdict["twttbaramc_dr2"] = deepcopy(tmpdict["ttbaramc"].Clone("twttbaramc_dr2"))
-    tmpdict["twttbaramc_dr2"].Add(tmpdict["twamc_dr2"])
-
-    # tW aMC+P8 DS + ttbar aMC+P8
-    tmpdict["twttbaramc_ds"] = deepcopy(tmpdict["ttbaramc"].Clone("twttbaramc_ds"))
-    tmpdict["twttbaramc_ds"].Add(tmpdict["twamc_ds"])
-
-    # tW aMC+P8 DS IS + ttbar aMC+P8
-    tmpdict["twttbaramc_ds_is"] = deepcopy(tmpdict["ttbaramc"].Clone("twttbaramc_ds_is"))
-    tmpdict["twttbaramc_ds_is"].Add(tmpdict["twamc_ds_is"])
-
-    # tW aMC+P8 DS runningBW + ttbar aMC+P8
-    tmpdict["twttbaramc_ds_runningBW"] = deepcopy(tmpdict["ttbaramc"].Clone("twttbaramc_ds_runningBW"))
-    tmpdict["twttbaramc_ds_runningBW"].Add(tmpdict["twamc_ds_runningBW"])
-
-    # tW aMC+P8 DS IS runningBW + ttbar aMC+P8
-    tmpdict["twttbaramc_ds_is_runningBW"] = deepcopy(tmpdict["ttbaramc"].Clone("twttbaramc_ds_is_runningBW"))
-    tmpdict["twttbaramc_ds_is_runningBW"].Add(tmpdict["twamc_ds_is_runningBW"])
-
-
-    #### Delete used histograms
-    del tmpdict["ttbar"]
-    del tmpdict["ttbarherwig"]
-    del tmpdict["ttbaramc"]
-    del tmpdict["twdr"]
-    del tmpdict["twds"]
-    del tmpdict["twherwig"]
-    del tmpdict["twamc_dr"]
-    del tmpdict["twamc_dr2"]
-    del tmpdict["twamc_ds"]
-    del tmpdict["twamc_ds_runningBW"]
-    del tmpdict["twamc_ds_is"]
-    del tmpdict["twamc_ds_is_runningBW"]
-
-
-    #### Rename current file
-    os.system("mv " + thef + " " + thef.replace(".root", "_old.root"))
-
-
-    #### Save new file
-    tmpf = r.TFile(thef, "RECREATE")
-    for key in tmpdict: tmpdict[key].Write()
-    tmpf.Close(); del tmpf
-    return
+#def prepareCards(thef):
+#    tmpdict = {}
+#
+#    #### Get the histos
+#    tmpf = r.TFile(thef, "READ")
+#    for key in tmpf.GetListOfKeys():
+#        tmpdict[key.GetName()] = deepcopy(tmpf.Get(key.GetName()).Clone(key.GetName()))
+#
+#    tmpf.Close(); del tmpf
+#
+#    #### Process them
+#    # tW PH+P8 DR + ttbar PH+P8
+#    tmpdict["twttbardr"] = deepcopy(tmpdict["ttbar"].Clone("twttbardr"))
+#    tmpdict["twttbardr"].Add(tmpdict["twdr"])
+#
+#    # tW PH+P8 DS + ttbar PH+P8
+#    tmpdict["twttbards"] = deepcopy(tmpdict["ttbar"].Clone("twttbards"))
+#    tmpdict["twttbards"].Add(tmpdict["twds"])
+#
+#    # tW PH+H7 DR + ttbar PH+H7
+#    tmpdict["twttbarherwig"] = deepcopy(tmpdict["ttbarherwig"].Clone("twttbarherwig"))
+#    tmpdict["twttbarherwig"].Add(tmpdict["twherwig"])
+#
+#    # tW aMC+P8 DR + ttbar aMC+P8
+#    tmpdict["twttbaramc_dr"] = deepcopy(tmpdict["ttbaramc"].Clone("twttbaramc_dr"))
+#    tmpdict["twttbaramc_dr"].Add(tmpdict["twamc_dr"])
+#
+#    # tW aMC+P8 DR2 + ttbar aMC+P8
+#    tmpdict["twttbaramc_dr2"] = deepcopy(tmpdict["ttbaramc"].Clone("twttbaramc_dr2"))
+#    tmpdict["twttbaramc_dr2"].Add(tmpdict["twamc_dr2"])
+#
+#    # tW aMC+P8 DS + ttbar aMC+P8
+#    tmpdict["twttbaramc_ds"] = deepcopy(tmpdict["ttbaramc"].Clone("twttbaramc_ds"))
+#    tmpdict["twttbaramc_ds"].Add(tmpdict["twamc_ds"])
+#
+#    # tW aMC+P8 DS IS + ttbar aMC+P8
+#    tmpdict["twttbaramc_ds_is"] = deepcopy(tmpdict["ttbaramc"].Clone("twttbaramc_ds_is"))
+#    tmpdict["twttbaramc_ds_is"].Add(tmpdict["twamc_ds_is"])
+#
+#    # tW aMC+P8 DS runningBW + ttbar aMC+P8
+#    tmpdict["twttbaramc_ds_runningBW"] = deepcopy(tmpdict["ttbaramc"].Clone("twttbaramc_ds_runningBW"))
+#    tmpdict["twttbaramc_ds_runningBW"].Add(tmpdict["twamc_ds_runningBW"])
+#
+#    # tW aMC+P8 DS IS runningBW + ttbar aMC+P8
+#    tmpdict["twttbaramc_ds_is_runningBW"] = deepcopy(tmpdict["ttbaramc"].Clone("twttbaramc_ds_is_runningBW"))
+#    tmpdict["twttbaramc_ds_is_runningBW"].Add(tmpdict["twamc_ds_is_runningBW"])
+#
+#
+#    #### Delete used histograms
+#    del tmpdict["ttbar"]
+#    del tmpdict["ttbarherwig"]
+#    del tmpdict["ttbaramc"]
+#    del tmpdict["twdr"]
+#    del tmpdict["twds"]
+#    del tmpdict["twherwig"]
+#    del tmpdict["twamc_dr"]
+#    del tmpdict["twamc_dr2"]
+#    del tmpdict["twamc_ds"]
+#    del tmpdict["twamc_ds_runningBW"]
+#    del tmpdict["twamc_ds_is"]
+#    del tmpdict["twamc_ds_is_runningBW"]
+#
+#
+#    #### Rename current file
+#    os.system("mv " + thef + " " + thef.replace(".root", "_old.root"))
+#
+#
+#    #### Save new file
+#    tmpf = r.TFile(thef, "RECREATE")
+#    for key in tmpdict: tmpdict[key].Write()
+#    tmpf.Close(); del tmpf
+#    return
 
 
 def getInfoFromFD(path, fdpath, unc, iY, iV, isNom = False):
@@ -482,30 +487,30 @@ def confirm(message = "Do you wish to continue?"):
 # var           := name of the variable in the tree to make cards
 # var_response  := name of the variable in the response matrix without the M
 varList = {}
-varList['LCurve'] = {
-    'xaxis' : '\\log_{10}\\left(\\mathscr{L}_{1}\\right)',
-    'yaxis' : '\\log_{10}\\left(\\mathscr{L}_{2}\\,/\\tau^{2}\\right)',
-}
+#varList['LCurve'] = {
+#    'xaxis' : '\\log_{10}\\left(\\mathscr{L}_{1}\\right)',
+#    'yaxis' : '\\log_{10}\\left(\\mathscr{L}_{2}\\,/\\tau^{2}\\right)',
+#}
+#
+#varList['LCurvature'] = {
+#    'xaxis' : '\\log_{10}\\left(\\tau\\right)',
+#    'yaxis' : '\\mathscr{C}\\left(\\log_{10}\\left(\\tau\\right)\\right)',
+#}
 
-varList['LCurvature'] = {
-    'xaxis' : '\\log_{10}\\left(\\tau\\right)',
-    'yaxis' : '\\mathscr{C}\\left(\\log_{10}\\left(\\tau\\right)\\right)',
-}
-
-varList['LogTauCurv'] = varList['LCurvature']
+#varList['LogTauCurv'] = varList['LCurvature']
 
 varList['Names'] = {
     #'Variables'   : ["Lep1_Pt", "Jet1_Pt", "Lep1Lep2_DPhi", "Lep1Lep2Jet1MET_Pz", "Lep1Lep2Jet1MET_Mt", "Lep1Lep2Jet1_M"],
     #'Variables'   : ["Lep1_Pt", "Jet1_Pt", "Lep1Lep2_DPhi", "Lep1Lep2Jet1MET_Pz", "Lep1Lep2Jet1MET_Mt", "Lep1Lep2Jet1_M", "Fiducial"],
     'Variables'   : ["Lep1_Pt", "Jet1_Pt", "Lep1Lep2_DPhi", "Lep1Lep2Jet1MET_Pz", "Lep1Lep2Jet1MET_Mt", "Lep1Lep2Jet1_M"],
-    'ExpSysts'    : ["JESUp", "JESDown", "JERUp", "ElecEffUp", "ElecEffDown", "MuonEffUp", #   DO NOT MOVE THE FIRST THREE TO OTHER
-                     "MuonEffDown", "TrigUp", "TrigDown", "PUUp", "PUDown", "BtagUp",      # POSITION: it will affect the calculus
-                     #"BtagDown", "MistagUp", "MistagDown"],                                # of the response matrices.
-                     "BtagDown", "MistagUp", "MistagDown", "TopPtUp", "TopPtDown"],        # of the response matrices.  WITH TOP PT REW
-    'ttbarSysts'  : ["ttbarMEUp", "ttbarMEDown", "pdfUp", "pdfDown", "hDampUp", "hDampDown", "UEUp", "UEDown"],
-    'specialSysts': ["JERDown", "DSDown"],
-    'colorSysts'  : ["GluonMoveCRTuneerdON", "PowhegerdON", "QCDbasedCRTuneerdON", "GluonMoveCRTune"],
-    'NormSysts'   : ["ttbarUp", "ttbarDown", "Non-WorZUp", "Non-WorZDown", "DYUp", "DYDown", "VVttbarVUp", "VVttbarVDown"],
+#    'ExpSysts'    : ["JESUp", "JESDown", "JERUp", "ElecEffUp", "ElecEffDown", "MuonEffUp", #   DO NOT MOVE THE FIRST THREE TO OTHER
+#                     "MuonEffDown", "TrigUp", "TrigDown", "PUUp", "PUDown", "BtagUp",      # POSITION: it will affect the calculus
+#                     #"BtagDown", "MistagUp", "MistagDown"],                                # of the response matrices.
+#                     "BtagDown", "MistagUp", "MistagDown", "TopPtUp", "TopPtDown"],        # of the response matrices.  WITH TOP PT REW
+#    'ttbarSysts'  : ["ttbarMEUp", "ttbarMEDown", "pdfUp", "pdfDown", "hDampUp", "hDampDown", "UEUp", "UEDown"],
+#    'specialSysts': ["JERDown", "DSDown"],
+#    'colorSysts'  : ["GluonMoveCRTuneerdON", "PowhegerdON", "QCDbasedCRTuneerdON", "GluonMoveCRTune"],
+#    'NormSysts'   : ["ttbarUp", "ttbarDown", "Non-WorZUp", "Non-WorZDown", "DYUp", "DYDown", "VVttbarVUp", "VVttbarVDown"],
 }
 
 
@@ -520,21 +525,22 @@ varList['minimax_ATLAS'] = {
                        270., 310., 380., 420.], #DO NOT CHANGE THESE BECAUSE THEY ARE ATLAS' ONES
     #'bins_detector' : [0., 40., 60., 80., 100., 120., 140., 160., 180., 200., 220., 240.,
                        #270., 310., 380., 420.], #DO NOT CHANGE THESE BECAUSE THEY ARE ATLAS' ONES
-    'bins_detector' : [0., 40., 50., 60., 70., 80., 85., 90., 95., 100., 105., 110., 150., 120., 130.,
+    'bins_detector' : [0., 40., 50., 60., 70., 80., 85., 90., 95., 100., 105., 110., 120., 130.,
                        140., 150., 160., 170., 180., 190., 200., 210., 220., 230., 240., 255.,
                        270., 310., 380., 420.],
     'var_detector': 'min(max(1.,minimax), 419.)',
     'name'        : 'minimax',
     'var_response': 'minimax_ATLAS',
     'var_particle': 'min(max(1.,Dressminimax), 419.)',
-    "yaxismax_ratio_fidbin" : 2.0,
-    #"yaxismax_particlefidbin": 0.1,
-    "yaxismax_particlefidbin": 0.02,
+    "yaxismax_ratio_fidbin" : 1.5,
+    "yaxismax_ratio_particle" : 1.5,
+    "yaxismax_particlefidbin": 0.2,
     "yaxismax_particlefidbinunc" : 0.5,
-    #"logy_particlefidbin": True,
-    "yaxismax_ratio_bin"        : 3.0,
-    "yaxismax_particlebin"      : 0.07,
+    "logy_particlefidbin": True,
+    "yaxismax_ratio_bin"        : 3.5,
+    "yaxismax_particlebin"      : 0.10,
     "yaxismax_particlebinunc"   : 0.5,
+    'legpos_particlefidbin': (.47, .88, .74, .43),
 }
 
 
@@ -874,7 +880,8 @@ varList['Jet1_Pt'] = {
     # 'legpos_particlefidbin': (.66, .9, .8, .6),
     # 'legpos_particlefidbin': (.6, .9, .75, .55),
     #'legpos_particlefidbin': (.63, .88, .78, .53),
-    'legpos_particlefidbin': (.51, .88, .78, .43),
+#    'legpos_particlefidbin': (.51, .88, .78, .43),
+    'legpos_particlefidbin': (.46, .88, .73, .43),
     #'legpos_particlefidbin':"TC",
     "legpos_particlebinunc" : "TL",
     'resptxtsize' : 1.5,
@@ -884,7 +891,7 @@ varList['Jet1_Pt'] = {
     'txtangle_covparticle': 45,
     "txtangle_covparticlefidbin": 45,
     "yaxisuplimitunf": 0.20,
-    "yaxismax_particlefidbin": 0.02,
+    "yaxismax_particlefidbin": 0.029,
     "yaxismax_particlefid" : 1.8,
     #"yaxismax_particlefidbinunc" : 1.2,
     "yaxismax_particlefidbinunc" : 0.5,
@@ -893,7 +900,7 @@ varList['Jet1_Pt'] = {
     "yaxismax_particlebin": 0.010,
     "yaxismax_ratio_norm" : 3.5,
 #    "yaxismax_ratio_fidbin" : 2.5,
-    "yaxismax_ratio_fidbin" : 1.5,
+    "yaxismax_ratio_fidbin" : 1.08,
 }
 
 
@@ -931,6 +938,8 @@ varList['Jet1_Eta'] = {
     'name'        : 'Jet1_Eta',
     'var_response': 'Jet1_Eta',
     'var_particle': 'min(max(GenJet_eta[iDressSelJet[0]], -2.4), 2.4)',
+    'legpos_particlefidbin': (.4, .45, .6, .05),
+    "yaxismax_particlefidbin": 0.35,
 }
 
 
@@ -1074,7 +1083,8 @@ varList['Lep1_Pt'] = {
     #'legpos_particlefidbin': (.18, .3, .32, .05),
     # 'legpos_particlefidbin': (.66, .9, .8, .6),
 #    'legpos_particlefidbin': (.63, .88, .78, .53),
-    'legpos_particlefidbin': (.51, .88, .78, .43),
+#    'legpos_particlefidbin': (.51, .88, .78, .43),
+    'legpos_particlefidbin': (.46, .88, .73, .43),
     'legpos_particleunc'   : "TL",
     'legpos_particlefidbinunc': "TL",
     'resptxtsize'  : 1.5,
@@ -1092,7 +1102,7 @@ varList['Lep1_Pt'] = {
     "yaxismax_particlebin": 0.0085,
     "legpos_particlebinunc" : "TL",
 #    "yaxismax_ratio_fidbin" : 2.5,
-   "yaxismax_ratio_fidbin" : 1.08,
+    "yaxismax_ratio_fidbin" : 1.08,
 }
 
 
@@ -1137,13 +1147,14 @@ varList['Lep1_Eta'] = {
     'var_response': 'Lep1_Eta',
     'var_particle': 'min(max(GenDressedLepton_eta[iDressSelLep[0]], -2.4), 2.4)',
     #"yaxismax_ratio_fidbin" : 2.0,
-    ##"yaxismax_particlefidbin": 0.1,
+    "yaxismax_particlefidbin": 0.37,
     #"yaxismax_particlefidbin": 0.015,
     #"yaxismax_particlefidbinunc" : 0.5,
     ##"logy_particlefidbin": True,
     #"yaxismax_ratio_bin"        : 3.0,
     #"yaxismax_particlebin"      : 0.06,
     #"yaxismax_particlebinunc"   : 0.5,
+    'legpos_particlefidbin': (.4, .45, .6, .05),
 }
 
 
@@ -1180,6 +1191,8 @@ varList['Fiducial'] = {
     'var_response'  : 'Fiducial',
     'var_particle'  : 'min(GenDressedLepton_pt[iDressSelLep[0]], 149.)',
     #'var_particle'  : 'min(DressJet1_Pt, 149.)',
+    'printname'   : "Fiducial",
+    'mathprintname'   : "Fiducial",
 }
 
 
@@ -1368,88 +1381,137 @@ varList['Lep1Lep2_Pt'] = {
     "var_detector"  : 'min(max(Lep1Lep2_Pt, 1.), 199.)',
     'var_response'  : 'Lep1Lep2_Pt',
     'var_particle'  : 'min(max(DressLep1Lep2_Pt, 1.), 199.)',
+    "yaxismax_particlefidbin": 0.019,
+    "yaxismax_ratio_fidbin"     : 1.5,
+    'legpos_particlefidbin': (.47, .88, .74, .43),
+}
+
+varList['NJets'] = {
+    'printname'      : 'Number of jets',
+    'printnamenodim' : 'Number of jets',
+    'mathprintname'  : '\\text{Number of jets}',
+    'xaxis'          : 'Number of jets',
+    'yaxis_particle' : 'd#sigma/d(NJets) (pb)',
+    'yaxisfid'       : '(1/#sigma_{fid.})d#sigma/d(NJets)',
+    'yaxisfidbin'    : '(1/#sigma_{fid.})d#sigma/d(NJets)',
+    'yaxisbin'       : 'd#sigma/d(NJets) (pb)',
+    'yaxis_unc'      : 'Relative uncertainty',
+    'printname'      : '\\text{Number of jets}',
+    'bins_particle'  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5],
+    'bins_detector'  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5],
+    "yaxismax_detector" : 400000*3.0,
+    "yaxismax_particle" : 6*3.0,
+    'var_detector': 'min(max(nJetSel30_Recl, 0), 5)',
+    'name'        : 'Number of jets',
+    'var_response': 'NJets',
+    'var_particle': 'min(max(nDressSelJet, 0), 5)',
+    'legpos_particlefidbin': (.4, .45, .6, .05),
+    "yaxismax_particlefidbin": 0.35,
+}
+
+varList['NBJets'] = {
+    'printname'      : 'Number of b jets',
+    'printnamenodim' : 'Number of b jets',
+    'mathprintname'  : '\\text{Number of b jets}',
+    'xaxis'          : 'Number of b jets',
+    'yaxis_particle' : 'd#sigma/d(NBJets) (pb)',
+    'yaxisfid'       : '(1/#sigma_{fid.})d#sigma/d(NBJets)',
+    'yaxisfidbin'    : '(1/#sigma_{fid.})d#sigma/d(NBJets)',
+    'yaxisbin'       : 'd#sigma/d(NBJets) (pb)',
+    'yaxis_unc'      : 'Relative uncertainty',
+    'printname'      : '\\text{Number of b jets}',
+    'bins_particle'  : [-0.5,0.5,1.5,2.5,3.5],
+    'bins_detector'  : [-0.5,0.5,1.5,2.5,3.5],
+    "yaxismax_detector" : 500000*3.0,
+    "yaxismax_particle" : 8*3.3,
+    'var_detector': 'min(max(nBJetSelMedium30_Recl, 0), 3)',
+    'name'        : 'Number of b jets',
+    'var_response': 'NBJets',
+    'var_particle': 'min(max(nDressBSelJet, 0), 3)',
+    'legpos_particlefidbin': (.4, .45, .6, .05),
+    "yaxismax_particlefidbin": 0.35,
 }
 
 # Profiling things
-systMap = {
-    'btagging_2016'       : True,
-    'btagging_1718'       : True,
-    'mistagging_2016'     : True,
-    'mistagging_1718'     : True,
-    'muonen_2016'         : True,
-    'muonen_2017'         : True,
-    'muonen_2018'         : True,
-    'elecidsf'            : True,
-    'elecrecosf'          : True,
-    'muonidsf_stat_2016'  : True,
-    'muonidsf_stat_2017'  : True,
-    'muonidsf_stat_2018'  : True,
-    'muonidsf_syst'       : True,
-    'muonisosf_stat_2016' : True,
-    'muonisosf_stat_2017' : True,
-    'muonisosf_stat_2018' : True,
-    'muonisosf_syst'      : True,
-    'pileup'              : True,
-    'prefiring_2016'      : True,
-    'prefiring_2017'      : True,
-    'jes'                 : True,
-    'jer_2016'            : True,
-    'jer_2017'            : True,
-    'jer_2018'            : True,
-    'triggereff_2016'     : True,
-    'triggereff_2017'     : True,
-    'triggereff_2018'     : True,
-    'ttbar_matching' : {'tw'      : False,
-                        'ttbar'   : True,
-                        'dy'      : False,
-                        'nonworz' : False,
-                        'vvttv'   : False},
-    'ue'           : {  'tw'      : False,
-                        'ttbar'   : True,
-                        'dy'      : False,
-                        'nonworz' : False,
-                        'vvttv'   : False},
-    'isr_ttbar' : {     'tw'      : False,
-                        'ttbar'   : True,
-                        'dy'      : False,
-                        'nonworz' : False,
-                        'vvttv'   : False},
-    'isr_tw' : {        'tw'       : True,
-                        'ttbar'   : False,
-                        'dy'      : False,
-                        'nonworz' : False,
-                        'vvttv'   : False},
-    'fsr_ttbar' : {     'tw'      : False,
-                        'ttbar'   : True,
-                        'dy'      : False,
-                        'nonworz' : False,
-                        'vvttv'   : False},
-    'fsr_tw' : {        'tw'       : True,
-                        'ttbar'   : False,
-                        'dy'      : False,
-                        'nonworz' : False,
-                        'vvttv'   : False},
-    'ttbar_scales' : {  'tw'      : False,
-                        'ttbar'   : True,
-                        'dy'      : False,
-                        'nonworz' : False,
-                        'vvttv'   : False},
-    'tw_scales' : {    'tw'       : True,
-                        'ttbar'   : False,
-                        'dy'      : False,
-                        'nonworz' : False,
-                        'vvttv'   : False},
-    'topptrew'   : {    'tw'      : False,
-                        'ttbar'   : True,
-                        'dy'      : False,
-                        'nonworz' : False,
-                        'vvttv'   : False},
-    'colour_rec' : {    'tw'      : False,
-                        'ttbar'   : True,
-                        'dy'      : False,
-                        'nonworz' : False,
-                        'vvttv'   : False},
-}
+#systMap = {
+#    'btagging_2016'       : True,
+#    'btagging_1718'       : True,
+#    'mistagging_2016'     : True,
+#    'mistagging_1718'     : True,
+#    'muonen_2016'         : True,
+#    'muonen_2017'         : True,
+#    'muonen_2018'         : True,
+#    'elecidsf'            : True,
+#    'elecrecosf'          : True,
+#    'muonidsf_stat_2016'  : True,
+#    'muonidsf_stat_2017'  : True,
+#    'muonidsf_stat_2018'  : True,
+#    'muonidsf_syst'       : True,
+#    'muonisosf_stat_2016' : True,
+#    'muonisosf_stat_2017' : True,
+#    'muonisosf_stat_2018' : True,
+#    'muonisosf_syst'      : True,
+#    'pileup'              : True,
+#    'prefiring_2016'      : True,
+#    'prefiring_2017'      : True,
+#    'jes'                 : True,
+#    'jer_2016'            : True,
+#    'jer_2017'            : True,
+#    'jer_2018'            : True,
+#    'triggereff_2016'     : True,
+#    'triggereff_2017'     : True,
+#    'triggereff_2018'     : True,
+#    'ttbar_matching' : {'tw'      : False,
+#                        'ttbar'   : True,
+#                        'dy'      : False,
+#                        'nonworz' : False,
+#                        'vvttv'   : False},
+#    'ue'           : {  'tw'      : False,
+#                        'ttbar'   : True,
+#                        'dy'      : False,
+#                        'nonworz' : False,
+#                        'vvttv'   : False},
+#    'isr_ttbar' : {     'tw'      : False,
+#                        'ttbar'   : True,
+#                        'dy'      : False,
+#                        'nonworz' : False,
+#                        'vvttv'   : False},
+#    'isr_tw' : {        'tw'       : True,
+#                        'ttbar'   : False,
+#                        'dy'      : False,
+#                        'nonworz' : False,
+#                        'vvttv'   : False},
+#    'fsr_ttbar' : {     'tw'      : False,
+#                        'ttbar'   : True,
+#                        'dy'      : False,
+#                        'nonworz' : False,
+#                        'vvttv'   : False},
+#    'fsr_tw' : {        'tw'       : True,
+#                        'ttbar'   : False,
+#                        'dy'      : False,
+#                        'nonworz' : False,
+#                        'vvttv'   : False},
+#    'ttbar_scales' : {  'tw'      : False,
+#                        'ttbar'   : True,
+#                        'dy'      : False,
+#                        'nonworz' : False,
+#                        'vvttv'   : False},
+#    'tw_scales' : {    'tw'       : True,
+#                        'ttbar'   : False,
+#                        'dy'      : False,
+#                        'nonworz' : False,
+#                        'vvttv'   : False},
+#    'topptrew'   : {    'tw'      : False,
+#                        'ttbar'   : True,
+#                        'dy'      : False,
+#                        'nonworz' : False,
+#                        'vvttv'   : False},
+#    'colour_rec' : {    'tw'      : False,
+#                        'ttbar'   : True,
+#                        'dy'      : False,
+#                        'nonworz' : False,
+#                        'vvttv'   : False},
+#}
 
 
 UncsColourMap = {
@@ -1557,34 +1619,34 @@ UncGroupsColourMap = {
     'mtop'                : r.kMagenta-3,
 }
 
-ColorMapList = [
-    r.TColor.GetColor("#a6cee3"),
-    r.TColor.GetColor("#1f77b4"),
-    r.TColor.GetColor("#b2df8a"),
-    r.TColor.GetColor("#33a02c"),
-    r.TColor.GetColor("#e31a1c"),
-    r.TColor.GetColor("#fdbf6f"),
-    r.TColor.GetColor("#ff7f00"),
-    r.TColor.GetColor("#6a3d9a"),
-    r.kOrange-6,
-    r.TColor.GetColor("#cab2d6"),
-    r.kAzure-6,
-    r.kMagenta,
-    r.kGray+2,
-    r.kBlue,
-    r.kRed,
-    r.kGreen+4,
-    r.kYellow-6,
-    r.kTeal-7,
-    r.kViolet-2,
-    r.kPink+1,
-    r.kSpring-9,
-    r.TColor.GetColor("#fb9a99"),
-    r.kGreen+1,
-    r.kBlue+3,
-    r.kPink-5,
-    r.kTeal,
-]
+#ColorMapList = [
+#    r.TColor.GetColor("#a6cee3"),
+#    r.TColor.GetColor("#1f77b4"),
+#    r.TColor.GetColor("#b2df8a"),
+#    r.TColor.GetColor("#33a02c"),
+#    r.TColor.GetColor("#e31a1c"),
+#    r.TColor.GetColor("#fdbf6f"),
+#    r.TColor.GetColor("#ff7f00"),
+#    r.TColor.GetColor("#6a3d9a"),
+#    r.kOrange-6,
+#    r.TColor.GetColor("#cab2d6"),
+#    r.kAzure-6,
+#    r.kMagenta,
+#    r.kGray+2,
+#    r.kBlue,
+#    r.kRed,
+#    r.kGreen+4,
+#    r.kYellow-6,
+#    r.kTeal-7,
+#    r.kViolet-2,
+#    r.kPink+1,
+#    r.kSpring-9,
+#    r.TColor.GetColor("#fb9a99"),
+#    r.kGreen+1,
+#    r.kBlue+3,
+#    r.kPink-5,
+#    r.kTeal,
+#]
 
 
 ColourMapForProcesses = {
@@ -1820,107 +1882,107 @@ TableDict = {
 }
 
 #### NOTE: it is important to note that they are all normalisation uncertainties (ahora ya no jiji)
-ProfileSysts = {"dy_norm", "nonworz_norm", "ttbar_norm", "vvttv_norm",
-                "lumi_2016", "lumi_2017", "lumi_2018",
-                "lumi_BBD", "lumi_DB", "lumi_LS", "lumi_BCC", "lumi_GS", "lumi_XY"}
+#ProfileSysts = {"dy_norm", "nonworz_norm", "ttbar_norm", "vvttv_norm",
+#                "lumi_2016", "lumi_2017", "lumi_2018",
+#                "lumi_BBD", "lumi_DB", "lumi_LS", "lumi_BCC", "lumi_GS", "lumi_XY"}
 
-ModifiedProfileSysts = {"dy_norm", "nonworz_norm", "ttbar_norm", "vvttv_norm",
-                        "lumi_2016", "lumi_2017", "lumi_2018",
-                        "lumi_BBD", "lumi_DB", "lumi_LS", "lumi_BCC", "lumi_GS", "lumi_XY",
-    'btagging_2016'  ,
-    'btagging_1718'  ,
-    'mistagging_2016',
-    'mistagging_1718',
-    'muonen_2016',
-    'muonen_2017',
-    'muonen_2018',
-    'elecidsf'  ,
-    'elecrecosf',
-    'muonidsf_stat_2016' ,
-    'muonidsf_stat_2017' ,
-    'muonidsf_stat_2018' ,
-    'muonidsf_syst'      ,
-    'muonisosf_stat_2016',
-    'muonisosf_stat_2017',
-    'muonisosf_stat_2018',
-    'muonisosf_syst'     ,
-    'pileup'        ,
-    'prefiring_2016',
-    'prefiring_2017',
-    'jes'       ,
-    'jer_2016'  ,
-    'jer_2017'  ,
-    'jer_2018'  ,
-    'triggereff_2016',
-    'triggereff_2017',
-    'triggereff_2018',
-    #'tw_scales',
-    #'ttbar_scales',
-    #'topptrew',
-    #'isr_ttbar',
-    #'isr_tw',
-    #'fsr_ttbar',
-    #'fsr_tw',
-    }
+#ModifiedProfileSysts = {"dy_norm", "nonworz_norm", "ttbar_norm", "vvttv_norm",
+#                        "lumi_2016", "lumi_2017", "lumi_2018",
+#                        "lumi_BBD", "lumi_DB", "lumi_LS", "lumi_BCC", "lumi_GS", "lumi_XY",
+#    'btagging_2016'  ,
+#    'btagging_1718'  ,
+#    'mistagging_2016',
+#    'mistagging_1718',
+#    'muonen_2016',
+#    'muonen_2017',
+#    'muonen_2018',
+#    'elecidsf'  ,
+#    'elecrecosf',
+#    'muonidsf_stat_2016' ,
+#    'muonidsf_stat_2017' ,
+#    'muonidsf_stat_2018' ,
+#    'muonidsf_syst'      ,
+#    'muonisosf_stat_2016',
+#    'muonisosf_stat_2017',
+#    'muonisosf_stat_2018',
+#    'muonisosf_syst'     ,
+#    'pileup'        ,
+#    'prefiring_2016',
+#    'prefiring_2017',
+#    'jes'       ,
+#    'jer_2016'  ,
+#    'jer_2017'  ,
+#    'jer_2018'  ,
+#    'triggereff_2016',
+#    'triggereff_2017',
+#    'triggereff_2018',
+#    #'tw_scales',
+#    #'ttbar_scales',
+#    #'topptrew',
+#    #'isr_ttbar',
+#    #'isr_tw',
+#    #'fsr_ttbar',
+#    #'fsr_tw',
+#    }
 
-ModifiedProfileSystsThatAreNotPresentAllYears = {
-    "lumi_2016"           : ["2016"],
-    "lumi_2017"           : ["2017"],
-    "lumi_2018"           : ["2018"],
-    "lumi_BBD"            : ["2016", "2017"],
-    "lumi_DB"             : ["2016", "2017"],
-    "lumi_LS"             : ["2017", "2018"],
-    "lumi_BCC"            : ["2017", "2018"],
-    "lumi_GS"             : ["2016", "2017"],
-    "lumi_XY"             : ["2016", "2017", "2018"],
-    'btagging_2016'       : ["2016"],
-    'btagging_1718'       : ["2017", "2018"],
-    'mistagging_2016'     : ["2016"],
-    'mistagging_1718'     : ["2017", "2018"],
-    'muonen_2016'         : ["2016"],
-    'muonen_2017'         : ["2017"],
-    'muonen_2018'         : ["2018"],
-    'elecidsf'            : ["2016", "2017", "2018"],
-    'elecrecosf'          : ["2016", "2017", "2018"],
-    'muonidsf_stat_2016'  : ["2016"],
-    'muonidsf_stat_2017'  : ["2017"],
-    'muonidsf_stat_2018'  : ["2018"],
-    'muonidsf_syst'       : ["2016", "2017", "2018"],
-    'muonisosf_stat_2016' : ["2016"],
-    'muonisosf_stat_2017' : ["2017"],
-    'muonisosf_stat_2018' : ["2018"],
-    'muonisosf_syst'      : ["2016", "2017", "2018"],
-    'pileup'              : ["2016", "2017", "2018"],
-    'prefiring_2016'      : ["2016"],
-    'prefiring_2017'      : ["2017"],
-    'jes'                 : ["2016", "2017", "2018"],
-    'jer_2016'            : ["2016"],
-    'jer_2017'            : ["2017"],
-    'jer_2018'            : ["2018"],
-    'triggereff_2016'     : ["2016"],
-    'triggereff_2017'     : ["2017"],
-    'triggereff_2018'     : ["2018"],
-    #'tw_scales'           : ["2016", "2017", "2018"],
-    #'ttbar_scales'        : ["2016", "2017", "2018"],
-    #'topptrew'            : ["2016", "2017", "2018"],
-    #'isr_ttbar'           : ["2016", "2017", "2018"],
-    #'isr_tw'              : ["2016", "2017", "2018"],
-    #'fsr_ttbar'           : ["2016", "2017", "2018"],
-    #'fsr_tw'              : ["2016", "2017", "2018"],
-}
+#ModifiedProfileSystsThatAreNotPresentAllYears = {
+#    "lumi_2016"           : ["2016"],
+#    "lumi_2017"           : ["2017"],
+#    "lumi_2018"           : ["2018"],
+#    "lumi_BBD"            : ["2016", "2017"],
+#    "lumi_DB"             : ["2016", "2017"],
+#    "lumi_LS"             : ["2017", "2018"],
+#    "lumi_BCC"            : ["2017", "2018"],
+#    "lumi_GS"             : ["2016", "2017"],
+#    "lumi_XY"             : ["2016", "2017", "2018"],
+#    'btagging_2016'       : ["2016"],
+#    'btagging_1718'       : ["2017", "2018"],
+#    'mistagging_2016'     : ["2016"],
+#    'mistagging_1718'     : ["2017", "2018"],
+#    'muonen_2016'         : ["2016"],
+#    'muonen_2017'         : ["2017"],
+#    'muonen_2018'         : ["2018"],
+#    'elecidsf'            : ["2016", "2017", "2018"],
+#    'elecrecosf'          : ["2016", "2017", "2018"],
+#    'muonidsf_stat_2016'  : ["2016"],
+#    'muonidsf_stat_2017'  : ["2017"],
+#    'muonidsf_stat_2018'  : ["2018"],
+#    'muonidsf_syst'       : ["2016", "2017", "2018"],
+#    'muonisosf_stat_2016' : ["2016"],
+#    'muonisosf_stat_2017' : ["2017"],
+#    'muonisosf_stat_2018' : ["2018"],
+#    'muonisosf_syst'      : ["2016", "2017", "2018"],
+#    'pileup'              : ["2016", "2017", "2018"],
+#    'prefiring_2016'      : ["2016"],
+#    'prefiring_2017'      : ["2017"],
+#    'jes'                 : ["2016", "2017", "2018"],
+#    'jer_2016'            : ["2016"],
+#    'jer_2017'            : ["2017"],
+#    'jer_2018'            : ["2018"],
+#    'triggereff_2016'     : ["2016"],
+#    'triggereff_2017'     : ["2017"],
+#    'triggereff_2018'     : ["2018"],
+#    #'tw_scales'           : ["2016", "2017", "2018"],
+#    #'ttbar_scales'        : ["2016", "2017", "2018"],
+#    #'topptrew'            : ["2016", "2017", "2018"],
+#    #'isr_ttbar'           : ["2016", "2017", "2018"],
+#    #'isr_tw'              : ["2016", "2017", "2018"],
+#    #'fsr_ttbar'           : ["2016", "2017", "2018"],
+#    #'fsr_tw'              : ["2016", "2017", "2018"],
+#}
 
 
-ProfileSystsThatAreNotPresentAllYears = {
-    "lumi_2016" : ["2016"],
-    "lumi_2017" : ["2017"],
-    "lumi_2018" : ["2018"],
-    "lumi_BBD"  : ["2016", "2017"],
-    "lumi_DB"   : ["2016", "2017"],
-    "lumi_LS"   : ["2017", "2018"],
-    "lumi_BCC"  : ["2017", "2018"],
-    "lumi_GS"   : ["2016", "2017"],
-    "lumi_XY"   : ["2016", "2017", "2018"],
-}
+#ProfileSystsThatAreNotPresentAllYears = {
+#    "lumi_2016" : ["2016"],
+#    "lumi_2017" : ["2017"],
+#    "lumi_2018" : ["2018"],
+#    "lumi_BBD"  : ["2016", "2017"],
+#    "lumi_DB"   : ["2016", "2017"],
+#    "lumi_LS"   : ["2017", "2018"],
+#    "lumi_BCC"  : ["2017", "2018"],
+#    "lumi_GS"   : ["2016", "2017"],
+#    "lumi_XY"   : ["2016", "2017", "2018"],
+#}
 
 
 ProcessesNames = {"tw", "ttbar", "dy", "nonworz", "vvttv"}
@@ -1930,28 +1992,28 @@ ControlRegionVariableDict = {"3j2t" : "Lep1Lep2Jet1_M_control",
 }
 
 
-WeightsToChange = {
-    'btagging_2016'      : "bTagWeight_btag",
-    'btagging_1718'      : "bTagWeight_btag",
-    'mistagging_2016'    : "bTagWeight_mistag",
-    'mistagging_1718'    : "bTagWeight_mistag",
-    'elecidsf'           : "ElecIDSF",
-    'elecrecosf'         : "ElecRECOSF",
-    'muonidsf_stat_2016' : "MuonIDSF_stat",
-    'muonidsf_stat_2017' : "MuonIDSF_stat",
-    'muonidsf_stat_2018' : "MuonIDSF_stat",
-    'muonidsf_syst'      : "MuonIDSF_syst",
-    'muonisosf_stat_2016': "MuonISOSF_stat",
-    'muonisosf_stat_2017': "MuonISOSF_stat",
-    'muonisosf_stat_2018': "MuonISOSF_stat",
-    'muonisosf_syst'     : "MuonISOSF_syst",
-    'pileup'             : "puWeight",
-    'prefiring_2016'     : "PrefireWeight",
-    'prefiring_2017'     : "PrefireWeight",
-    'triggereff_2016'    : "TrigSF",
-    'triggereff_2017'    : "TrigSF",
-    'triggereff_2018'    : "TrigSF",
-}
+#WeightsToChange = {
+#    'btagging_2016'      : "bTagWeight_btag",
+#    'btagging_1718'      : "bTagWeight_btag",
+#    'mistagging_2016'    : "bTagWeight_mistag",
+#    'mistagging_1718'    : "bTagWeight_mistag",
+#    'elecidsf'           : "ElecIDSF",
+#    'elecrecosf'         : "ElecRECOSF",
+#    'muonidsf_stat_2016' : "MuonIDSF_stat",
+#    'muonidsf_stat_2017' : "MuonIDSF_stat",
+#    'muonidsf_stat_2018' : "MuonIDSF_stat",
+#    'muonidsf_syst'      : "MuonIDSF_syst",
+#    'muonisosf_stat_2016': "MuonISOSF_stat",
+#    'muonisosf_stat_2017': "MuonISOSF_stat",
+#    'muonisosf_stat_2018': "MuonISOSF_stat",
+#    'muonisosf_syst'     : "MuonISOSF_syst",
+#    'pileup'             : "puWeight",
+#    'prefiring_2016'     : "PrefireWeight",
+#    'prefiring_2017'     : "PrefireWeight",
+#    'triggereff_2016'    : "TrigSF",
+#    'triggereff_2017'    : "TrigSF",
+#    'triggereff_2018'    : "TrigSF",
+#}
 
 #UncertaintiesToEnvelope = {"ttbar_scales", "tw_scales", "colour"}
 #UncertaintiesToEnvelope = {"ttbar_scales", "tw_scales"}
@@ -2010,9 +2072,10 @@ coloursForToys = {
 # individual_list = ['fsr','pileup','dy_norm','colour','jes','matching','ttbar_norm','elec','nonworz_norm','btag','ue','toppt','tw_scales',
 #                    'vvttv_norm','mc_stat','isr','ttbar_scales','lumi','pdf','mistag','ds','jer','trigger','prefiring','muon','mtop']
 
-individual_list = ['ttbar_scales','btag','jes','ttbar_norm','toppt','matching','mtop','elec','pileup','lumi','colour','dy_norm','mc_stat',
-                   'vvttv_norm','tw_scales','ue','isr','jer','nonworz_norm','fsr','ds','pdf','mistag','trigger','prefiring','muon']
+#individual_list = ['ttbar_scales','btag','jes','ttbar_norm','toppt','matching','mtop','elec','pileup','lumi','colour','dy_norm','mc_stat',
+#                   'vvttv_norm','tw_scales','ue','isr','jer','nonworz_norm','fsr','ds','pdf','mistag','trigger','prefiring','muon']
 
+individual_list = ["modelling", "experimental", "normalisation", "mc_stat"]
 global_list     = ['systematics']
 
 markersdict = {"bb4l"                       : 2,

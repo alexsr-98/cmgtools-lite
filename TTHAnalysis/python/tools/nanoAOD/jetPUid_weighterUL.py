@@ -181,17 +181,20 @@ class jetPUid_weighterUL(Module):
                             uncmistagdn *= (1 - eff*SF[2])
 
 
-            central = (dataNoTag * dataTag ) / ( mcNoTag * mcTag )
+            #central = (dataNoTag * dataTag ) / ( mcNoTag * mcTag )
+            central = ( dataTag ) / ( mcTag )
 
             self.ret["jetPUidWeight" + self.label + jecVar] = central
 
 
             # b-tagging & mistagging eff. unc. varied weights
             if jecVar == "":
-                self.ret["jetPUidWeight" + self.label + "_tag_Up"]    = unctagup    / ( mcNoTag * mcTag )
-                self.ret["jetPUidWeight" + self.label + "_tag_Dn"]    = unctagdn    / ( mcNoTag * mcTag )
-                self.ret["jetPUidWeight" + self.label + "_mistag_Up"] = uncmistagup / ( mcNoTag * mcTag )
-                self.ret["jetPUidWeight" + self.label + "_mistag_Dn"] = uncmistagdn / ( mcNoTag * mcTag )
+                #self.ret["jetPUidWeight" + self.label + "_tag_Up"]    = unctagup    / ( mcNoTag * mcTag )
+                self.ret["jetPUidWeight" + self.label + "_tag_Up"]    = unctagup    / ( mcTag )
+                #self.ret["jetPUidWeight" + self.label + "_tag_Dn"]    = unctagdn    / ( mcNoTag * mcTag )
+                self.ret["jetPUidWeight" + self.label + "_tag_Dn"]    = unctagdn    / ( mcTag )
+                #self.ret["jetPUidWeight" + self.label + "_mistag_Up"] = uncmistagup / ( mcNoTag * mcTag )
+                #self.ret["jetPUidWeight" + self.label + "_mistag_Dn"] = uncmistagdn / ( mcNoTag * mcTag )
 
                 for ldelta,lepVar in self.systsLepEn.items():
                     mcTag     = 1.
@@ -226,7 +229,8 @@ class jetPUid_weighterUL(Module):
                                 mcNoTag   *= (1 - eff      )
                                 dataNoTag *= (1 - eff*SF[0])
 
-                    central = (dataNoTag * dataTag ) / ( mcNoTag * mcTag )
+                    #central = (dataNoTag * dataTag ) / ( mcNoTag * mcTag )
+                    central = (dataTag ) / ( mcTag )
 
                     self.ret["jetPUidWeight" + self.label + lepVar] = central
 
@@ -257,7 +261,7 @@ class jetPUid_weighterUL(Module):
             xbin = max(1, min(histo.GetNbinsX(), histo.GetXaxis().FindBin(tmpeta)))
             ybin = max(1, min(histo.GetNbinsY(), histo.GetYaxis().FindBin(pt)))
 
-        print("pt:", pt, "eta:", eta, xbin, ybin)
+        #print("pt:", pt, "eta:", eta, xbin, ybin)
         return histo.GetBinContent(xbin, ybin)
 
 

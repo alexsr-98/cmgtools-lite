@@ -22,7 +22,7 @@ cmsTextOffset   = 0.1
 
 relPosX         = 0.045
 relPosY         = 0.035
-relExtraDY      = 1.2
+relExtraDY      = 0.95
 
 extraOverCmsTextSize  = 0.76
 

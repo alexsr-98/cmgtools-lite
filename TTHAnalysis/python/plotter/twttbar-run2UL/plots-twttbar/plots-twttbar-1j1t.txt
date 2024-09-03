@@ -1,19 +1,23 @@
 channel   : channel                : [0.5,1.5,2.5,3.5]                      ; IncludeUnderflow=False, LegendCutoff=0,  XTitle='Channel', xBinLabels="e#mu\,#mu#mu\,ee"
 tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", LegendCutoff=0, MoreY=2.0
 
-nloosejets: nJetSel20_Recl : [-0.5,0.5,1.5,2.5,3.5] ; LegendCutoff=0, XTitle='N(loose jet)', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
+nloosejets: nJetSel20_Recl : [-0.5,0.5,1.5,2.5,3.5] ; LegendCutoff=0, XTitle='Number of loose jets', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3", MoreY=1.5
+loosejet1_pt                : JetLoose1_Pt                : 15,0,30                                ; LegendCutoff=0, MoreY=1.3, XTitle="Leading loose jet #it{p}_{T} (GeV)"
 
-nfwdjets  : nFwdJetSel30_Recl           : [-0.5,0.5,1.5,2.5,3.5] ; LegendCutoff=0, XTitle='N(forward jet)', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
-nfwdloosejets  : nFwdJetSel20_Recl      : [-0.5,0.5,1.5,2.5,3.5] ; LegendCutoff=0, XTitle='N(forward loose jet)', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
+nbloosejets                 : nBJetSelMedium20_Recl       : [-0.5,0.5,1.5,2.5,3.5]                 ; LegendCutoff=0, MoreY=1.2, XTitle='Number of loose b-tagged jets', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
+
+#nloosejetsfromPU: NlooseJetsPU : [-0.5,0.5,1.5,2.5,3.5] ; LegendCutoff=0, XTitle='Number of loose jets from PU', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
+
+#nfwdjets  : nFwdJetSel30_Recl           : [-0.5,0.5,1.5,2.5,3.5] ; LegendCutoff=0, XTitle='Number of forward jets', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
+#nfwdloosejets  : nFwdJetSel20_Recl      : [-0.5,0.5,1.5,2.5,3.5] ; LegendCutoff=0, XTitle='Number of forward loose jets', XNDiv=5, xBinLabels="0\,1\,2\,#geq 3"
 
 ### NOTA IMPORTANTE: NO SEPARAR LOS CORCHETES DE LOS CARACTERES DE TEXTO. SI SE HACE, LAS INCERTIDUMBRES MAL
 
-jet1_pt   : Jet1_Pt                              : 18,20,200     ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Jet p_{T} (GeV)", MoreY=1.3
+jet1_pt   : Jet1_Pt                              : 18,20,200     ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Jet p_{T} (GeV)", MoreY=1.4
 jet1_eta  : Jet_eta[iJetSel30_Recl[0]]           : 15,-2.4,2.4   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Jet #eta"
-jet1_m    : $DATA{Jet_mass[iJetSel30_Recl[0]]} $MC{Jet_mass_nom[iJetSel30_Recl[0]]}          : 12,0,60       ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Jet mass (GeV)"
 jet1_e    : Jet1_E                               : 14,10,250     ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Jet energy (GeV)"
 jet1_phi  : Jet_phi[iJetSel30_Recl[0]]           : 40,-3.14,3.14 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Jet #varphi (rad)"
-jet1_btag : Jet_btagDeepFlavB[iJetSel30_Recl[0]] : 20,0,1        ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Jet DeepFlavour b-tagging discr. (adim.)"
+jet1_btag : Jet_btagDeepFlavB[iJetSel30_Recl[0]] : 20,0,1        ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Jet DeepFlavour b-tagging discr."
 
 #jetfwd1_pt   : $DATA{Jet_pt[iFwdJetSel30_Recl[0]]} $MC{Jet_pt_nom[iFwdJetSel30_Recl[0]]}   : 13,20,150      ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading forward jet p_{T} (GeV)"
 #jetfwd1_eta  : Jet_eta[iFwdJetSel30_Recl[0]]  : 15,-5.0,5.0    ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Leading forward jet #eta"
@@ -34,42 +38,43 @@ lep2_eta  : LepGood_eta[1]         : 15,-2.4,2.4            ; IncludeUnderflow=F
 lep1_phi  : LepGood_phi[1]         : 40,-3.14,3.14          ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="Subeading lepton #varphi (rad)"
 
 
-met          : MET_T1_pt          : 30,0,300               ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}^{miss} (GeV)"
-met_phi      : MET_T1_phi         : 40,-3.14,3.14          ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#phi^{miss} (rad)"
+#met          : MET_T1_pt          : 30,0,300               ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}^{miss} (GeV)"
+#met_phi      : MET_T1_phi         : 40,-3.14,3.14          ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#phi^{miss} (rad)"
 puppimet     : PuppiMET_pt         : 30,0,300               ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}^{miss}_{puppi} (GeV)"
 puppimet_phi : PuppiMET_phi        : 40,-3.14,3.14          ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#phi^{miss}_{puppi} (rad)"
 
 
-lep1lep2_dr   : Lep1Lep2_DR        : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#Delta#it{R}(#it{e}^{#pm}\, #it{#mu}^{#pm}) (adim.)"
-lep1lep2_dphi : Lep1Lep2_DPhi      : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#Delta#it{#varphi}(#it{e}^{#pm}\, #it{#mu}^{#mp})/#it{#pi} (adim.)"
-lep1lep2_deta : Lep1Lep2_DEta      : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#Delta#it{#eta}(#it{e}^{#pm}\, #it{#mu}^{#pm}) (adim.)"
-lep1lep2_pt   : Lep1Lep2_Pt        : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}(#it{e}^{#pm}\, #it{#mu}^{#pm}) (GeV)", MoreY=1.3
-lep1lep2_ptsum: Lep1Lep2_PtSum     : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}(#it{e}^{#pm}) + p_{T}(#it{#mu}^{#pm}) (GeV)", MoreY=1.3
-lep1lep2_m    : Mll                : 30,0,300 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m(#it{e}^{#pm}\, #it{#mu}^{#pm}) (GeV)", MoreY=1.3
+lep1lep2_dr     : Lep1Lep2_DR        : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#Delta#it{R}(#it{e}^{#pm}\, #it{#mu}^{#pm})"
+lep1lep2_dphi   : Lep1Lep2_DPhi      : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#Delta#it{#varphi}(#it{e}^{#pm}\, #it{#mu}^{#mp})/#it{#pi}", Legend='TL', MoreY=1.3
+lep1lep2_deta   : Lep1Lep2_DEta      : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#Delta#it{#eta}(#it{e}^{#pm}\, #it{#mu}^{#pm})"
+lep1lep2_pt     : Lep1Lep2_Pt        : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}(#it{e}^{#pm}\, #it{#mu}^{#pm}) (GeV)", MoreY=1.3
+lep1lep2_ptsum  : Lep1Lep2_PtSum     : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="p_{T}(#it{e}^{#pm}) + p_{T}(#it{#mu}^{#pm}) (GeV)", MoreY=1.3
+lep1lep2_m      : Mll                : 30,0,300 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m(#it{e}^{#pm}\, #it{#mu}^{#pm}) (GeV)", MoreY=1.3
+lep1lep2_m_pico : Mll                : 30,70,110 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m(#it{e}^{#pm}\, #it{#mu}^{#pm}) (GeV)", MoreY=1.3
 
+lep1lep2jet1_pz    : Lep1Lep2Jet1_Pz     : 18,0,450 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="|#it{p}_{Z}| (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}) (GeV)"
+lep1lep2jet1met_pt : Lep1Lep2Jet1MET_Pt  : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#it{p}_{T} (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}\, p_{T}^{miss}) (GeV)"
+lep1lep2jet1met_m  : Lep1Lep2Jet1MET_M   : 20,0,600 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}\, #it{p}_{T}^{miss}) (GeV)"
+lep1lep2jet1met_mt : Lep1Lep2Jet1MET_Mt  : 20,0,600 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m_{T} (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}\, #it{p}_{T}^{miss}) (GeV)"
+lep1lep2jet1_pt    : Lep1Lep2Jet1_Pt     : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#it{p}_{T} (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}) (GeV)"
+lep1lep2jet1_m     : Lep1Lep2Jet1_M      : 20,0,600 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}) (GeV)"
+lep1lep2jet1_e     : Lep1Lep2Jet1_E      : 20,0,600 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="E (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}) (GeV)"
+lep1jet1_pt        : Lep1Jet1_Pt         : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\it{p}_{T} (\\ell_{1}\, \\it{j}) (GeV)"
+lep1jet1_m         : Lep1Jet1_M          : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m (\\ell_{1}\, \\it{j}) (GeV)"
+lep1jet1_dr        : Lep1Jet1_DR         : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta R (\\ell_{1}\, jet)"
+#lep1jet1_dr_small  : Lep1Jet1_DR         : 10,0,1   ; IncludeOverflows=False, IncludeOverflow=False, LegendCutoff=0,  XTitle="\\Delta R (\\ell_{1}\, jet)"
+lep1jet1_dphi      : Lep1Jet1_DPhi       : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\varphi(\\ell_{1}\,j)/\\pi"
+lep2jet1_pt        : Lep2Jet1_Pt         : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\it{p}_{T} (\\ell_{2}\, \\it{j}) (GeV)"
+lep2jet1_m         : Lep2Jet1_M          : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m (\\ell_{2}\, \\it{j}) (GeV)"
+lep2jet1_dphi      : Lep2Jet1_DPhi       : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\varphi(\\ell_{2}\,j)/\\pi"
 
-#lep1lep2jet1_pz : Lep1Lep2Jet1_Pz  : 18,0,450 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="|#it{p}_{Z}| (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}) (GeV)"
-#lep1lep2jet1met_pt : Lep1Lep2Jet1MET_Pt  : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#it{p}_{T} (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}\, p_{T}^{miss}) (GeV)"
-#lep1lep2jet1met_m  : Lep1Lep2Jet1MET_M   : 20,0,600 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}\, #it{p}_{T}^{miss}) (GeV)"
-#lep1lep2jet1met_mt : Lep1Lep2Jet1MET_Mt  : 20,0,600 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m_{T} (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}\, #it{p}_{T}^{miss}) (GeV)"
-#lep1lep2jet1_pt    : Lep1Lep2Jet1_Pt     : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="#it{p}_{T} (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}) (GeV)"
-#lep1lep2jet1_m     : Lep1Lep2Jet1_M      : 20,0,600 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}) (GeV)"
-#lep1lep2jet1_e     : Lep1Lep2Jet1_E      : 20,0,600 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="E (#it{e}^{#pm}\, #it{#mu}^{#mp}\, #it{j}) (GeV)"
-#lep1jet1_pt        : Lep1Jet1_Pt         : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\it{p}_{T} (\\ell_{1}\, \\it{j}) (GeV)"
-#lep1jet1_m         : Lep1Jet1_M          : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m (\\ell_{1}\, \\it{j}) (GeV)"
-#lep1jet1_dr        : Lep1Jet1_DR         : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta R (\\ell_{1}\, jet) (adim.)"
-#lep1jet1_dphi      : Lep1Jet1_DPhi       : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\varphi(\\ell_{1}\,j)/\\pi (adim.)"
-#lep2jet1_pt        : Lep2Jet1_Pt         : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\it{p}_{T} (\\ell_{2}\, \\it{j}) (GeV)"
-#lep2jet1_m         : Lep2Jet1_M          : 20,0,200 ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="m (\\ell_{2}\, \\it{j}) (GeV)"
-#lep2jet1_dphi      : Lep2Jet1_DPhi       : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\varphi(\\ell_{2}\,j)/\\pi (adim.)"
+costhetastar1      : cosThetaStar1       : 10,-1,1  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="cos(\\theta^{*})_{\\ell_{1}}"
+costhetastar2      : cosThetaStar2       : 10,-1,1  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="cos(\\theta^{*})_{\\ell_{2}}"
 
-costhetastar1      : cosThetaStar1       : 10,-1,1  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="cos(\\theta^{*})_{\\ell_{1}} (adim.)"
-costhetastar2      : cosThetaStar2       : 10,-1,1  ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="cos(\\theta^{*})_{\\ell_{2}} (adim.)"
+lepjet11lep2_dr    : LepJet11Lep2_DR     : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta R (\\ell_{1}jet\, \\ell_{2})"
+lepjet11lep2_dphi  : LepJet11Lep2_DPhi   : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\it{\\varphi}(\\ell_{1}jet\, \\ell_{2})/\\it{\\pi}"
+lepjet11lep2_deta  : LepJet11Lep2_DEta   : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\it{\\varphi}(\\ell_{1}jet\, \\ell_{2})/\\it{\\pi}"
 
-#lepjet11lep2_dr    : LepJet11Lep2_DR     : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta R (\\ell_{1}jet\, \\ell_{2}) (adim.)"
-#lepjet11lep2_dphi  : LepJet11Lep2_DPhi   : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\it{\\varphi}(\\ell_{1}jet\, \\ell_{2})/\\it{\\pi}"
-#lepjet11lep2_deta  : LepJet11Lep2_DEta   : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\it{\\varphi}(\\ell_{1}jet\, \\ell_{2})/\\it{\\pi}"
-#
-#lep1lepjet21_dr    : Lep1LepJet21_DR     : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta R (\\ell_{1}\,jet\\ell_{2}) (adim.)"
-#lep1lepjet21_dphi  : Lep1LepJet21_DPhi   : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\it{\\varphi}(\\ell_{1}\,jet\\ell_{2})/\\it{\\pi}"
-#lep1lepjet21_deta  : Lep1LepJet21_DEta   : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\it{\\varphi}(\\ell_{1}\,jet\\ell_{2})/\\it{\\pi}"
+lep1lepjet21_dr    : Lep1LepJet21_DR     : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta R (\\ell_{1}\,jet\\ell_{2})"
+lep1lepjet21_dphi  : Lep1LepJet21_DPhi   : 10,0,1   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\it{\\varphi}(\\ell_{1}\,jet\\ell_{2})/\\it{\\pi}"
+lep1lepjet21_deta  : Lep1LepJet21_DEta   : 20,0,5   ; IncludeUnderflow=False, LegendCutoff=0,  XTitle="\\Delta\\it{\\varphi}(\\ell_{1}\,jet\\ell_{2})/\\it{\\pi}"

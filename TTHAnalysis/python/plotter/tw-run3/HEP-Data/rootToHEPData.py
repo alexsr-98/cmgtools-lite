@@ -5,16 +5,13 @@ import os, sys
 sys.path.append('./tw-run3')
 from plot_postfit import dictBinsCenterRegions, dictRegionsYaxisLabels, dictRegionsXaxisLabels
 
-### To do list
-#   - Differential plots
-
 
 #Create the submission obj
 submission = Submission()
 
 
 #### Configurations  Inclusive-------
-pathOfCards = "/mnt_pool/c3_users/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_cards/2024-04-26_topptrew13p6TeV_v4/run3/"
+pathOfCards = "/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_Run3_cards/2024-06-13_cardsIncl_CWR_CorrecionesFR/run3/"
 fitDiagnosticsName = "fitDiagnosticsrun3_1j1t2j1t2j2t.root"
 
 processes = {"tw": "tW (signal)", "ttbar": "ttbar", "vvttv": "VV+ttbarV", "dy": "DY", "nonworz": "Non-W/Z", "total_background": "Total background", "data": "Data"}
@@ -35,15 +32,21 @@ dictBinsExtremesRegions = {
     #"ch3"      : [70,150],
 }
 dictRegionsXaxisLabels = {
-    "ch1"      : "RF discriminant",
-    "ch2"      : "RF discriminant",
+    "ch1"      : "RF discriminant bin",
+    "ch2"      : "RF discriminant bin",
+    "ch3"      : "Subleading jet $p_{T}$",
+}
+
+dictRegionscaptionsLabels = {
+    "ch1"      : "RF output",
+    "ch2"      : "RF output",
     "ch3"      : "Subleading jet $p_{T}$",
 }
 
 #### -------
 
 #### Configurations  Differential-------
-pathOfDiffCards = "/mnt_pool/c3_users/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_cards_diff/2024-04-26_TopPtRew13p6TeV/run3/"
+pathOfDiffCards = "/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_cards_diff/2024-06-13_CWR/run3/"
 histosFile = "/particlefidbinOutput.root"
 variablesOrdered = ["Lep1_Pt", "Lep1Lep2Jet1_Pz","Jet1_Pt", "Lep1Lep2Jet1_M", "Lep1Lep2_DPhi", "Lep1Lep2Jet1MET_Mt"]
 variablesOrdered2 = ["Lep1_Pt", "Jet1_Pt", "Lep1Lep2_DPhi", "Lep1Lep2Jet1_Pz", "Lep1Lep2Jet1MET_Mt", "Lep1Lep2Jet1_M"]
@@ -113,10 +116,10 @@ if __name__=="__main__":
             ## Table
             table = Table("Figure 6" + channels[ch])
             #table.description = preOrPost[folder].capitalize() + " distribution of the " + dictRegionsXaxisLabels[ch] + " in the " + channelsJets[ch] + "  region. The uncertainty band includes the postfit uncertainties. The bottom of each panel shows the ratios of data to the predictions after the fit (points)."
-            table.description = "The distribution of the " + dictRegionsXaxisLabels[ch] + " for events in the " + channelsJets[ch] + "  region. The data (points) and the MC predictions (filled histograms) after the maximum likelihood fit are shown. The vertical bars on the points represent the statistical uncertainty in the data, and the hatched band the total uncertainty in the MC prediction. The lower panels display the ratio of the data to the sum of the MC (points) predictions after the fit, with the bands giving the corresponding uncertainties."
+            table.description = "The distribution of the " + dictRegionscaptionsLabels[ch] + " for events in the " + channelsJets[ch] + "  region. The number of observed events (points) and estimated signal and background events (filled histograms) from the maximum likelihood fit are shown. The vertical bars on the points represent the statistical uncertainty in the data, and the hatched band the total uncertainty in the estimated events after the fit. The lower panels display the ratio of the data to the sum of the estimated events (points) after the fit, with the bands giving the corresponding uncertainties."
             table.location = "Data from Figure 6 (" + positionCh[ch] + "), located on page 17."
             #table.keywords["observables"] = ["N"]
-            table.add_image(pathOfPaperFig + figure[ch])
+            ###table.add_image(pathOfPaperFig + figure[ch])
             
             nameX, nameY, units = dictRegionsXaxisLabels[ch], dictRegionsYaxisLabels[ch] + " ", unitsDict[ch]
             table.add_variable(createIndependentVar(dictBinsExtremesRegions[ch], nameX, True, units))
@@ -150,7 +153,7 @@ if __name__=="__main__":
     sigmaExpUncLum = Uncertainty("lumi", is_symmetric = True)
     sigmaExp.values = [82.3]
     sigmaExpUncStat.values = [2.1]
-    sigmaExpUncSys.values = [(-9.8,10.2)]
+    sigmaExpUncSys.values = [(-9.7,9.9)]
     sigmaExpUncLum.values = [3.3]
     sigmaExp.add_uncertainty(sigmaExpUncStat)
     sigmaExp.add_uncertainty(sigmaExpUncSys)
@@ -162,16 +165,16 @@ if __name__=="__main__":
     
     # Yields
     table = Table("Table 3")
-    table.description = "The number of observed and MC predicted events after the fit in the 1j1b, 2j1b, and 2j2b regions. The total uncertainties in the predictions are given."
+    table.description = "The number of estimated signal and background events after the fit in the 1j1b, 2j1b, and 2j2b regions compared to the observed number of events. The total uncertainties in the estimated events after the fit are given."
     table.location = "Data from Table 3, located on page 16."
     col1 = Variable("Process", is_independent=True, is_binned=False, units="")
-    processesList = ["tW", "ttbar", "Drell-Yan", "VV+ttbarV", "Non-W/Z", "Total", "Data"]
+    processesList = ["tW", "ttbar", "Drell-Yan", "VV+ttbarV", "Non-W/Z", "Total", "Observed"]
     col1.values = processesList
     table.add_variable(col1)
     
     processesList_Yields = {"1j1b": [8000,49200,670,460,340,58700,58635], 
-                            "2j1b": [3670,42520,330,450,810,47780,47810],
-                            "2j2b": [1140,33380,42,190,64,24810,34818],
+                            "2j1b": [3660,42520,330,450,810,47780,47810],
+                            "2j2b": [1140,33380,42,190,64,34810,34818],
                             #"Postfit/prefit" : [1.11,0.91,1.09,1.18,1.68,0.94,""],
                             }
     
@@ -203,10 +206,10 @@ if __name__=="__main__":
         reader = RootFileReader(pathOfDiffCards + folder + histosFile)
         ## Table
         table = Table("Figure 9" + names[folder])
-        table.description = "Normalised fiducial differential tW production cross section as a function of the " + variables[folder] + ". The horizontal bars on the points show the bin width. Predictions from POWHEG (PH) + PYTHIA 8 (P8) DR and DS, POWHEG + HERWIG 7 (H7) DR, MADGRAPH5_aMC@NLO (aMC) + PYTHIA 8 DR, DR2, DS and DS with a dynamic factor are also shown. The grey band represents the statistical uncertainty and the orange band the total uncertainty. In the lower panels, the ratio of the predictions to the data is shown."
+        table.description = "Normalised fiducial differential tW production cross section as a function of the " + variables[folder] + ". The horizontal bars on the points show the bin width. Predictions from POWHEG (PH) DR and DS + PYTHIA 8 (P8), POWHEG DR + HERWIG 7 (H7), MADGRAPH5_aMC@NLO (aMC) DR, DR2, DS and DS with a dynamic factor + PYTHIA 8 are also shown. The grey band represents the statistical uncertainty and the yellow band the total uncertainty. In the lower panels, the ratio of the predictions to the data is shown."
         table.location = "Data from Figure 9 (" + positionDiff[folder] + "), located on page 20."
         #table.keywords["observables"] = ["N"]
-        table.add_image(pathOfPaperFig + figureDiff[folder])
+        ###table.add_image(pathOfPaperFig + figureDiff[folder])
         
         nameX, nameY, unitsX, unitsY = variables[folder], "$(1/\sigma_{fid.})d\sigma/d$" + variables[folder], unitsDiff[folder], unitsDiffY[folder]
         
@@ -248,8 +251,8 @@ if __name__=="__main__":
     
     ## Table
     table = Table("Tables 4 and 5")
-    table.description = "The p-values from the goodness-of-fit tests comparing the six differential cross section measurements with the predictions from POWHEG (PH) + PYTHIA 8 (P8) DR and DS,  POWHEG + HERWIG 7 (H7) DR, MADGRAPH5 aMC@NLO (aMC) + PYTHIA 8 DR, DR2, DS, and DS with a dynamic factor. The complete covariance matrix from the results and the statistical uncertainties in the predictions are taken into account."
-    table.location = "Data from Tables 4 and 5 located on page 18 and 21."
+    table.description = "The p-values from the goodness-of-fit tests comparing the six differential cross section measurements with the predictions from POWHEG (PH) DR and DS + PYTHIA 8 (P8),  POWHEG DR + HERWIG 7 (H7), MADGRAPH5 aMC@NLO (aMC) DR, DR2, DS, and DS with a dynamic factor + PYTHIA 8. The complete covariance matrix from the results and the statistical uncertainties in the predictions are taken into account."
+    table.location = "Data from Tables 4 and 5 located on page 21."
 
     col1 = Variable("Variable", is_independent=True, is_binned=False, units="")
     variablesTable = []
@@ -284,17 +287,17 @@ if __name__=="__main__":
 
     ## Suplementary material
     figureprefit = {"ch1": "prefit_ch1.pdf", "ch2": "prefit_ch2.pdf", "ch3": "prefit_ch3.pdf"}
-    pathOfSuplementaryFigures = "/mnt_pool/c3_users/user/asoto/Proyectos/tW-Run3/TOP-23-008/supplemental_figures/"
+    pathOfSuplementaryFigures = "/nfs/fanae/user/asoto/Proyectos/tW-Run3/TOP-23-008/supplemental_figures/"
     reader = RootFileReader(pathOfCards + fitDiagnosticsName)
     for folder in ["shapes_prefit"]: #["shapes_prefit", "shapes_fit_s"]:
         for ch in channels:
             ## Table
             table = Table("Supplemental material: prefit " + channelsJets[ch] + " " + dictRegionsXaxisLabels[ch])
             #table.description = preOrPost[folder].capitalize() + " distribution of the " + dictRegionsXaxisLabels[ch] + " in the " + channelsJets[ch] + "  region. The uncertainty band includes the postfit uncertainties. The bottom of each panel shows the ratios of data to the predictions after the fit (points)."
-            table.description = "Distribution of the " + dictRegionsXaxisLabels[ch] + " for events in the " + channelsJets[ch] + "  region. The data (points) and the MC predictions (filled histograms) before the maximum likelihood fit are shown. The vertical bars on the points represent the statistical uncertainty in the data, and the hatched band the total uncertainty in the MC prediction. The lower panels display the ratio of the data to the sum of the MC (points) predictions before the fit, with the bands giving the corresponding uncertainties."
+            table.description = "Distribution of the " + dictRegionscaptionsLabels[ch] + " for events in the " + channelsJets[ch] + "  region. The number of observed events (points) and estimated signal and background events (filled histograms) before the maximum likelihood fit are shown. The vertical bars on the points represent the statistical uncertainty in the data, and the hatched band the total uncertainty in the estimated events before the fit. The lower panels display the ratio of the data to the sum of the estimated events (points) before the fit, with the bands giving the corresponding uncertainties."
             table.location = "Supplemental material."
             #table.keywords["observables"] = ["N"]
-            table.add_image(pathOfSuplementaryFigures + figureprefit[ch])
+            ###table.add_image(pathOfSuplementaryFigures + figureprefit[ch])
             
             nameX, nameY, units = dictRegionsXaxisLabels[ch], dictRegionsYaxisLabels[ch] + " ", unitsDict[ch]
             table.add_variable(createIndependentVar(dictBinsExtremesRegions[ch], nameX, True, units))
@@ -310,7 +313,7 @@ if __name__=="__main__":
             submission.add_table(table)
 
 
-    pathOfSuplementary = "/mnt_pool/c3_users/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_cards_diff/2024-04-26_TopPtRew13p6TeV/run3/"
+    pathOfSuplementary = "/nfs/fanae/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/python/plotter/temp_cards_diff/2024-06-13_CWR/run3/"
     listOfObs = ["Lep1_Pt", "Lep1Lep2Jet1_Pz", "Jet1_Pt", "Lep1Lep2Jet1_M", "Lep1Lep2_DPhi", "Lep1Lep2Jet1MET_Mt"]
     templateName = "R{Var}_"
     responseMatrices = "UnfoldingInfo.root"
@@ -323,7 +326,7 @@ if __name__=="__main__":
         table.description = "Response matrix between detector and particle level for the " +  variables[var] + "."
         table.location = "Supplemental material."
         
-        table.add_image(pathOfSuplementaryFigures + "Rnonumb_{Var}_.pdf".format(Var = var))
+        ###table.add_image(pathOfSuplementaryFigures + "Rnonumb_{Var}_.pdf".format(Var = var))
         
         nameX, nameY, unitsX, unitsY = variables[var] + "[particle level]", variables[var] + "[detector level]", unitsDiff[var], unitsDiff[var]
         
@@ -340,7 +343,7 @@ if __name__=="__main__":
         table = Table("Supplemental material: " + var + " covariance matrix")
         table.description = "Covariance matrix including all uncertainties of the normalised differential cross section in bins of " + variables[var]  + " in units of " + unitsDiffCov[var] + "."
         table.location = "Supplemental material."
-        table.add_image(pathOfSuplementaryFigures + "Cov_{Var}_fidbin.pdf".format(Var = var))
+        ###table.add_image(pathOfSuplementaryFigures + "Cov_{Var}_fidbin.pdf".format(Var = var))
         
         nameX, nameY, unitsX, unitsY = variables[var], variables[var]+ " ", unitsDiff[var], unitsDiff[var]
         

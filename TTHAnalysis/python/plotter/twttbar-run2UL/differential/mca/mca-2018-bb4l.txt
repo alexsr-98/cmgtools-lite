@@ -1,4 +1,5 @@
-bb4l+ : b_bbar_4l_TuneCP5_13TeV_powheg_pythia8_gridpackfix* : 63.932 ; Label="bb4l", FillColor=883
-bb4l+ : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8* + ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_PDFWeights_powheg_pythia8* : xsec : (Origchannel == 4 || Origchannel == 5 || Origchannel == 9) ; Label="bb4l", FillColor=883
-bb4l+ : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*     + ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_PDFWeights_powheg_pythia8*     : xsec : (Origchannel == 4 || Origchannel == 5 || Origchannel == 9) ; Label="bb4l", FillColor=883
-bb4l+ : TTTo2L2Nu_TuneCP5_13TeV_powheg_pythia8* : xsec : (Origchannel == 4 || Origchannel == 5 || Origchannel == 9) ; Label="bb4l", FillColor=883
+#bb4l+ : b_bbar_4l_TuneCP5_13TeV_powheg_pythia8_gridpackfix* : 63.932 ; Label="bb4l", FillColor=883
+bb4l+ : BBLLNuNu_TuneCP5_13TeV_powheg_pythia8* : 92.176 ; Label="bb4l", FillColor=883
+#bb4l+ : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8* + ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_PDFWeights_powheg_pythia8* : xsec : (Origchannel == 4 || Origchannel == 5 || Origchannel == 9) ; Label="bb4l", FillColor=883
+#bb4l+ : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*     + ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_PDFWeights_powheg_pythia8*     : xsec : (Origchannel == 4 || Origchannel == 5 || Origchannel == 9) ; Label="bb4l", FillColor=883
+#bb4l+ : TTTo2L2Nu_TuneCP5_13TeV_powheg_pythia8* : xsec : (Origchannel == 4 || Origchannel == 5 || Origchannel == 9) ; Label="bb4l", FillColor=883

@@ -27,7 +27,7 @@ def confirm(message = "Do you wish to continue?"):
     """
     answer = ""
     while answer not in ["y", "n", "yes", "no"]:
-        answer = raw_input(message + " [Y/N]\n").lower()
+        answer = input(message + " [Y/N]\n").lower()
     return answer[0] == "y"
 
 

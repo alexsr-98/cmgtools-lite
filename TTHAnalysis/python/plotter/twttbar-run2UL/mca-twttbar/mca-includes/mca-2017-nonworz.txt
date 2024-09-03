@@ -4,9 +4,9 @@
 
 # NLO
 #nonworz : WJetsToLNu_TuneCP5_13TeV_amcatnloFXFX_pythia8*     : xsec ; FillColor=413 ### unir
-nonworz : WJetsToLNu_0J_TuneCP5_13TeV_amcatnloFXFX_pythia8*   : xsec ; FillColor=413
-nonworz : WJetsToLNu_1J_TuneCP5_13TeV_amcatnloFXFX_pythia8*   : xsec ; FillColor=413
-nonworz : WJetsToLNu_2J_TuneCP5_13TeV_amcatnloFXFX_pythia8*   : xsec ; FillColor=413
+nonworz : WJetsToLNu_0J_TuneCP5_13TeV_amcatnloFXFX_pythia8*   : xsec ; FillColor=ROOT.TColor.GetColor(156\,156\,161)
+nonworz : WJetsToLNu_1J_TuneCP5_13TeV_amcatnloFXFX_pythia8*   : xsec ; FillColor=ROOT.TColor.GetColor(156\,156\,161)
+nonworz : WJetsToLNu_2J_TuneCP5_13TeV_amcatnloFXFX_pythia8*   : xsec ; FillColor=ROOT.TColor.GetColor(156\,156\,161)
 
 ## TTToSemiLeptonic
-nonworz : TTToSemiLeptonic_TuneCP5_13TeV_powheg_pythia8* : xsec ; FillColor=413
+nonworz : TTToSemiLeptonic_TuneCP5_13TeV_powheg_pythia8* : xsec ; FillColor=ROOT.TColor.GetColor(156\,156\,161)

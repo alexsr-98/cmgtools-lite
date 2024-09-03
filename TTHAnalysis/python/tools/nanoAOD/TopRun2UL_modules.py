@@ -406,26 +406,44 @@ leptrigSFs_2018    = lambda : lepScaleFactors_TopRun2UL(year_ = "2018",    lepen
 
 
 #sfSeq_2016 = [leptrigSFs, btagWeights_2016, addTopPtWeight, addjetPUidMod]   ### COSINA
-sfSeq_2016apv   = [leptrigSFs_2016apv, btagWeights_2016apv, addTopPtWeight]
-sfSeq_2016      = [leptrigSFs_2016,    btagWeights_2016,    addTopPtWeight]
-sfSeq_2017      = [leptrigSFs_2017,    btagWeights_2017,    addTopPtWeight]
-sfSeq_2018      = [leptrigSFs_2018,    btagWeights_2018,    addTopPtWeight]
+#sfSeq_2016apv   = [leptrigSFs_2016apv, btagWeights_2016apv, addTopPtWeight]
+#sfSeq_2016      = [leptrigSFs_2016,    btagWeights_2016,    addTopPtWeight]
+#sfSeq_2017      = [leptrigSFs_2017,    btagWeights_2017,    addTopPtWeight]
+#sfSeq_2018      = [leptrigSFs_2018,    btagWeights_2018,    addTopPtWeight]
 
-# Con jet PU ID
-#from CMGTools.TTHAnalysis.tools.nanoAOD.jetPUid_weighterUL import jetPUid_weighterUL
-#jetpuidpath = os.environ['CMSSW_BASE'] + "/src/CMGTools/TTHAnalysis/data/TopRun2UL/jetPUid"
-#addjetPUidMod = lambda : jetPUid_weighterUL(jetpuidpath + "/" + "scalefactorsPUID_81Xtraining.root",
-                                            #jetpuidpath + "/" + "effcyPUID_81Xtraining.root",
-                                            #wp = "M",
-                                            #jecvars   = ['jesTotal', 'jer'] + ['jes%s'%v for v in jecGroups] + ["jer%i"%i for i in range(6)],
-                                            ##year = 2016, debug = True)
-                                            #year = 2016)
+### Con jet PU ID
+from CMGTools.TTHAnalysis.tools.nanoAOD.jetPUid_weighterUL import jetPUid_weighterUL
+jetpuidpath = os.environ['CMSSW_BASE'] + "/src/CMGTools/TTHAnalysis/data/TopRun2UL/jetPUid"
+addjetPUidMod_2016apv = lambda : jetPUid_weighterUL(jetpuidpath + "/" + "UL16preVFP_jmar.root",
+                                                    wp = "M",
+                                                    jecvars   = ['jesTotal', 'jer'] + ['jes%s'%v.format(year = 2016) for v in jecGroups] + ["jer%i"%i for i in range(6)] + ["jesHEMIssue"],
+                                                    lepenvars = ["mu", "elsigma"],
+                                                    #year = 2016, debug = True)
+                                                    year = 2016)
+addjetPUidMod_2016    = lambda : jetPUid_weighterUL(jetpuidpath + "/" + "UL16postVFP_jmar.root",
+                                                    wp = "M",
+                                                    jecvars   = ['jesTotal', 'jer'] + ['jes%s'%v.format(year = 2016) for v in jecGroups] + ["jer%i"%i for i in range(6)] + ["jesHEMIssue"],
+                                                    lepenvars = ["mu", "elsigma"],
+                                                    #year = 2016, debug = True)
+                                                    year = 2016)
+addjetPUidMod_2017    = lambda : jetPUid_weighterUL(jetpuidpath + "/" + "UL17_jmar.root",
+                                                    wp = "M",
+                                                    jecvars   = ['jesTotal', 'jer'] + ['jes%s'%v.format(year = 2017) for v in jecGroups] + ["jer%i"%i for i in range(6)] + ["jesHEMIssue"],
+                                                    lepenvars = ["mu", "elsigma"],
+                                                    #year = 2017, debug = True)
+                                                    year = 2017)
+addjetPUidMod_2018    = lambda : jetPUid_weighterUL(jetpuidpath + "/" + "UL18_jmar.root",
+                                                    wp = "M",
+                                                    jecvars   = ['jesTotal', 'jer'] + ['jes%s'%v.format(year = 2018) for v in jecGroups] + ["jer%i"%i for i in range(6)] + ["jesHEMIssue"],
+                                                    lepenvars = ["mu", "elsigma"],
+                                                    #year = 2018, debug = True)
+                                                    year = 2018)
 
 
-#sfSeq_2016apv   = [leptrigSFs_2016apv, btagWeights_2016apv, addTopPtWeight, addjetPUidMod]
-#sfSeq_2016      = [leptrigSFs_2016,    btagWeights_2016,    addTopPtWeight, addjetPUidMod]
-#sfSeq_2017      = [leptrigSFs_2017,    btagWeights_2017,    addTopPtWeight, addjetPUidMod]
-#sfSeq_2018      = [leptrigSFs_2018,    btagWeights_2018,    addTopPtWeight, addjetPUidMod]
+sfSeq_2016apv   = [leptrigSFs_2016apv, btagWeights_2016apv, addTopPtWeight]#, addjetPUidMod_2016apv]
+sfSeq_2016      = [leptrigSFs_2016,    btagWeights_2016,    addTopPtWeight]#, addjetPUidMod_2016]
+sfSeq_2017      = [leptrigSFs_2017,    btagWeights_2017,    addTopPtWeight]#, addjetPUidMod_2017]
+sfSeq_2018      = [leptrigSFs_2018,    btagWeights_2018,    addTopPtWeight]#, addjetPUidMod_2018]
 
 
 
