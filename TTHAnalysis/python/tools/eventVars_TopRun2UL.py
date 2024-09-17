@@ -64,6 +64,8 @@ class EventVars_TopRun2UL(Module):
 
         self.lepenergyvars = [("isSS", "I"),
                               ("channel", "I"),
+                              "Lep1_Pt",
+                              "Lep2_Pt",
                               "Lep1Lep2_Pt",
                               "Lep1Lep2_PtSum",
                               "Lep1Lep2_DR",
@@ -121,6 +123,8 @@ class EventVars_TopRun2UL(Module):
 
                               #### Variables that are not susceptible to JEC variations that need a nominal value
                               # (note that being in the lepenergyvars list does not give this!)
+                              "Lep1_Pt",
+                              "Lep2_Pt",
                               "Lep1Lep2_Pt",
                               "Lep1Lep2_PtSum",
                               "Lep1Lep2_DR",
@@ -283,6 +287,8 @@ class EventVars_TopRun2UL(Module):
             else:
                 allret["channel"] = ch.NoChan
 
+            allret["Lep1_Pt"]        = leps_4m[0].Pt()
+            allret["Lep2_Pt"]        = leps_4m[1].Pt()
             allret["Lep1Lep2_Pt"]    = (leps_4m[0] + leps_4m[1]).Pt()
             allret["Lep1Lep2_PtSum"] = leps_4m[0].Pt() + leps_4m[1].Pt()
             allret["Lep1Lep2_DR"]    = leps_4m[0].DeltaR(leps_4m[1])
@@ -300,8 +306,17 @@ class EventVars_TopRun2UL(Module):
                     metpt  = event.MET_pt
                     metphi = event.MET_phi
                 else:
-                    metpt  = getattr(event, 'MET_T1_pt{v}'.format( v = sys if sys != "" else ""))
-                    metphi = getattr(event, 'MET_T1_phi{v}'.format(v = sys if sys != "" else ""))
+                    isJER = False
+                    for JERSource in ["jerUp","jer0Up","jer1Up","jer2Up","jer3Up","jer4Up","jer5Up","jerDown","jer0Down","jer1Down","jer2Down","jer3Down","jer4Down","jer5Down"]:
+                        if JERSource in sys:
+                            isJER = True
+
+                    if isJER: ###### Type I corrected MET should not have JER variations propagated
+                        metpt  = getattr(event, 'MET_T1_pt')
+                        metphi = getattr(event, 'MET_T1_phi')
+                    else:
+                        metpt  = getattr(event, 'MET_T1_pt{v}'.format( v = sys if sys != "" else ""))
+                        metphi = getattr(event, 'MET_T1_phi{v}'.format(v = sys if sys != "" else ""))
 
                 met_4m.SetPtEtaPhiM(metpt, 0, metphi, 0)
 
@@ -330,6 +345,8 @@ class EventVars_TopRun2UL(Module):
                 if getattr(event, 'nJetSel20{v}_Recl'.format(v = sys if "unclustEn" not in sys else "")) > 0:
                     allret["JetLoose1_Pt" + sys] = loosejets_4m[0].Pt()
 
+                allret["METgood_pt"  + sys] = met_4m.Pt()
+                allret["METgood_phi" + sys] = met_4m.Phi()
 
                 if getattr(event, 'nJetSel30{v}_Recl'.format(v = sys if "unclustEn" not in sys else "")) > 0:
                     allret["Lep1Lep2Jet1MET_Pt"          + sys] = (leps_4m[0] + leps_4m[1] + jets_4m[0] + met_4m).Pt()
@@ -439,6 +456,8 @@ class EventVars_TopRun2UL(Module):
                 else:
                     allret["channel" + sys] = ch.NoChan
 
+                allret["Lep1_Pt"        + sys] = leps_4m[0].Pt()
+                allret["Lep2_Pt"        + sys] = leps_4m[1].Pt()
                 allret["Lep1Lep2_Pt"    + sys] = (leps_4m[0] + leps_4m[1]).Pt()
                 allret["Lep1Lep2_PtSum" + sys] = leps_4m[0].Pt() + leps_4m[1].Pt()
                 allret["Lep1Lep2_DR"    + sys] = leps_4m[0].DeltaR(leps_4m[1])

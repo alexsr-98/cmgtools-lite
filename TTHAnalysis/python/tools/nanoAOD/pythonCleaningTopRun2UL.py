@@ -19,22 +19,23 @@ class pythonCleaningTopRun2UL(Module):
         self.selecsdict = {}
 
         # Con JetPUID (revisar con cuidao https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetIDUL)
-        """
+        # Loose WP of PUJetID
         if isMC:
-            self.selecsdict[2016] = lambda jet: (jet.jetId > 1 and (jet.puId >= 3 if jet.pt_nom <= 50 else 1))
-            self.selecsdict[2017] = lambda jet: (jet.jetId > 1 and (jet.puId >= 6 if jet.pt_nom <= 50 else 1))
-            self.selecsdict[2018] = lambda jet: (jet.jetId > 1 and (jet.puId >= 6 if jet.pt_nom <= 50 else 1))
+            self.selecsdict[2016] = lambda jet: (jet.jetId > 1 and (jet.puId >= 1 if jet.pt_nom <= 50 else 1))
+            self.selecsdict[2017] = lambda jet: (jet.jetId > 1 and (jet.puId >= 4 if jet.pt_nom <= 50 else 1))
+            self.selecsdict[2018] = lambda jet: (jet.jetId > 1 and (jet.puId >= 4 if jet.pt_nom <= 50 else 1))
         else:
-            self.selecsdict[2016] = lambda jet: (jet.jetId > 1 and (jet.puId >= 3 if jet.pt <= 50 else 1))
-            self.selecsdict[2017] = lambda jet: (jet.jetId > 1 and (jet.puId >= 6 if jet.pt <= 50 else 1))
-            self.selecsdict[2018] = lambda jet: (jet.jetId > 1 and (jet.puId >= 6 if jet.pt <= 50 else 1))
-        """
+            self.selecsdict[2016] = lambda jet: (jet.jetId > 1 and (jet.puId >= 1 if jet.pt <= 50 else 1))
+            self.selecsdict[2017] = lambda jet: (jet.jetId > 1 and (jet.puId >= 4 if jet.pt <= 50 else 1))
+            self.selecsdict[2018] = lambda jet: (jet.jetId > 1 and (jet.puId >= 4 if jet.pt <= 50 else 1))
+
         
         # Estandar
+        """
         self.selecsdict[2016] = lambda jet: jet.jetId > 1
         self.selecsdict[2017] = lambda jet: jet.jetId > 1
         self.selecsdict[2018] = lambda jet: jet.jetId > 1
-        
+        """
 
         self.jc     = jetCollection
         self.lc     = lepCollection

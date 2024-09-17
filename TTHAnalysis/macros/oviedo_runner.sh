@@ -1,8 +1,7 @@
 #!/bin/bash
-if [[ "$VO_CMS_SW_DIR" != "" ]] && test -f $VO_CMS_SW_DIR/cmsset_default.sh; then 
-  source $VO_CMS_SW_DIR/cmsset_default.sh
-fi;
-export SCRAM_ARCH=slc7_amd64_gcc700
+source /cms/cmsset_default.sh
+echo $VO_CMS_SW_DIR
+export SCRAM_ARCH=el9_amd64_gcc12
 WORK=$workpath; shift
 SRC=$workpath; shift
 cd $SRC; 

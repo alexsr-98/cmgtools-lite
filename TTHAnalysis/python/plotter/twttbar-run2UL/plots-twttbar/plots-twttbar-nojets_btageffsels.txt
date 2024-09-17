@@ -1,31 +1,15 @@
-btageff_deepjet_B  : EffSFJetB_deepjetIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
-btageff_deepjet_C  : EffSFJetC_deepjetIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
-btageff_deepjet_L  : EffSFJetL_deepjetIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
+btageff_deepjet_B  : EffSFJetB_deepJetIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
+btageff_deepjet_C  : EffSFJetC_deepJetIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
+btageff_deepjet_L  : EffSFJetL_deepJetIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
 
-btageff_deepcsv_B  : EffSFJetB_deepcsvIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
-btageff_deepcsv_C  : EffSFJetC_deepcsvIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
-btageff_deepcsv_L  : EffSFJetL_deepcsvIstag : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsf_deepjet_B   : EffSFJetB_deepJetSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsf_deepjet_C   : EffSFJetC_deepJetSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsf_deepjet_L   : EffSFJetL_deepJetSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
 
-btagsf_deepjet_B   : EffSFJetB_deepjetSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsf_deepjet_C   : EffSFJetC_deepjetSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsf_deepjet_L   : EffSFJetL_deepjetSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfup_deepjet_B : EffSFJetB_deepJetSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfup_deepjet_C : EffSFJetC_deepJetSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfup_deepjet_L : EffSFJetL_deepJetSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
 
-btagsfup_deepjet_B : EffSFJetB_deepjetSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsfup_deepjet_C : EffSFJetC_deepjetSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsfup_deepjet_L : EffSFJetL_deepjetSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
-
-btagsfdn_deepjet_B : EffSFJetB_deepjetSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsfdn_deepjet_C : EffSFJetC_deepjetSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsfdn_deepjet_L : EffSFJetL_deepjetSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
-
-btagsf_deepcsv_B   : EffSFJetB_deepcsvSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsf_deepcsv_C   : EffSFJetC_deepcsvSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsf_deepcsv_L   : EffSFJetL_deepcsvSF    : 2,-0.5,1.5 ; IncludeUnderflow=False
-
-btagsfup_deepcsv_B : EffSFJetB_deepcsvSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsfup_deepcsv_C : EffSFJetC_deepcsvSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsfup_deepcsv_L : EffSFJetL_deepcsvSFup  : 2,-0.5,1.5 ; IncludeUnderflow=False
-
-btagsfdn_deepcsv_B : EffSFJetB_deepcsvSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsfdn_deepcsv_C : EffSFJetC_deepcsvSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
-btagsfdn_deepcsv_L : EffSFJetL_deepcsvSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfdn_deepjet_B : EffSFJetB_deepJetSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfdn_deepjet_C : EffSFJetC_deepJetSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False
+btagsfdn_deepjet_L : EffSFJetL_deepJetSFdn  : 2,-0.5,1.5 ; IncludeUnderflow=False

@@ -4,5 +4,5 @@ alwaystrue : 1
 
 dressemu    : Dresschannel == 1
 dressdilep  : (nDressSelLep == 2) && (DressLep1_Pt > 25) && (DressLep2_Pt > 20) && DressisSS == 0 && (DressminMllAFAS > 20)
-dress1jet   : nDressSelJet == 2
-dress1btag  : nDressBSelJet == 2
+dress2jet   : nDressSelJet == 2
+dress2btag  : nDressBSelJet == 2

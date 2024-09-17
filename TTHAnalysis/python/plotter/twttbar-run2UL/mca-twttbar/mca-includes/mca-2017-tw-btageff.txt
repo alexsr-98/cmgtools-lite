@@ -1,5 +1,0 @@
-tw+ : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8_central* : xsec ; FillColor=798
-tw+ : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8*topnano* : xsec ; FillColor=798
-
-#tw+ : ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8_central_* + ST_tW_top_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8_central_* : xsec ; FillColor=798
-#tw+ : ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8_central_* + ST_tW_antitop_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8_central_* : xsec ; FillColor=798

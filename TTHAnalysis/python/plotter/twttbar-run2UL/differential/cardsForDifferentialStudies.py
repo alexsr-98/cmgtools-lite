@@ -9,7 +9,7 @@ import varList as vl
 r.PyConfig.IgnoreCommandLineOptions = True
 r.gROOT.SetBatch(True)
 
-friendspath   = "/pool/phedexrw/userstorage/vrbouza/proyectos/twttbar_run2/productions"
+friendspath   = "/lustrefs/hdd_pool_dir/nanoAODv9/bb4l/productions"
 logpath       = friendspath + "/{p}/{y}/logs/cards_differential"
 
 friendsscaff = "--FMCs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors"
@@ -23,7 +23,7 @@ commandscaff  = '''python3 makeShapeCards_TopRun2.py --tree NanoAOD {mcafile} {c
 # will have to divide by the second one. The first one is relevant becasue of the dividing of the files.
 # The second one, because of the proportions between MC simulations.
 
-nomweight     = '''-W "MuonIDSF * MuonISOSF * ElecIDSF * ElecRECOSF * TrigSF * puWeight * bTagWeight * L1PreFiringWeight_Nom"'''
+nomweight     = '''-W "MuonIDSF * MuonISOSF * ElecIDSF * ElecRECOSF * TrigSF * puWeight * bTagWeight * L1PreFiringWeight_Nom * jetPUidWeight"'''
 genweight     = ""
 
 

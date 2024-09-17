@@ -842,7 +842,7 @@ class Unfolder():
         if "Fiducial" not in self.var:
             #fullcovnom.Scale(scaleval**2)
             fullcovnom = ep.computeCovarianceFromResults(allHistos, fullcovnom)
-            fullcovnom.Scale(65)
+            #fullcovnom.Scale(65)
             fullcovnom.Add(covnom) # We add the stat unc
             fullcovnom.Write()
         #covitwo = deepcopy(self.helpers[''].tunfolder.GetEmatrixInput("CovMatInput"))
