@@ -24,7 +24,7 @@ doArea      = False     # Apply area constraint in unfolding (general setting, c
 onlyTotal   = False      # Only show total unc. line in the differential relative unc. plots.
 
 vetolist = ["plots", "control", "tables", "response"]
-arXivtext = ""
+arXivtext = "arXiv:2409.06444"
 
 # === OTHER IMPORTANT DEFINITIONS ===
 LumiDict     = {"2022"       : 8.0,

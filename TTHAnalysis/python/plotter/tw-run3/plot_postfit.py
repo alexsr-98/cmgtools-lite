@@ -11,6 +11,8 @@ r.gStyle.SetEndErrorSize(0)
 
 postFitWithRatioPrefit = False
 
+arXivtext = "arXiv:2409.06444"
+
 ColourMapForProcesses = {
     "tw"       : r.TColor.GetColor(248,156,32),
     "ttbar"    : r.TColor.GetColor(228,37,54),
@@ -423,20 +425,28 @@ def producePlots(year, region, path):
       if keyname == "postfit":
         doSpam('#scale[1.2]{#bf{CMS}}',.2, .845, .35, .885,textSize = 22)
       else:
-        doSpam('#splitline{#scale[1.2]{#bf{CMS}}}{#scale[1.0]{#it{Supplementary}}}',.2, .835, .35, .875,textSize = 22)      
+        doSpam('#splitline{#scale[1.2]{#bf{CMS}}}{#scale[1.0]{#it{Supplementary}}}',.2, .835, .35, .875,textSize = 22)     
+        if dire == "ch3":
+          doSpam(arXivtext,0.25, .963, .975, .99,textSize = spamsSize*0.98) 
+        else:
+          doSpam(arXivtext,0.13, .963, .975, .99,textSize = spamsSize*0.98) 
       if dire == "ch3":
         if keyname == "postfit":
           doSpam("    e^{#pm}#mu^{#mp} (" + dictRegions[dire] + ")", .365, .845, .55, .885, textSize = spamsSize + extraSizeForChannelSpam)
           doSpam("Postfit", .2, .728, .35, .768, textSize = spamsSize + extraSizeForChannelSpam)
         else:
           doSpam("    e^{#pm}#mu^{#mp} (" + dictRegions[dire] + ")", .415, .845, .60, .885, textSize = spamsSize + extraSizeForChannelSpam)
+          doSpam("Prefit", .2, .728, .35, .768, textSize = spamsSize + extraSizeForChannelSpam)
       else:
         if keyname == "postfit":
           doSpam("#splitline{ e^{#pm}#mu^{#mp}}{(" + dictRegions[dire] + ")}", .2, .600, .35, .640, textSize = spamsSize + extraSizeForChannelSpam)
           doSpam("Postfit", .2, .728, .35, .768, textSize = spamsSize + extraSizeForChannelSpam)
         else:
-          doSpam("#splitline{ e^{#pm}#mu^{#mp}}{(" + dictRegions[dire] + ")}", .2, .700, .35, .740, textSize = spamsSize + extraSizeForChannelSpam)
-	
+          # If I don't use the prefit label put the commented line
+          #doSpam("#splitline{ e^{#pm}#mu^{#mp}}{(" + dictRegions[dire] + ")}", .2, .700, .35, .740, textSize = spamsSize + extraSizeForChannelSpam)
+          doSpam("#splitline{ e^{#pm}#mu^{#mp}}{(" + dictRegions[dire] + ")}", .2, .600, .35, .640, textSize = spamsSize + extraSizeForChannelSpam)
+          doSpam("Prefit", .2, .728, .35, .768, textSize = spamsSize + extraSizeForChannelSpam)
+
       if not os.path.exists(outpath): os.system("mkdir -p %s"%outpath)
       c.SaveAs("%s/%s_%s.png"%(outpath,keyname,dire))
       c.SaveAs("%s/%s_%s.pdf"%(outpath,keyname,dire))

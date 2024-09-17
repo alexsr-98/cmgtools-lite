@@ -101,6 +101,8 @@ def GetAndPlotResponseMatrix(iY, var, key, theresponseh, theparticleh, thepath):
     r.gStyle.SetPaintTextFormat("4.3f")
     CMS_lumi.lumi_13TeV = ""
     #CMS_lumi.extraText  = 'Simulation Supplementary'
+    r.gStyle.SetPadTickX(1)
+    r.gStyle.SetPadTickY(1)
     # For paper
     CMS_lumi.extraText  = 'Simulation Supplementary' + ' Preliminary' * vl.doPre
     # For PAS

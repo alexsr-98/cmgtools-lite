@@ -165,7 +165,10 @@ def drawANormalisedCovMat(finalmat, inpath, iY, var, isnotfid = False):
     r.gStyle.SetLabelFont(43, "XYZ")
     r.gStyle.SetLabelSize(22, "XYZ")
 
-    c = r.TCanvas('c', "", 200, 10, 600, 600)
+    c = r.TCanvas('c', "", 200, 10, 630, 600)
+
+    r.gStyle.SetPadTickX(1)
+    r.gStyle.SetPadTickY(1)
 
     txtanglestring = ""
     if ('txtangle_covparticlefidbin' in vl.varList[var]):
@@ -187,7 +190,7 @@ def drawANormalisedCovMat(finalmat, inpath, iY, var, isnotfid = False):
     #CMS_lumi.extraText  = 'Preliminary' * vl.doPre
     CMS_lumi.lumi_sqrtS = '#sqrt{s} = 13 TeV'
     #CMS_lumi.cmsTextSize += 0.1
-    CMS_lumi.CMS_lumi(r.gPad, 4, 0, 0.05)
+    CMS_lumi.CMS_lumi(r.gPad, 4, 0, 0.035)
 
     if doArXiv:
         arXiv = r.TLatex()
@@ -195,10 +198,11 @@ def drawANormalisedCovMat(finalmat, inpath, iY, var, isnotfid = False):
         arXiv.SetTextAngle(0)
         arXiv.SetTextColor(r.kBlack)
         
+        aLittleExtra = -0.01
         arXiv.SetTextFont(42)
         arXiv.SetTextAlign(31)
         arXiv.SetTextSize(0.6 * r.gPad.GetTopMargin())
-        arXiv.DrawLatex(0.61, 1 - r.gPad.GetTopMargin() + 0.2 * r.gPad.GetTopMargin(), vl.arXivtext)
+        arXiv.DrawLatex(0.61+aLittleExtra, 1 - r.gPad.GetTopMargin() + 0.2 * r.gPad.GetTopMargin(), vl.arXivtext)
 
     plotsoutputpath = pathtothings + "/CovMatplots"
     if not os.path.isdir(plotsoutputpath):
