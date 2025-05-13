@@ -9,3 +9,5 @@ zveto:      (channel == 1) || (abs(Mll - 91) > 15)
 
 1jet:       nJetSel30_Recl == 1;
 1btag:      nBJetSelMedium30_Recl == 1;
+
+#nvertex: (PV_npvsGood <= 7)

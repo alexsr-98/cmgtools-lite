@@ -419,7 +419,7 @@ def CalculateAndPlotResponseMatrices(tsk):
         tmpnam = key.GetName()
         #print "\ntmpnam:", tmpnam
 
-        if any([el in tmpnam for el in ["ds", "dr", "data", "herwig", "amc"]]) and "sf" not in tmpnam:
+        if any([el in tmpnam for el in ["ds", "dr", "data", "herwig", "amc", "bb4lv1"]]) and "sf" not in tmpnam:
             print("WARNING: Skipping", tmpnam, "because it is a data or MC sample of alternative signal")
             continue
 

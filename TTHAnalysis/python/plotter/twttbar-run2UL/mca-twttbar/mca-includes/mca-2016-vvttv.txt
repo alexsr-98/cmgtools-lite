@@ -14,7 +14,6 @@ vvttv : WWTo1L1Nu2Q_4f_TuneCP5_13TeV_amcatnloFXFX_pythia8*  : xsec ; FillColor=R
 # NLO
 vvttv : WZTo1L1Nu2Q_4f_TuneCP5_13TeV_amcatnloFXFX_pythia8*     : xsec ; FillColor=ROOT.TColor.GetColor(150\,74\,139)
 vvttv : WZTo2Q2L_mllmin4p0_TuneCP5_13TeV_amcatnloFXFX_pythia8* : xsec ; FillColor=ROOT.TColor.GetColor(150\,74\,139)
-vvttv : WZTo2Q2L_mllmin4p0_TuneCP5_13TeV_amcatnloFXFX_pythia8* : xsec ; FillColor=ROOT.TColor.GetColor(150\,74\,139)
 vvttv : WZTo3LNu_TuneCP5_13TeV_amcatnloFXFX_pythia8*           : xsec ; FillColor=ROOT.TColor.GetColor(150\,74\,139)
 
 

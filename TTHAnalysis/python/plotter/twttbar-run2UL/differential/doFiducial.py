@@ -62,11 +62,11 @@ def NormaliseAndPlot(tsk):
 
     PlotParticleFidBinLevelResults(thedict, inpath, iY, iV, covmatnorm)
 
-#    particlebinpath = inpath + "/" + iY + "/particlebinplots/"
-#    if not os.path.isdir(particlebinpath):
-#        os.system("mkdir -p " + particlebinpath)
-#
-#    PlotParticleBinLevelResults(dictforbin, inpath, iY, iV)
+    particlebinpath = inpath + "/" + iY + "/particlebinplots/"
+    if not os.path.isdir(particlebinpath):
+        os.system("mkdir -p " + particlebinpath)
+
+    PlotParticleBinLevelResults(dictforbin, inpath, iY, iV)
     return
 
 
@@ -312,8 +312,8 @@ def PlotParticleFidBinLevelResults(thedict, inpath, iY, varName, covmatnorm):
     statOnlyList[0].SetLineColor(0)
     statOnlyList[0].SetFillStyle(1001)
 
-    #if varName != "Fiducial":
-    #    tex.saveLaTeXfromhisto(thedict[""], varName, path = inpath + "/" + iY + "/tables", errhisto = nominal_withErrors[0], ty = "particlefidbin")
+    if varName != "Fiducial":
+        tex.saveLaTeXfromhisto(thedict[""], varName, path = inpath + "/" + iY + "/tables", errhisto = nominal_withErrors[0], ty = "particlefidbin")
 
     if "yaxismax_particlefidbin" in vl.varList[varName]:
         plot.yaxisuplimit = vl.varList[varName]["yaxismax_particlefidbin"]
@@ -334,13 +334,14 @@ def PlotParticleFidBinLevelResults(thedict, inpath, iY, varName, covmatnorm):
     tru                         = vl.giveMeOneComparison(tmptfile, "bb4l", scaleval, varName, part = True, normbin = True, normfid = True)
     twttbardr                   = vl.giveMeOneComparison(tmptfile, "twttbardr", scaleval, varName, part = True, normbin = True, normfid = True)
     twttbards                   = vl.giveMeOneComparison(tmptfile, "twttbards", scaleval, varName, part = True, normbin = True, normfid = True)
-    #twttbarherwig               = vl.giveMeOneComparison(tmptfile, "twttbarherwig", scaleval, varName, part = True, normbin = True, normfid = True)
+    twttbarherwig               = vl.giveMeOneComparison(tmptfile, "twttbarherwig", scaleval, varName, part = True, normbin = True, normfid = True)
     twttbaramc_dr               = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr", scaleval, varName, part = True, normbin = True, normfid = True)
     twttbaramc_dr2              = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr2", scaleval, varName, part = True, normbin = True, normfid = True)
     twttbaramc_ds               = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds", scaleval, varName, part = True, normbin = True, normfid = True)
     twttbaramc_ds_runningBW     = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_runningBW", scaleval, varName, part = True, normbin = True, normfid = True)
     #twttbaramc_ds_is            = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is", scaleval, varName, part = True, normbin = True, normfid = True)
     #twttbaramc_ds_is_runningBW  = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is_runningBW", scaleval, varName, part = True, normbin = True, normfid = True)
+    #bb4lv1                      = vl.giveMeOneComparison(tmptfile, "bb4lv1", scaleval, varName, part = True, normbin = True, normfid = True)
 
     tmptfile.Close(); del tmptfile
 
@@ -385,6 +386,8 @@ def PlotParticleFidBinLevelResults(thedict, inpath, iY, varName, covmatnorm):
     #plot.addHisto(twttbaramc_dr2,          'P,same', 'tW DR2 + t#bar{t} aMC + P8',     'P', 'mc')
     #plot.addHisto(twttbaramc_ds,           'P,same', 'tW DS + t#bar{t} aMC + P8',      'P', 'mc')
     #plot.addHisto(twttbaramc_ds_runningBW, 'P,same', 'tW DS dyn. + t#bar{t} aMC + P8', 'P', 'mc')
+    #plot.addHisto(bb4lv1, 'P,same', 'b#bar{b}l^{+}#nu l^{-}#nu PH + P8 (v1)', 'P', 'mc')
+
 
     # Remove from the thedict[""] histo, the error bars, but first do it over a deepcopy
     dataHistoCopy = deepcopy(thedict[""].Clone("dataHistoCopy"))
@@ -426,7 +429,150 @@ def PlotParticleFidBinLevelResults(thedict, inpath, iY, varName, covmatnorm):
     savetfile3.Close(); del savetfile3
     return
 
+def PlotParticleBinLevelResults(thedict, inpath, iY, varName):
+    print("> Now let's obtain the same plots only normalised to the bin width!!")
 
+    savetfile = r.TFile(inpath + "/" + iY + "/" + varName + "/particlebinOutput.root", "recreate")
+    for key in thedict: thedict[key].Write()
+    savetfile.Close()
+
+    statOnlyList       = [deepcopy(thedict[""]),  deepcopy(thedict[""])]
+
+    nominal_withErrors = ep.propagateHisto(thedict, doSym = vl.doSym)
+    plot               = bp.beautifulUnfPlot(varName + "_particlebin", varName)
+    plot.doRatio       = True
+    plot.doFit         = False
+    plot.plotspath     = inpath + "/" + iY + "/particlebinplots/"
+    plot.displayedLumi = vl.TotalLumi if iY == "run2" else vl.LumiDict[iY]
+    plot.doPreliminary = vl.doPre
+    plot.doLogY        = False if not "logy_particlefidbin" in vl.varList[varName] else vl.varList[varName]["logy_particlefidbin"]
+
+    #if "yaxismax_particlebin" in vl.varList[varName]: plot.yaxisuplimit = vl.varList[varName]["yaxismax_particlebin"]
+
+    thedict[""].SetMarkerStyle(r.kFullCircle)
+    thedict[""].SetLineColor(r.kBlack)
+    thedict[""].SetMarkerSize(1)
+    nominal_withErrors[0].SetFillColorAlpha(r.TColor.GetColor(255, 223, 127), 1.0)
+    nominal_withErrors[0].SetLineColor(0)
+    nominal_withErrors[0].SetFillStyle(1001)
+    statOnlyList[0].SetFillColorAlpha(r.kGray + 1, 1.0)
+    statOnlyList[0].SetLineColor(0)
+    statOnlyList[0].SetFillStyle(1001)
+
+    savetfile1 = r.TFile(inpath + "/" + iY + "/" + varName + "/particlebinOutput.root", "update")
+    nom0 = deepcopy(nominal_withErrors[0].Clone("nom0"))
+    nom1 = deepcopy(nominal_withErrors[1].Clone("nom1"))
+    nom0.Write()
+    nom1.Write()
+    savetfile1.Close()
+
+    #tex.saveLaTeXfromhisto(thedict[""], varName, path = vl.tablespath, errhisto = nominal_withErrors[0], ty = "unfolded_bin")
+
+    if "legpos_particlebin" in vl.varList[varName]:
+        legloc = vl.varList[varName]["legpos_particlebin"]
+    else:
+        legloc = "TR"
+
+    thelumi = vl.TotalLumi if iY == "run2" else vl.LumiDict[iY]
+    scaleval = 1/thelumi/1000
+
+    if not os.path.isfile(inpath + "/" + iY + "/" + varName + '/particle.root'):
+        raise RuntimeError('The rootfile with the generated information does not exist.')
+
+    tmptfile = r.TFile.Open(inpath + "/" + iY + "/" + varName + '/particle.root')
+    tru                         = vl.giveMeOneComparison(tmptfile, "bb4l", scaleval, varName, part = True, normbin = True)
+    twttbardr                   = vl.giveMeOneComparison(tmptfile, "twttbardr", scaleval, varName, part = True, normbin = True)
+    twttbards                   = vl.giveMeOneComparison(tmptfile, "twttbards", scaleval, varName, part = True, normbin = True)
+    twttbarherwig               = vl.giveMeOneComparison(tmptfile, "twttbarherwig", scaleval, varName, part = True, normbin = True)
+    twttbaramc_dr               = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr", scaleval, varName, part = True, normbin = True)
+    twttbaramc_dr2              = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr2", scaleval, varName, part = True, normbin = True)
+    twttbaramc_ds               = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds", scaleval, varName, part = True, normbin = True)
+    twttbaramc_ds_runningBW     = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_runningBW", scaleval, varName, part = True, normbin = True)
+    #twttbaramc_ds_is            = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is", scaleval, varName, part = True, normbin = True, normfid = True)
+    #twttbaramc_ds_is_runningBW  = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is_runningBW", scaleval, varName, part = True, normbin = True, normfid = True)
+    #bb4lv1                      = vl.giveMeOneComparison(tmptfile, "bb4lv1", scaleval, varName, part = True, normbin = True, normfid = True)
+
+    tmptfile.Close(); del tmptfile
+
+    savetfile2 = r.TFile(inpath + "/" + iY + "/" + varName + "/particlebinOutput.root", "update")
+    tru.Write()
+    twttbardr.Write()
+    twttbards.Write()
+    #twttbarherwig.Write()
+    twttbaramc_dr.Write()
+    twttbaramc_dr2.Write()
+    twttbaramc_ds.Write()
+    twttbaramc_ds_runningBW.Write()
+    #twttbaramc_ds_is_runningBW.Write()
+    #twttbaramc_ds_is.Write()
+    statOnlyList[0].Write("{vn}_statUp".format(vn = varName))
+    statOnlyList[1].Write("{vn}_statDown".format(vn = varName))
+    nominal_withErrors[0].Write("{vn}_totalUp".format(vn = varName))
+    nominal_withErrors[1].Write("{vn}_totalDown".format(vn = varName))
+    savetfile2.Close()
+
+    themaxs = []
+    #for el in [tru, twttbardr, twttbards, twttbarherwig, twttbaramc_dr, twttbaramc_dr2, twttbaramc_ds, twttbaramc_ds_runningBW,
+    for el in [tru, twttbardr, twttbards, twttbaramc_dr, twttbaramc_dr2, twttbaramc_ds, twttbaramc_ds_runningBW,
+            thedict[""], nominal_withErrors[0], nominal_withErrors[1]]:
+        themaxs.append(vl.getAConservativeMaximum(el))
+    tmpval = max(themaxs)
+
+    #nominal_withErrors[0].SetMaximum(tmpval)
+    #nominal_withErrors[1].SetMaximum(tmpval)
+    #thedict[""].SetMaximum(tmpval)
+
+    #####for iB in range(1, thedict[""].GetNbinsX() + 1):
+    #####    thedict[""].SetBinError(iB, 0.)
+
+    plot.addHisto(nominal_withErrors,      'A2',     'Total unc.',                     'F', 'total')
+    plot.addHisto(statOnlyList,            '2,same',      'Stat unc.',                      'F', "stat")
+    plot.addHisto(tru,                     'P,same', 'b#bar{b}l^{+}#nu l^{-}#nu PH + P8','P', 'mc')
+    plot.addHisto(twttbardr,               'P,same', 'tW DR + t#bar{t} PH + P8',       'P', 'mc')
+    plot.addHisto(twttbards,               'P,same', 'tW DS + t#bar{t} PH + P8',       'P', 'mc')
+    #plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
+    #plot.addHisto(twttbaramc_dr,           'P,same', 'tW DR + t#bar{t} aMC + P8',      'P', 'mc')
+    #plot.addHisto(twttbaramc_dr2,          'P,same', 'tW DR2 + t#bar{t} aMC + P8',     'P', 'mc')
+    #plot.addHisto(twttbaramc_ds,           'P,same', 'tW DS + t#bar{t} aMC + P8',      'P', 'mc')
+    #plot.addHisto(twttbaramc_ds_runningBW, 'P,same', 'tW DS dyn. + t#bar{t} aMC + P8', 'P', 'mc')
+    #plot.addHisto(bb4lv1, 'P,same', 'b#bar{b}l^{+}#nu l^{-}#nu PH + P8 (v1)', 'P', 'mc')
+
+
+    # Remove from the thedict[""] histo, the error bars, but first do it over a deepcopy
+    dataHistoCopy = deepcopy(thedict[""].Clone("dataHistoCopy"))
+    for iB in range(1, dataHistoCopy.GetNbinsX() + 1):
+        dataHistoCopy.SetBinError(iB, 0.)
+    plot.addHisto(dataHistoCopy,           'P,E,same{s}'.format(s = ",X0" if "equalbinsunf" in vl.varList[varName] else ""),  vl.labellegend,                   "P" if "equalbinsunf" in vl.varList[varName] else "PL", 'data')
+
+    plot.saveCanvasv2(legloc)
+
+    #plot.addHisto(nominal_withErrors, 'E2',     'Uncertainty',   'F')
+    #plot.addHisto(thedict[""], 'P,same',vl.labellegend,'PE', 'data')
+    #plot.saveCanvas(legloc)
+    del plot
+
+    plot2       = bp.beautifulUnfPlot(varName + 'uncs_particlebin', varName)
+    plot2.doFit         = False
+    plot2.displayedLumi = vl.TotalLumi if iY == "run2" else vl.LumiDict[iY]
+    plot2.doPreliminary = vl.doPre
+    plot2.plotspath     = inpath + "/" + iY + "/particlebinplots/"
+    
+
+    yaxismax_particlebinunc = 1.4
+    if "yaxismax_particlebinunc" in vl.varList[varName]:
+        yaxismax_particlebinunc = vl.varList[varName]["yaxismax_particlebinunc"]
+
+    uncListorig, hincstat, hincsyst, hincmax = ep.drawTheRelUncPlot(nominal_withErrors, thedict, plot2, yaxismax_particlebinunc, doSym =  vl.doSym)
+
+    if "legpos_particlebinunc" in vl.varList[varName]:
+        unclegpos = vl.varList[varName]["legpos_particlebinunc"]
+    else:
+        unclegpos = "TR"
+
+    plot2.saveCanvas(unclegpos)
+    del plot2, nominal_withErrors, tru#, aMCatNLO, hDS 
+
+    return
 
 
 

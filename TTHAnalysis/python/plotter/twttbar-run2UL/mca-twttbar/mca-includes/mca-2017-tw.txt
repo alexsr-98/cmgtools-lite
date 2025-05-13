@@ -1,5 +1,5 @@
 #tw+ : ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8*  : xsec ; FillColor=798 ### Unir
 #tw+ : ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8*      : xsec ; FillColor=798 ### Unir
 
-tw+ : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8* + ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_PDFWeights_powheg_pythia8* : xsec ; FillColor=ROOT.TColor.GetColor(248\,156\,32)
-tw+ : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*     + ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_PDFWeights_powheg_pythia8*     : xsec ; FillColor=ROOT.TColor.GetColor(248\,156\,32)
+tw+ : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*  : 21.56 ; FillColor=ROOT.TColor.GetColor(248\,156\,32)
+tw+ : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*      : 21.56 ; FillColor=ROOT.TColor.GetColor(248\,156\,32)

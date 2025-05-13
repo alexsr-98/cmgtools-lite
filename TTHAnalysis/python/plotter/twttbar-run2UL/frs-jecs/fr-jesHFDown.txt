@@ -1,4 +1,5 @@
 change: \bbTagWeight\b:                  bTagWeight_jesHFDown
+change: \bjetPUidWeight\b:               jetPUidWeight_jesHFDown
 
 change: \[iJetSel30_Recl\[:              [iJetSel30_jesHFDown_Recl[
 change: \bnJetSel30_Recl\b:              nJetSel30_jesHFDown_Recl

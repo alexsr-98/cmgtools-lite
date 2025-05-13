@@ -5,6 +5,7 @@ import warnings as wr
 from copy import deepcopy
 import sys, os, argparse
 from collections import OrderedDict
+from decimal import Decimal
 
 sys.path.append('{cmsswpath}/src/CMGTools/TTHAnalysis/python/plotter/twttbar-run2UL/differential/'.format(cmsswpath = os.environ['CMSSW_BASE']))
 import varList as vl
@@ -48,7 +49,12 @@ def saveLaTeXfromhisto(histo, varname, path = "./", outname = "", ty = "detector
         table[0].append(tmpval); table[1].append(tmpinc)
 
     # To assure that we don't remove trailing zeros
-    frm = tuple([""] + [".{l}f".format(l = len(table[0][ind].split(".")[1] )) for ind in range(1, len(table[0])) ])
+    #frm = tuple([""] + [".{l}f".format(l = len(table[0][ind].split(".")[1] )) for ind in range(1, len(table[0])) ])
+    frm = tuple([""] + [
+    ".{l}f".format(l=len(table[0][ind].split(".")[1])) 
+    if "." in table[0][ind] else ".0f" 
+    for ind in range(1, len(table[0]))
+    ])
 
     #finaltab = tb.tabulate(table, headers = headers, floatfmt = frm, numalign = "decimal", stralign = "center", colalign=("left",))
     #print(finaltab)
@@ -57,7 +63,7 @@ def saveLaTeXfromhisto(histo, varname, path = "./", outname = "", ty = "detector
 
     #finallatextab = tb.tabulate(table, headers = headers, floatfmt = frm, tablefmt = "latex_raw")
     #print(finallatextab)
-
+    print(headers)
     finallatextab = pt.PrettyTable(headers)
 
     finallatextab.add_row(table[0])
@@ -88,8 +94,8 @@ def saveLaTeXfromhisto(histo, varname, path = "./", outname = "", ty = "detector
 def getvalueandincstrings(histo, b):
     valstring = ""; incstring = ""; # NOTE: Python by default uses up to 12 characters when
                                     #       transforming a float number into a string.
-    valstring = str(histo.GetBinContent(b))
-    incstring = str(histo.GetBinError(b))
+    valstring = str(Decimal(histo.GetBinContent(b)))
+    incstring = str(Decimal(histo.GetBinError(b)))
     ndeczeros = 0
     numofdecs = 0
 

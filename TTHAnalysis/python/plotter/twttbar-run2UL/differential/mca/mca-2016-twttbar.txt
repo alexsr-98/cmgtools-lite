@@ -1,35 +1,38 @@
-#twttbardr : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8* + ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_PDFWeights_powheg_pythia8* : xsec ;  FillColor=633
-#twttbardr : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*     + ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_PDFWeights_powheg_pythia8*     : xsec ;  FillColor=633
+twttbardr : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*    : 21.56 ; FillColor=633
+twttbardr : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*        : 21.56 ; FillColor=633
+twttbardr : TTTo2L2Nu_TuneCP5_13TeV_powheg_pythia8*                                 : 87.98 ; FillColor=633
 
-twttbardr : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*    : xsec ; FillColor=633
-twttbardr : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*        : xsec ; FillColor=633
-twttbardr : TTTo2L2Nu_TuneCP5_13TeV_powheg_pythia8*                                 : xsec ; FillColor=633
-
-
-twttbards     : ST_tW_antitop_5f_DS_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8* : xsec ; FillColor=633
-twttbards     : ST_tW_top_5f_DS_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*     : xsec ; FillColor=633
-twttbards     : TTTo2L2Nu_TuneCP5_13TeV_powheg_pythia8*                                 : xsec ; FillColor=633
+#twdr : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*    : 21.56 ; FillColor=633
+#twdr : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*        : 21.56 ; FillColor=633
+#ttbar : TTTo2L2Nu_TuneCP5_13TeV_powheg_pythia8*                                 : 87.98 ; FillColor=633
 
 
-twttbarherwig : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCH3_13TeV_powheg_herwig7*    : xsec ; FillColor=633
-twttbarherwig : ST_tW_top_5f_NoFullyHadronicDecays_TuneCH3_13TeV_powheg_herwig7*        : xsec ; FillColor=633
-twttbarherwig : TT_TuneCH3_13TeV_powheg_herwig7*                                        : xsec ; FillColor=633
+twttbards     : ST_tW_antitop_5f_DS_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8* : 21.56 ; FillColor=633
+twttbards     : ST_tW_top_5f_DS_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*     : 21.56 ; FillColor=633
+twttbards     : TTTo2L2Nu_TuneCP5_13TeV_powheg_pythia8*                                 : 87.98 ; FillColor=633
 
 
-twttbaramc_dr              : ST_tW_Dilept_5f_DR_TuneCP5_13TeV_amcatnlo_pythia8*              : xsec ;
-twttbaramc_dr              : TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8*                      : xsec ; FillColor=633
+twttbarherwig : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCH3_13TeV_powheg_herwig7*    : 21.56 ; FillColor=633
+twttbarherwig : ST_tW_top_5f_NoFullyHadronicDecays_TuneCH3_13TeV_powheg_herwig7*        : 21.56 ; FillColor=633
+twttbarherwig : TT_TuneCH3_13TeV_powheg_herwig7*                                        : 833.9 ; FillColor=633
 
-twttbaramc_dr2             : ST_tW_Dilept_5f_DR2_TuneCP5_13TeV_amcatnlo_pythia8*             : xsec ;
-twttbaramc_dr2             : TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8*                      : xsec ; FillColor=633
 
-twttbaramc_ds              : ST_tW_Dilept_5f_DS_TuneCP5_13TeV_amcatnlo_pythia8*              : xsec ;
-twttbaramc_ds              : TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8*                      : xsec ; FillColor=633
+twttbaramc_dr              : ST_tW_Dilept_5f_DR_TuneCP5_13TeV_amcatnlo_pythia8*              : 8.392 ;
+twttbaramc_dr              : TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8*                      : 833.9 ; FillColor=633
 
-twttbaramc_ds_is           : ST_tW_Dilept_5f_DS_IS_TuneCP5_13TeV_amcatnlo_pythia8*           : xsec ;
-twttbaramc_ds_is           : TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8*                      : xsec ; FillColor=633
+twttbaramc_dr2             : ST_tW_Dilept_5f_DR2_TuneCP5_13TeV_amcatnlo_pythia8*             : 8.392 ;
+twttbaramc_dr2             : TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8*                      : 833.9 ; FillColor=633
 
-twttbaramc_ds_runningBW    : ST_tW_Dilept_5f_DS_runningBW_TuneCP5_13TeV_amcatnlo_pythia8*    : xsec ;
-twttbaramc_ds_runningBW    : TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8*                      : xsec ; FillColor=633
+twttbaramc_ds              : ST_tW_Dilept_5f_DS_TuneCP5_13TeV_amcatnlo_pythia8*              : 8.392 ;
+twttbaramc_ds              : TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8*                      : 833.9 ; FillColor=633
 
-twttbaramc_ds_is_runningBW : ST_tW_Dilept_5f_DS_IS_runningBW_TuneCP5_13TeV_amcatnlo_pythia8* : xsec ;
-twttbaramc_ds_is_runningBW : TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8*                      : xsec ; FillColor=633
+twttbaramc_ds_is           : ST_tW_Dilept_5f_DS_IS_TuneCP5_13TeV_amcatnlo_pythia8*           : 8.392 ;
+twttbaramc_ds_is           : TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8*                      : 833.9 ; FillColor=633
+
+twttbaramc_ds_runningBW    : ST_tW_Dilept_5f_DS_runningBW_TuneCP5_13TeV_amcatnlo_pythia8*    : 8.392 ;
+twttbaramc_ds_runningBW    : TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8*                      : 833.9 ; FillColor=633
+
+twttbaramc_ds_is_runningBW : ST_tW_Dilept_5f_DS_IS_runningBW_TuneCP5_13TeV_amcatnlo_pythia8* : 8.392 ;
+twttbaramc_ds_is_runningBW : TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8*                      : 833.9 ; FillColor=633
+
+bb4lv1 : BBLLNuNu_v1_TuneCP5_13TeV_powheg_pythia8* : 96.372 ; Label="bb4lv1", FillColor=883

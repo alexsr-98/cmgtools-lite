@@ -1,5 +1,5 @@
-OUTDIR="./temp_Run3_plots/2024_06_13_forAN_CWR/"
-OUTDIR2="./temp_Run3_plots/2024_04_09_testCarlosWithoutSFs/"
+OUTDIR="./temp_Run3_plots/2024_10_29_forAN_referee/"
+OUTDIR2="./temp_Run3_plots/2024_10_29_Zpeak_test/"
 OUTDIR3="./temp_Run3_plots/2024_03_18_PUvars_FullWeightFixTestMoreVars/"
 
 #python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022PostEE -o $OUTDIR -r nojets -q batch -j 16 -u --sP nJetnBJet
@@ -33,8 +33,8 @@ OUTDIR3="./temp_Run3_plots/2024_03_18_PUvars_FullWeightFixTestMoreVars/"
 #python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022PostEE -o $OUTDIR2 -r 2j2t -q batch -j 16
 #python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022PostEE -o $OUTDIR2 -r 1j1t-mm -q batch -j 16
 #python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022PostEE -o $OUTDIR2 -r 1j1t-ee -q batch -j 16
-#python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022PostEE -o $OUTDIR2 -r nojets-ee -q batch -j 16
-#python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022PostEE -o $OUTDIR2 -r nojets-mm -q batch -j 16
+#python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022PostEE -o $OUTDIR2 -r nojets-ee -q batch -j 16 -f --sP lep1lep2_m_picu --sP tot_weight
+#python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022PostEE -o $OUTDIR2 -r nojets-mm -q batch -j 16 -f --sP lep1lep2_m_picu --sP tot_weight
 #
 #python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022 -o $OUTDIR2 -r nojets -q batch -j 16
 #python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022 -o $OUTDIR2 -r 1j1t -q batch -j 16
@@ -42,8 +42,8 @@ OUTDIR3="./temp_Run3_plots/2024_03_18_PUvars_FullWeightFixTestMoreVars/"
 #python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022 -o $OUTDIR2 -r 2j2t -q batch -j 16
 #python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022 -o $OUTDIR2 -r 1j1t-mm -q batch -j 16
 #python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022 -o $OUTDIR2 -r 1j1t-ee -q batch -j 16
-#python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022 -o $OUTDIR2 -r nojets-ee -q batch -j 16
-#python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022 -o $OUTDIR2 -r nojets-mm -q batch -j 16
+#python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022 -o $OUTDIR2 -r nojets-ee -q batch -j 16 -f --sP lep1lep2_m_picu --sP tot_weight
+#python tw-run3/plotterHelper.py -P 2023-12-23 -y 2022 -o $OUTDIR2 -r nojets-mm -q batch -j 16 -f --sP lep1lep2_m_picu --sP tot_weight
 #
 #python tw-run3/plotterHelper.py -P 2023-12-23 -y run3 -o $OUTDIR2 -r nojets -q batch -j 16
 #python tw-run3/plotterHelper.py -P 2023-12-23 -y run3 -o $OUTDIR2 -r 1j1t -q batch -j 16
@@ -64,11 +64,11 @@ OUTDIR3="./temp_Run3_plots/2024_03_18_PUvars_FullWeightFixTestMoreVars/"
 
 
 # Plots for paper only
-python tw-run3/plotterHelper.py -P 2023-12-23 -y run3 -o $OUTDIR -r nojets -q batch -j 16 -u --sP nJetnBJet -f --cmsText ''
-python tw-run3/plotterHelper.py -P 2023-12-23 -y run3 -o $OUTDIR -r 1j1t -q batch -j 16 -u --sP nloosejets -f --cmsText ''
-python tw-run3/plotterHelper.py -P 2023-12-23 -y run3 -o $OUTDIR -r 1j1t_MVAtrain -q batch -j 32 -u --sP loosejet1_pt --sP lep1_pt --sP lep1lep2jet1_pt --sP lep1lep2_m -f --cmsText ''
-python tw-run3/plotterHelper.py -P 2023-12-23 -y run3 -o $OUTDIR -r 1j1t_differential -q batch -j 32 -u -f --cmsText ''
-python tw-run3/plotterHelper.py -P 2023-12-23 -y run3 -o $OUTDIR -r 2j1t_MVAtrain -q batch -j 32 -u --sP lep1lep2_m --sP lep2_pt --sP lep12jet12_dr --sP lep1lep2jet1_pt -f --cmsText 'Supplementary'
+#python tw-run3/plotterHelper.py -P 2023-12-23 -y run3 -o $OUTDIR -r nojets -q batch -j 16 -u --sP nJetnBJet -f --cmsText ''
+#python tw-run3/plotterHelper.py -P 2023-12-23 -y run3 -o $OUTDIR -r 1j1t -q batch -j 16 -u --sP nloosejets -f --cmsText ''
+#python tw-run3/plotterHelper.py -P 2023-12-23 -y run3 -o $OUTDIR -r 1j1t_MVAtrain -q batch -j 32 -u --sP loosejet1_pt --sP lep1_pt --sP lep1lep2jet1_pt --sP lep1lep2_m -f --cmsText ''
+#python tw-run3/plotterHelper.py -P 2023-12-23 -y run3 -o $OUTDIR -r 1j1t_differential -q batch -j 32 -u -f --cmsText ''
+#python tw-run3/plotterHelper.py -P 2023-12-23 -y run3 -o $OUTDIR -r 2j1t_MVAtrain -q batch -j 32 -u --sP lep1lep2_m --sP lep2_pt --sP lep12jet12_dr --sP lep1lep2jet1_pt -f --cmsText 'Supplementary'
 
 
 

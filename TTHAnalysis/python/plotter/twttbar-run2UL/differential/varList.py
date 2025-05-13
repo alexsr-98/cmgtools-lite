@@ -13,7 +13,7 @@ nuncs       = 3         # Number of uncs. shown in the relative uncertainty plot
 diffControlReg = "3j2t" # Control region used in the differential signal extraction step
 
 asimov      = True     # Use of Asimov dataset or data
-doxsec      = False      # Show events or diff. cross section in final results
+doxsec      = True      # Show events or diff. cross section in final results
 doPre       = True      # Show or not show the "Preliminary" in the plots
 #doPre       = False      # Show or not show the "Preliminary" in the plots
 doSym       = True      # Symmetrise the uncertainties or not
@@ -83,6 +83,10 @@ def giveMeOneComparison(thef, name, scalevalue, iV, part = False, normfid = Fals
     outH.SetMarkerStyle(markersdict[name])
     outH.SetLineColor(0)
     outH.SetLineWidth(0)
+    #outH.SetMarkerSize(0)
+    #outH.SetLineColor(comparisonColourDict[name])
+    #outH.SetLineWidth(2)
+    #outH.SetFillColor(0)
 
     binstr = "bins_detector" if not part else "bins_particle"
     if normfid:
@@ -239,7 +243,7 @@ def parseRelUncs(path, verbose = False):
 
 
 def getInfoFromFD(path, fdpath, unc, iY, iV, isNom = False):
-    signalname = "x_tw"
+    signalname = "x_bb4l"
     ints = []
     card = r.TFile.Open(path + "/particle.root", "READ")
     nparticlebins = card.Get(signalname).GetNbinsX()
@@ -256,7 +260,7 @@ def getInfoFromFD(path, fdpath, unc, iY, iV, isNom = False):
     w       = tfile2.Get('w')
     fitResult = tfile.Get('fit_s')
     for i in range(nparticlebins):
-        var = w.var('r_tW_%d'%i)
+        var = w.var('r_bb4l_%d'%i)
         poiList.add(var)
     cov   = deepcopy(fitResult.reducedCovarianceMatrix(poiList))
 
@@ -279,10 +283,10 @@ def getInfoFromFD(path, fdpath, unc, iY, iV, isNom = False):
                   nparticlebins, -0.5, nparticlebins - 0.5,
                   nparticlebins, -0.5, nparticlebins - 0.5)
     for i in range(1, nparticlebins + 1):
-        results['r_tW_%d'%(i-1)][0] *= ints[i-1] * scaleval
-        results['r_tW_%d'%(i-1)][1] *= ints[i-1] * scaleval
-        results['r_tW_%d'%(i-1)][2] *= ints[i-1] * scaleval
-        results['r_tW_%d'%(i-1)][3] *= ints[i-1] * scaleval
+        results['r_bb4l_%d'%(i-1)][0] *= ints[i-1] * scaleval
+        results['r_bb4l_%d'%(i-1)][1] *= ints[i-1] * scaleval
+        results['r_bb4l_%d'%(i-1)][2] *= ints[i-1] * scaleval
+        results['r_bb4l_%d'%(i-1)][3] *= ints[i-1] * scaleval
 
         # ...and these here are asymm.:
         # if not isNom:
@@ -295,10 +299,10 @@ def getInfoFromFD(path, fdpath, unc, iY, iV, isNom = False):
         #     outUp.  SetBinError  (i,   mean([results['r_tW_%d'%(i-1)][1], results['r_tW_%d'%(i-1)][2]])) # asym
 
         ##### FORCED SYMM
-        outUp.  SetBinContent(i,   results['r_tW_%d'%(i-1)][0]) # sym
-        outUp.  SetBinError  (i,   results['r_tW_%d'%(i-1)][3]) # sym
-        outDown.SetBinContent(i,   results['r_tW_%d'%(i-1)][0]) # sym
-        outDown.SetBinError  (i,   results['r_tW_%d'%(i-1)][3]) # sym
+        outUp.  SetBinContent(i,   results['r_bb4l_%d'%(i-1)][0]) # sym
+        outUp.  SetBinError  (i,   results['r_bb4l_%d'%(i-1)][3]) # sym
+        outDown.SetBinContent(i,   results['r_bb4l_%d'%(i-1)][0]) # sym
+        outDown.SetBinError  (i,   results['r_bb4l_%d'%(i-1)][3]) # sym
 
         # print outUp.GetBinContent(iB), outUp.GetBinError(iB), scaleval, ints[i-1]
 
@@ -519,8 +523,8 @@ varList['minimax_ATLAS'] = {
     'yaxis_particle': 'd#sigma/d(m^{minimax}) (pb)',
     'yaxisbin'      : '(1/#sigma_{fid.})d#sigma/d(m^{minimax}) (pb/GeV)',
     'yaxisfidbin'   : '(1/#sigma_{fid.})d#sigma/d(m^{minimax}) (1/GeV)',
-    'printname'     : "\\minimaxvar (\GeV)",
-    'mathprintname':  "\\minimaxvar",
+    'printname'     : "\\minimax (\GeV)",
+    'mathprintname':  "\\minimax",
     'bins_particle' : [0., 40., 60., 80., 100., 120., 140., 160., 180., 200., 220., 240., 
                        270., 310., 380., 420.], #DO NOT CHANGE THESE BECAUSE THEY ARE ATLAS' ONES
     #'bins_detector' : [0., 40., 60., 80., 100., 120., 140., 160., 180., 200., 220., 240.,
@@ -851,7 +855,7 @@ varList['Jet1_Pt'] = {
     'printnamenodim': 'Leading jet \\pt',
     'mathprintname' : '\\text{Leading jet }\\pt',
     'xaxis'         : 'Leading jet #it{p}_{T} (GeV)',
-    'yaxis_particle': 'd#sigma/d(leading jet #it{p}_{T}) (pb)',
+    'yaxis_particle': 'd#sigma/d(leading jet #it{p}_{T}) (pb)' if doxsec else 'Events',
     'yaxisfidbin'   : '(1/#sigma_{fid.})d#sigma/d(leading jet  #it{p}_{T}) (1/GeV)',
     'yaxisbin'      : '(1/#sigma_{fid.})d#sigma/d(leading jet  #it{p}_{T}) (pb/GeV)',
     'yaxis_unc'     : 'Relative uncertainty',
@@ -890,7 +894,7 @@ varList['Jet1_Pt'] = {
     "txtsize_covparticlefidbin": 1.8,
     'txtangle_covparticle': 45,
     "txtangle_covparticlefidbin": 45,
-    "yaxisuplimitunf": 0.20,
+    #"yaxisuplimitunf": 0.20,
     "yaxismax_particlefidbin": 0.029,
     "yaxismax_particlefid" : 1.8,
     #"yaxismax_particlefidbinunc" : 1.2,
@@ -901,6 +905,7 @@ varList['Jet1_Pt'] = {
     "yaxismax_ratio_norm" : 3.5,
 #    "yaxismax_ratio_fidbin" : 2.5,
     "yaxismax_ratio_fidbin" : 1.08,
+    "legpos_particleas"   : (.4, .45, .6, .05),
 }
 
 
@@ -924,7 +929,7 @@ varList['Jet1_Eta'] = {
     'printnamenodim' : 'Leading jet \\eta',
     'mathprintname'  : '\\text{Leading jet }\\eta',
     'xaxis'          : 'Leading jet #eta',
-    'yaxis_particle' : 'd#sigma/d(leading jet #eta) (pb)',
+    'yaxis_particle' : 'd#sigma/d(leading jet #eta) (pb)' if doxsec else 'Events',
     'yaxisfid'       : '(1/#sigma_{fid.})d#sigma/d(leading jet #eta)',
     'yaxisfidbin'    : '(1/#sigma_{fid.})d#sigma/d(leading jet #eta)',
     'yaxisbin'       : 'd#sigma/d(leading jet #eta) (pb)',
@@ -940,6 +945,7 @@ varList['Jet1_Eta'] = {
     'var_particle': 'min(max(GenJet_eta[iDressSelJet[0]], -2.4), 2.4)',
     'legpos_particlefidbin': (.4, .45, .6, .05),
     "yaxismax_particlefidbin": 0.35,
+    "legpos_particleas"   : (.4, .45, .6, .05),
 }
 
 
@@ -1026,7 +1032,7 @@ varList['Lep1_Pt'] = {
     'printnamenodim' : 'Leading lepton \\pt',
     'mathprintname'  :'\\text{Leading lepton }\\pt',
     'xaxis'          : 'Leading lepton #it{p}_{T} (GeV)',
-    'yaxis_particle' : 'd#sigma/d(leading lepton #it{p}_{T}) (pb)',
+    'yaxis_particle' : 'd#sigma/d(leading lepton #it{p}_{T}) (pb)' if doxsec else 'Events',
     # 'yaxisfid'       : '(1/#sigma_{fid.})d#sigma/d(leading lepton #it{p}_{T}) (adim.)',
     'yaxisfid'       : '(1/#sigma_{fid.})d#sigma/d(leading lepton #it{p}_{T})',
     'yaxisfidbin'    : '(1/#sigma_{fid.})d#sigma/d(leading lepton #it{p}_{T}) (1/GeV)',
@@ -1087,13 +1093,14 @@ varList['Lep1_Pt'] = {
     'legpos_particlefidbin': (.46, .88, .73, .43),
     'legpos_particleunc'   : "TL",
     'legpos_particlefidbinunc': "TL",
+    "legpos_particleas"   : (.4, .45, .6, .05),
     'resptxtsize'  : 1.5,
     'txtsize_covdetector': 1.2,
     'txtsize_covparticle': 1.35,
     'txtangle_covparticle': 42.50,
     "txtsize_covparticlefidbin": 1.2,
     "txtangle_covparticlefidbin": 35,
-    "yaxisuplimitunf": 0.2,
+    #"yaxisuplimitunf": 0.2,
     "yaxismax_particlefidbin": 0.03,
     "yaxismax_particlefid" : 1.1,
     "yaxismax_particlefidbinunc" : 1.3,
@@ -1132,7 +1139,7 @@ varList['Lep1_Eta'] = {
     'printnamenodim' : 'Leading lepton \\eta',
     'mathprintname'  : '\\text{Leading lepton }\\eta',
     'xaxis'          : 'Leading lepton #eta',
-    'yaxis_particle' : 'd#sigma/d(leading lepton #eta) (pb)',
+    'yaxis_particle' : 'd#sigma/d(leading lepton #eta) (pb)' if doxsec else 'Events',
     'yaxisfid'       : '(1/#sigma_{fid.})d#sigma/d(leading lepton #eta)',
     'yaxisfidbin'    : '(1/#sigma_{fid.})d#sigma/d(leading lepton #eta)',
     'yaxisbin'       : 'd#sigma/d(leading lepton #eta) (pb)',
@@ -1155,6 +1162,7 @@ varList['Lep1_Eta'] = {
     #"yaxismax_particlebin"      : 0.06,
     #"yaxismax_particlebinunc"   : 0.5,
     'legpos_particlefidbin': (.4, .45, .6, .05),
+    "legpos_particleas"   : (.4, .45, .6, .05),
 }
 
 
@@ -1312,7 +1320,7 @@ varList['Lep1Lep2_DPhi'] = {
     'printname'     : "$\\deltaPhiVar/ \\pi$",
     'printnamenodim': "$\\deltaPhiVar/ \\pi$",
     'mathprintname' : "\\deltaPhiVar/ \\pi",
-    'yaxis_particle': "d#sigma/d(#Delta#it{#varphi}(#it{e}^{#pm}, #it{#mu}^{#mp})/#it{#pi}) (pb)",
+    'yaxis_particle': "d#sigma/d(#Delta#it{#varphi}(#it{e}^{#pm}, #it{#mu}^{#mp})/#it{#pi}) (pb)" if doxsec else 'Events',
     'yaxisfidbin'   : '(1/#sigma_{fid.})d#sigma/d(#Delta#it{#varphi}(#it{e}^{#pm}, #it{#mu}^{#mp})/#it{#pi})',
     'yaxisbin'      : 'd#sigma/d(#Delta#it{#varphi}(#it{e}^{#pm}, #it{#mu}^{#mp})/#it{#pi}) (pb)',
     'yaxis_unc'     : 'Relative uncertainty',
@@ -1391,7 +1399,7 @@ varList['NJets'] = {
     'printnamenodim' : 'Number of jets',
     'mathprintname'  : '\\text{Number of jets}',
     'xaxis'          : 'Number of jets',
-    'yaxis_particle' : 'd#sigma/d(NJets) (pb)',
+    'yaxis_particle' : 'd#sigma/d(NJets) (pb)' if doxsec else 'Events',
     'yaxisfid'       : '(1/#sigma_{fid.})d#sigma/d(NJets)',
     'yaxisfidbin'    : '(1/#sigma_{fid.})d#sigma/d(NJets)',
     'yaxisbin'       : 'd#sigma/d(NJets) (pb)',
@@ -1400,13 +1408,13 @@ varList['NJets'] = {
     'bins_particle'  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5],
     'bins_detector'  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5],
     "yaxismax_detector" : 400000*3.0,
-    "yaxismax_particle" : 6*3.0,
+    #"yaxismax_particle" : 6*3.0,
     'var_detector': 'min(max(nJetSel30_Recl, 0), 5)',
     'name'        : 'Number of jets',
     'var_response': 'NJets',
     'var_particle': 'min(max(nDressSelJet, 0), 5)',
-    'legpos_particlefidbin': (.4, .45, .6, .05),
-    "yaxismax_particlefidbin": 0.35,
+    'legpos_particlefidbin': "TR",
+    "yaxismax_particlefidbin": 0.55,
 }
 
 varList['NBJets'] = {
@@ -1414,7 +1422,7 @@ varList['NBJets'] = {
     'printnamenodim' : 'Number of b jets',
     'mathprintname'  : '\\text{Number of b jets}',
     'xaxis'          : 'Number of b jets',
-    'yaxis_particle' : 'd#sigma/d(NBJets) (pb)',
+    'yaxis_particle' : 'd#sigma/d(NBJets) (pb)' if doxsec else 'Events',
     'yaxisfid'       : '(1/#sigma_{fid.})d#sigma/d(NBJets)',
     'yaxisfidbin'    : '(1/#sigma_{fid.})d#sigma/d(NBJets)',
     'yaxisbin'       : 'd#sigma/d(NBJets) (pb)',
@@ -1423,13 +1431,17 @@ varList['NBJets'] = {
     'bins_particle'  : [-0.5,0.5,1.5,2.5,3.5],
     'bins_detector'  : [-0.5,0.5,1.5,2.5,3.5],
     "yaxismax_detector" : 500000*3.0,
-    "yaxismax_particle" : 8*3.3,
+    #"yaxismax_particle" : 8*3.3,
     'var_detector': 'min(max(nBJetSelMedium30_Recl, 0), 3)',
     'name'        : 'Number of b jets',
     'var_response': 'NBJets',
     'var_particle': 'min(max(nDressBSelJet, 0), 3)',
     'legpos_particlefidbin': (.4, .45, .6, .05),
-    "yaxismax_particlefidbin": 0.35,
+    "yaxismax_particlefidbin": 0.6,
+    "legpos_particleas"   : (.4, .45, .6, .05),
+    "yaxismax_ratio_fidbin" : 1.5,
+    "yaxismax_ratio_particle" : 1.5,
+    "yaxismax_ratio_bin" : 1.5,
 }
 
 # Profiling things
@@ -1577,6 +1589,8 @@ UncsColourMap = {
     'ue'                  : r.kTeal-7,
     'ttbar_matching'      : r.kTeal,
     'scales'              : r.kGreen+4,
+    'scales_mur'          : r.kGreen+4,
+    'scales_muf'          : r.kGreen+6,
     'ttbar_scales'        : r.kGreen+4,
     'tw_scales'           : r.kYellow-6,
     'colour_rec'          : r.kViolet-2,
@@ -1586,11 +1600,15 @@ UncsColourMap = {
     'dy_norm'             : r.kMagenta,
     'mtop'                : r.kMagenta-3,
     'pdfhessian'          : r.kPink-7,
+    'lumi_corr'           : r.kPink-7,
 }
 UncsColourMap["colour"] = UncsColourMap["colour_rec"]
 
 
 UncGroupsColourMap = {
+    'experimental' : r.kGreen-4,
+    'modelling'   : r.kBlue+5,
+    'normalisation' : r.kOrange-6,
     'btag'                : r.TColor.GetColor("#b2df8a"),
     'mc_stat'             : r.kYellow-4,
     'mistag'              : r.kYellow-2,
@@ -1660,6 +1678,9 @@ ColourMapForProcesses = {
 
 # Plots (llaves en minuscula)
 SysNameTranslator = {
+    'experimental' : 'experimental',
+    'modelling'   : 'modelling',
+    'normalisation' : 'normalisation',
     'fit'                 : "Fit",
     'asimov'              : "Asimov",
     'Nominal'             : "Nominal",
@@ -1732,6 +1753,8 @@ SysNameTranslator = {
     'ue'                  : "UE",
     'ttbar_matching'      : "ME/PS matching (t#bar{t})",
     'scales'              : "#mu_{R}/#mu_{F}",
+    'scales_mur'          : "#mu_{R}",
+    'scales_muf'          : "#mu_{F}",
     'ttbar_scales'        : "t#bar{t} #mu_{R}/#mu_{F}",
     'tw_scales'           : "tW #mu_{R}/#mu_{F}",
     'colour_rec'          : "Colour rec.",
@@ -1765,10 +1788,12 @@ PrintSysNameTranslator = {
     'mistagging_2016'     : "Mistagging (2016)",
     'mistagging_1718'     : "Mistagging (2017, 2018)",
     "btagging_corr"       : "B-tagging corr.",
+    'btagging_2016apv'    : "B-tagging uncorr. (2016apv)",
     'btagging_2016'       : "B-tagging uncorr. (2016)",
     'btagging_2017'       : "B-tagging uncorr. (2017)",
     'btagging_2018'       : "B-tagging uncorr. (2018)",
     "mistagging_corr"     : "Mistagging corr.",
+    'mistagging_2016apv'  : "Mistagging uncorr. (2016apv)",
     'mistagging_2016'     : "Mistagging uncorr. (2016)",
     'mistagging_2017'     : "Mistagging uncorr. (2017)",
     'mistagging_2018'     : "Mistagging uncorr. (2018)",
@@ -1777,14 +1802,18 @@ PrintSysNameTranslator = {
     'muonen_2018'         : "Muon en. corr. (2018)",
     'elecidsf'            : "Electron ID eff.",
     'elecrecosf'          : "Electron reco. eff.",
+    'elecsigma'           : "Electron energy",
+    'muonidsf_stat_2016apv' : "Muon ID eff. (2016apv, stat.)",
     'muonidsf_stat_2016'  : "Muon ID eff. (2016, stat.)",
     'muonidsf_stat_2017'  : "Muon ID eff. (2017, stat.)",
     'muonidsf_stat_2018'  : "Muon ID eff. (2018, stat.)",
     'muonidsf_syst'       : "Muon ID eff. (syst.)",
+    'muonisosf_stat_2016apv': "Muon ISO eff. (2016apv, stat.)",
     'muonisosf_stat_2016' : "Muon ISO eff. (2016, stat.)",
     'muonisosf_stat_2017' : "Muon ISO eff. (2017, stat.)",
     'muonisosf_stat_2018' : "Muon ISO eff. (2018, stat.)",
     'muonisosf_syst'      : "Muon ISO eff. (syst.)",
+    'unclenergy'          : "Unclustered energy",
     'pileup'              : "Pile-up",
     'prefiring_2016'      : "L1 ECAL prefiring (2016)",
     'prefiring_2017'      : "L1 ECAL prefiring (2017)",
@@ -1813,13 +1842,19 @@ PrintSysNameTranslator = {
     'jer_2016'            : "JER (2016)",
     'jer_2017'            : "JER (2017)",
     'jer_2018'            : "JER (2018)",
+    'jetpuid_2016apv'     : "PUJetID 2016apv",
+    'jetpuid_2016'        : "PUJetID 2016",
+    'jetpuid_2017'        : "PUJetID 2017",
+    'jetpuid_2018'        : "PUJetID 2018",
+    'triggereff_2016apv'  : "Trigger eff. (2016apv)",
     'triggereff_2016'     : "Trigger eff. (2016)",
     'triggereff_2017'     : "Trigger eff. (2017)",
     'triggereff_2018'     : "Trigger eff. (2018)",
     "pdfhessian"          : "PDF + $\\alpha_{S}$",
     'isr_ttbar'           : "ISR (\\ttbar)",
     'isr_tw'              : "ISR (\\tw)",
-    'fsr'                 : "FSR (\\ttbar, \\tw)",
+    'fsr'                 : "FSR",
+    'isr'                 : "ISR",
     'fsr_ttbar'           : "FSR (\\ttbar)",
     'fsr_tw'              : "FSR (\\tw)",
     'topptrew'            : "Top \pt rew.",
@@ -1829,6 +1864,8 @@ PrintSysNameTranslator = {
     'ttbar_matching'      : "ME/PS matching (\\ttbar)",
     'ttbar_scales'        : "\\ttbar $\\mu_{R}$/$\\mu_{F}$",
     'tw_scales'           : "\\tw $\\mu_{R}$/$\\mu_{F}$",
+    'scales_muF'          : "$\\mu_{F}$",
+    'scales_muR'          : "$\\mu_{R}$",
     'colour_rec'          : "Colour rec.",
     'colour_rec_cr1'      : "Colour rec. (CR1)",
     'colour_rec_cr2'      : "Colour rec. (CR2)",
@@ -2054,6 +2091,11 @@ coloursForDiffWithCombine = {
     8    : r.kOrange - 7,
     9    : r.kOrange - 8,
     10   : r.kOrange - 9,
+    11   : r.kOrange - 10,
+    12   : r.kOrange - 11,
+    13   : r.kOrange - 12,
+    14   : r.kOrange - 13,
+    15   : r.kOrange - 14,
 }
 
 coloursForToys = {
@@ -2088,9 +2130,11 @@ markersdict = {"bb4l"                       : 2,
                "twttbaramc_ds_runningBW"    : 30,
                "twttbaramc_ds_is"           : 27,
                "twttbaramc_ds_is_runningBW" : 48,
+               "bb4lv1"                     : 48,
 }
 
 spacingdict = {"bb4l"                       : -0.9,
+               #"bb4l"                       : 0,    
                "twttbardr"                  : -0.7,
                "twttbards"                  : -0.5,
                "twttbarherwig"              : -0.3,
@@ -2100,6 +2144,7 @@ spacingdict = {"bb4l"                       : -0.9,
                "twttbaramc_ds_runningBW"    : +0.5,
                "twttbaramc_ds_is"           : +0.7,
                "twttbaramc_ds_is_runningBW" : +0.9,
+               "bb4lv1"                     : 0,
 }
 
 comparisonColourDict = {"bb4l"                      : 880,
@@ -2111,4 +2156,5 @@ comparisonColourDict = {"bb4l"                      : 880,
                         "twttbaramc_ds"             : r.kCyan,
                         "twttbaramc_ds_runningBW"   : r.kPink - 9,
                         "twttbaramc_ds_is"          : r.kViolet - 4,
-                        "twttbaramc_ds_is_runningBW": r.kViolet - 1}
+                        "twttbaramc_ds_is_runningBW": r.kViolet - 1,
+                        "bb4lv1"                    : r.kViolet - 10,}

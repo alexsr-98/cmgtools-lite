@@ -126,7 +126,7 @@ class beautifulUnfPlot:
             asymhisto.GetXaxis().SetRangeUser(histo.GetXaxis().GetBinLowEdge(1),
                                               histo.GetXaxis().GetBinUpEdge(histo.GetNbinsX()))
             #print histo.GetXaxis().GetBinUpEdge(histo.GetNbinsX())
-            
+
             asymhisto.GetXaxis().SetTitleFont(43)
             asymhisto.GetXaxis().SetTitleSize(22)
             asymhisto.GetXaxis().SetTitleOffset(1.4 if "unc" not in self.name else 1.1)
@@ -163,7 +163,7 @@ class beautifulUnfPlot:
             if redrawaxis: asymhisto.Draw("axis,same")
         else:
             histo = histos
-            if idname == "data" and "DPhi" not in self.var:
+            if idname == "data" and "DPhi" not in self.var: #and False:
                 self.graphForHorizontalBars = r.TGraphAsymmErrors()
                 for bin in range(1, histo.GetNbinsX() + 1):
                     x = histo.GetBinCenter(bin)
@@ -450,10 +450,13 @@ class beautifulUnfPlot:
             if "DPhi"      in self.var: totalunc.GetXaxis().SetMaxDigits(self.maxdigits)     ### RESTAURARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
             if "MT_LLMETB" in self.var: totalunc.GetXaxis().SetNdivisions(515, True)
             
+            
             if   "yaxismax_ratio_fidbin" in vl.varList[self.var] and "fidbin" in self.name:
                 totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_fidbin"], 0.), vl.varList[self.var]["yaxismax_ratio_fidbin"])
             elif "yaxismax_ratio_bin" in vl.varList[self.var] and "bin" in self.name:
                 totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_bin"], 0.), vl.varList[self.var]["yaxismax_ratio_bin"])
+            elif "yaxismax_ratio_particle" in vl.varList[self.var] and "particle" in self.name:
+                totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_particle"], 0.), vl.varList[self.var]["yaxismax_ratio_particle"])
             else:
                 #totalunc.GetYaxis().SetRangeUser(0.5, 1.5)
                 totalunc.GetYaxis().SetRangeUser(0.8, 1.2)
@@ -642,7 +645,7 @@ class beautifulUnfPlot:
             totalunc.GetXaxis().SetTitle(vl.varList[self.var]['xaxis'])
             totalunc.GetXaxis().SetTitleFont(43)
             totalunc.GetXaxis().SetTitleSize(22)
-            totalunc.GetXaxis().SetTitleOffset(4)
+            totalunc.GetXaxis().SetTitleOffset(1)
             totalunc.GetXaxis().SetLabelFont(43)
             totalunc.GetXaxis().SetLabelSize(22)
             totalunc.GetXaxis().SetLabelOffset(0.007)
@@ -656,7 +659,7 @@ class beautifulUnfPlot:
                 totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_fidbin"], 0.), vl.varList[self.var]["yaxismax_ratio_fidbin"])
             elif "yaxismax_ratio_bin" in vl.varList[self.var] and "bin" in self.name:
                 totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_bin"], 0.), vl.varList[self.var]["yaxismax_ratio_bin"])
-            elif   "yaxismax_ratio_particle" in vl.varList[self.var] and "minimax_ATLAS" in self.name:
+            elif   "yaxismax_ratio_particle" in vl.varList[self.var] and ("minimax_ATLAS" in self.name or "NBJets" in self.name):
                 totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_particle"], 0.), vl.varList[self.var]["yaxismax_ratio_particle"])
             else:
                 #totalunc.GetYaxis().SetRangeUser(0.5, 1.5)
@@ -664,6 +667,7 @@ class beautifulUnfPlot:
                 #totalunc.GetYaxis().SetRangeUser(0, 2)
 
             totalunc.GetYaxis().SetTitle('Pred. / Data  ')
+            #totalunc.GetYaxis().SetTitle('v1 / v2  ')
             totalunc.GetYaxis().SetTitleFont(43)
             totalunc.GetYaxis().SetTitleSize(22)
             totalunc.GetYaxis().SetTitleOffset(self.yaxistitleoffset_wide if self.doWide else self.yaxistitleoffset)
@@ -695,7 +699,7 @@ class beautifulUnfPlot:
                 totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_fidbin"], 0.), vl.varList[self.var]["yaxismax_ratio_fidbin"])
             elif "yaxismax_ratio_bin" in vl.varList[self.var] and "bin" in self.name:
                 totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_bin"], 0.), vl.varList[self.var]["yaxismax_ratio_bin"])
-            elif   "yaxismax_ratio_particle" in vl.varList[self.var] and "minimax_ATLAS" in self.name:
+            elif   "yaxismax_ratio_particle" in vl.varList[self.var] and ("minimax_ATLAS" in self.name or "NBJets" in self.name):
                 totalunc.GetYaxis().SetRangeUser(max(2. - vl.varList[self.var]["yaxismax_ratio_particle"], 0.), vl.varList[self.var]["yaxismax_ratio_particle"])
             else:
                 #datavalues.GetYaxis().SetRangeUser(0.5, 1.5)
@@ -728,6 +732,7 @@ class beautifulUnfPlot:
                 totalunc.Draw('a2')
             for el in ratiohistos:
                 el.Draw('L,same')
+                #el.Draw('histE1,same')
         
         # Save results
         """

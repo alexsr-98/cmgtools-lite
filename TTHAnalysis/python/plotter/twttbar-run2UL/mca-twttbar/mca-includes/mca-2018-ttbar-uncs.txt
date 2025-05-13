@@ -1,12 +1,12 @@
-syst_ttbar_matching_up  : TTTo2L2Nu_hdampUP_TuneCP5_13TeV_powheg_pythia8*       : xsec ;
-syst_ttbar_matching_dn  : TTTo2L2Nu_hdampDOWN_TuneCP5_13TeV_powheg_pythia8*     : xsec ;
+syst_ttbar_matching_up  : TTTo2L2Nu_hdampUP_TuneCP5_13TeV_powheg_pythia8*       : 87.98 ;
+syst_ttbar_matching_dn  : TTTo2L2Nu_hdampDOWN_TuneCP5_13TeV_powheg_pythia8*     : 87.98 ;
 
-syst_ttbar_colour_erdon : TTTo2L2Nu_TuneCP5_erdON_13TeV_powheg_pythia8*         : xsec ;
-syst_ttbar_colour_cr1   : TTTo2L2Nu_TuneCP5CR1_13TeV_powheg_pythia8*            : xsec ;
-syst_ttbar_colour_cr2   : TTTo2L2Nu_TuneCP5CR2_13TeV_powheg_pythia8*            : xsec ;
+syst_ttbar_colour_erdon : TTTo2L2Nu_TuneCP5_erdON_13TeV_powheg_pythia8*         : 87.98 ;
+syst_ttbar_colour_cr1   : TTTo2L2Nu_TuneCP5CR1_13TeV_powheg_pythia8*            : 87.98 ;
+syst_ttbar_colour_cr2   : TTTo2L2Nu_TuneCP5CR2_13TeV_powheg_pythia8*            : 87.98 ;
 
-syst_ttbar_ue_up        : TTTo2L2Nu_TuneCP5up_13TeV_powheg_pythia8*             : xsec ;
-syst_ttbar_ue_dn        : TTTo2L2Nu_TuneCP5down_13TeV_powheg_pythia8*           : xsec ;
+syst_ttbar_ue_up        : TTTo2L2Nu_TuneCP5up_13TeV_powheg_pythia8*             : 87.98 ;
+syst_ttbar_ue_dn        : TTTo2L2Nu_TuneCP5down_13TeV_powheg_pythia8*           : 87.98 ;
 
-syst_ttbar_mtop_up      : TTTo2L2Nu_mtop173p5_TuneCP5_13TeV_powheg_pythia8*     : xsec ;
-syst_ttbar_mtop_dn      : TTTo2L2Nu_mtop171p5_TuneCP5_13TeV_powheg_pythia8*     : xsec ;
+syst_ttbar_mtop_up      : TTTo2L2Nu_mtop173p5_TuneCP5_13TeV_powheg_pythia8*     : 87.98 ;
+syst_ttbar_mtop_dn      : TTTo2L2Nu_mtop171p5_TuneCP5_13TeV_powheg_pythia8*     : 87.98 ;

@@ -8,3 +8,7 @@ emu        : channel == 1
 dilep      : (nLepGood == 2) && (LepGood_pt_corrAll[0] > 25) && (LepGood_pt_corrAll[1] > 20) && (isSS == 0) && (minMllAFAS > 20)
 2jet       : nJetSel30_Recl == 2
 2btag      : nBJetSelMedium30_Recl == 2
+
+#sf        : (channel == 1) || (channel == 2) || (channel == 3)
+#zveto:      (channel == 1) || (abs(Mll - 91.2) > 15)
+#metgood:    (channel == 1) || (METgood_pt > 50)

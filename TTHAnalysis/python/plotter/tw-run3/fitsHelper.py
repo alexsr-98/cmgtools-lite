@@ -24,11 +24,12 @@ nThreshold    = 1000
 def makeFit(task):
     year, region, inpath, verbose, pretend, extra, doPrePostPlots, doAsimov, physModel = task
     fitoutpath  = inpath + "/" + year
-    if "," in region:
+    #if "," in region:
+    if True:
         cardList = []
         regionList = region.split(",")
         for iR in regionList:
-            cardList.append(iR + "/cuts-tw-" + iR + ".txt")
+            cardList.append(iR + "/cuts-twttbar-" + iR + ".txt")
         
         combcardnam = 'combcard_{r}.txt'.format(r = region.replace(",", ""))
         mergecomm = 'cd {path}; combineCards.py {allCards} > {outCard}; cd -'.format(allCards = ' '.join(cardList),
@@ -75,7 +76,7 @@ def makeFit(task):
         
         combcard_ = fitoutpath + "/" + combcardnam.replace(".txt", ".root")
     else:
-        combcard_ = fitoutpath + "/" + region + "/cuts-tw-" + region + ".txt"
+        combcard_ = fitoutpath + "/" + region + "/cuts-twttbar-" + region + ".txt"
         
     outfile_ = fitoutpath + "/fitOutput_{r}.txt".format(r = region if "," not in region else region.replace(",", ""))
 
@@ -149,7 +150,7 @@ def makeGOF(task):
     if "," in region:
         combcard_ = "../" + 'combcard_{r}.root'.format(r = region.replace(",", ""))
     else:
-        combcard_ = "../" + region + "/cuts-tw-" + region + ".txt"
+        combcard_ = "../" + region + "/cuts-twttbar-" + region + ".txt"
 
     if not os.path.isfile(gofoutpath + "/" + combcard_):
 

@@ -83,16 +83,16 @@ def makeImpacts(task):
     impactsoutpath = inpath + "/" + iY + "/" + ("Obs" * doObs) + "Impacts_" + region
 
     if "," not in region:
-        physicsModel = 'text2workspace.py -m 125 {infile} -o {outfile}'.format(infile  = inpath + "/" + iY + "/{r}/cuts-tw-{r}.txt".format(r = region),
-                                                                               outfile = inpath + "/" + iY + "/{r}/cuts-tw-{r}_ws.root".format(r = region),)
+        physicsModel = 'text2workspace.py -m 125 {infile} -o {outfile}'.format(infile  = inpath + "/" + iY + "/{r}/cuts-twttbar-{r}.txt".format(r = region),
+                                                                               outfile = inpath + "/" + iY + "/{r}/cuts-twttbar-{r}_ws.root".format(r = region),)
         if verbose:
             print("Text2Workspace command:", physicsModel, "\n")
 
         if not pretend:
-            if os.path.isfile(inpath + "/" + iY + "/{r}/cuts-tw-{r}_ws.root".format(r = region)):
+            if os.path.isfile(inpath + "/" + iY + "/{r}/cuts-twttbar-{r}_ws.root".format(r = region)):
                 if verbose:
                     print("    - Erasing old workspace...")
-                os.system("rm " + inpath + "/" + iY + "/{r}/cuts-tw-{r}_ws.root".format(r = region))
+                os.system("rm " + inpath + "/" + iY + "/{r}/cuts-twttbar-{r}_ws.root".format(r = region))
             outstat = os.system(physicsModel)
             if outstat:
                 raise RuntimeError("FATAL: text2workspace.py failed to execute for year {y} and regions {r}.".format(y = year, r = region))
@@ -100,7 +100,7 @@ def makeImpacts(task):
     firstcomm = comm1.format(y      = year,
                              ncores = ("--parallel " + str(ncores)) if ncores else "",
                              asimov = ("" if doobs else "-t -1 --setParameters r=1") if physModel == "1POI" else ("--freezeParameters ttbar_norm" if doobs else "-t -1 --setParameters r_tw=1,r_ttbar=1 --freezeParameters ttbar_norm"),
-                             incard = "../combcard_{r}.root".format(r = region.replace(",", "")) if "," in region else "../{r}/cuts-tw-{r}_ws.root".format(r = region),
+                             incard = "../combcard_{r}.root".format(r = region.replace(",", "")) if "," in region else "../{r}/cuts-twttbar-{r}_ws.root".format(r = region),
                              outdir = "./",
                              extra  = extra,
                              prefix = year + "_" + region.replace(",", ""),
@@ -118,7 +118,7 @@ def makeImpacts(task):
     secondcomm = comm2.format(y      = year,
                              ncores = ("--parallel " + str(ncores)) if ncores else "",
                              asimov = ("" if doobs else "-t -1 --setParameters r=1") if physModel == "1POI" else ("--freezeParameters ttbar_norm" if doobs else "-t -1 --setParameters r_tw=1,r_ttbar=1 --freezeParameters ttbar_norm"),
-                             incard = "../combcard_{r}.root".format(r = region.replace(",", "")) if "," in region else "../{r}/cuts-tw-{r}_ws.root".format(r = region),
+                             incard = "../combcard_{r}.root".format(r = region.replace(",", "")) if "," in region else "../{r}/cuts-twttbar-{r}_ws.root".format(r = region),
                              outdir = "./",
                              extra  = extra,
                              prefix = year + "_" + region.replace(",", ""),
@@ -136,7 +136,7 @@ def makeImpacts(task):
     thirdcomm = comm3.format(y      = year,
                              ncores = ("--parallel " + str(ncores)) if ncores else "",
                              asimov = ("" if doobs else "-t -1 --setParameters r=1") if physModel == "1POI" else ("--freezeParameters ttbar_norm" if doobs else "-t -1 --setParameters r_tw=1,r_ttbar=1 --freezeParameters ttbar_norm"),
-                             incard = "../combcard_{r}.root".format(r = region.replace(",", "")) if "," in region else "../{r}/cuts-tw-{r}_ws.root".format(r = region),
+                             incard = "../combcard_{r}.root".format(r = region.replace(",", "")) if "," in region else "../{r}/cuts-twttbar-{r}_ws.root".format(r = region),
                              outdir = "./",
                              extra  = extra,
                              prefix = year + "_" + region.replace(",", ""),
@@ -161,7 +161,7 @@ def makeImpacts(task):
     fourthcomm = comm4.format(y      = year,
                               ncores = ("--parallel " + str(ncores)) if ncores else "",
                               asimov = ("" if doobs else "-t -1 --setParameters r=1") if physModel == "1POI" else ("--freezeParameters ttbar_norm" if doobs else "-t -1 --setParameters r_tw=1,r_ttbar=1 --freezeParameters ttbar_norm"),
-                              incard = "../combcard_{r}.root".format(r = region.replace(",", "")) if "," in region else "../{r}/cuts-tw-{r}_ws.root".format(r = region),
+                              incard = "../combcard_{r}.root".format(r = region.replace(",", "")) if "," in region else "../{r}/cuts-twttbar-{r}_ws.root".format(r = region),
                               outdir = "./",
                               bl     = "--blind" if doBlind else "",
                               prefix = year + "_" + region.replace(",", ""),

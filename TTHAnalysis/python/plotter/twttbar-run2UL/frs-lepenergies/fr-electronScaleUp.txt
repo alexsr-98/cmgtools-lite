@@ -19,6 +19,7 @@ change: MuonIDSF\b:               MuonIDSF_elscaleUp
 change: MuonISOSF\b:              MuonISOSF_elscaleUp
 change: ElecIDSF\b:               ElecIDSF_elscaleUp
 change: ElecRECOSF\b:             ElecRECOSF_elscaleUp
+change: jetPUidWeight\b:          jetPUidWeight_elscaleUp
 
 change: \bLep1Lep2_Pt\b:          Lep1Lep2_Pt_elscaleUp
 change: \bLep1Lep2_PtSum\b:       Lep1Lep2_PtSum_elscaleUp

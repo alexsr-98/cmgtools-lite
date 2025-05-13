@@ -6,20 +6,20 @@ from copy import deepcopy
 from multiprocessing import Pool
 
 sys.path.append('{cmsswpath}/src/CMGTools/TTHAnalysis/python/plotter/twttbar-run2UL/differential/'.format(cmsswpath = os.environ['CMSSW_BASE']))
-from . import varList as vl
+import varList as vl
 
 r.gROOT.SetBatch(True)
 vl.SetUpWarnings()
 
-friendspath   = "/pool/phedexrw/userstorage/vrbouza/proyectos/twttbar_run2/productions"
+friendspath   = "/lustrefs/hdd_pool_dir/nanoAODv9/bb4l/productions"
 logpath       = friendspath + "/{p}/{y}/logs/cards_differential"
-friendsscaff  = "--FMCs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors"
+friendsscaff = "--FMCs {P}/0_jecs --Fs {P}/1_lepsuncsAndParticle --Fs {P}/2_cleaning --Fs {P}/3_varstrigger --FMCs {P}/4_scalefactors"
 
 slurmscaff    = "sbatch -c {nth} -p {queue} -J {jobname} -e {logpath}/log.%j.%x.err -o {logpath}/log.%j.%x.out --wrap '{command}'"
 
-commandscaff  = '''python makeShapeCards_TopRun2.py --tree NanoAOD {mcafile} {cutsfile} "{variable}" "{bins}" {samplespaths} {friends} --od {outpath} -l {lumi} {nth} -f -L {func} --neg -W "{w}" --year {year} {asimovornot} {uncs} {extra} {name} --AP --storeAll --notVarsChanges --threshold 0.001'''
+commandscaff  = '''python3 makeShapeCards_TopRun2.py --tree NanoAOD {mcafile} {cutsfile} "{variable}" "{bins}" {samplespaths} {friends} --od {outpath} -l {lumi} {nth} -f -L {func} --neg -W "{w}" --year {year} {asimovornot} {uncs} {extra} {name} --AP --storeAll --notVarsChanges --threshold 0.001'''
 
-theweights    = 'MuonIDSF * MuonISOSF * ElecIDSF * ElecRECOSF * TrigSF * puWeight * bTagWeight * L1PreFiringWeight_Nom'
+theweights    = 'MuonIDSF * MuonISOSF * ElecIDSF * ElecRECOSF * TrigSF * puWeight * bTagWeight * L1PreFiringWeight_Nom * jetPUidWeight'
 minchunkbytes = 1000
 redofiles     = True
 #redofiles     = False

@@ -1,4 +1,5 @@
 change: \bbTagWeight\b:                  bTagWeight_jesRelativeSample_yearDown
+change: \bjetPUidWeight\b:               jetPUidWeight_jesRelativeSample_yearDown
 
 change: \[iJetSel30_Recl\[:              [iJetSel30_jesRelativeSample_yearDown_Recl[
 change: \bnJetSel30_Recl\b:              nJetSel30_jesRelativeSample_yearDown_Recl

@@ -465,3 +465,7 @@ btagEffFtree_2018 = lambda : btageffVars_TopRun2UL(wp_   = "M",
                                                 SFmeasReg = "mujets")
 
 
+### Friend tree 5
+from CMGTools.TTHAnalysis.tools.particleAndPartonVars_tagBjets_TopRun2UL import particleAndPartonVars_tagBjets_TopRun2UL 
+tagIsHF = lambda : particleAndPartonVars_tagBjets_TopRun2UL()
+

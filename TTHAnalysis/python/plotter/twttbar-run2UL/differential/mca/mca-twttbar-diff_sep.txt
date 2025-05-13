@@ -1,9 +1,0 @@
-incl_2016apv      : + ; years="2016apv",IncludeMca="twttbar-run2UL/differential/mca/mca-2016apv-bb4l.txt", genSumWeightName="genEventSumw"
-incl_2016         : + ; years="2016",   IncludeMca="twttbar-run2UL/differential/mca/mca-2016-bb4l.txt"   , genSumWeightName="genEventSumw"
-incl_2017         : + ; years="2017",   IncludeMca="twttbar-run2UL/differential/mca/mca-2017-bb4l.txt"   , genSumWeightName="genEventSumw"
-incl_2018         : + ; years="2018",   IncludeMca="twttbar-run2UL/differential/mca/mca-2018-bb4l.txt"   , genSumWeightName="genEventSumw"
-
-incl_2016apv_comp : + ; years="2016apv",IncludeMca="twttbar-run2UL/differential/mca/mca-2016apv-twttbar_sep.txt", genSumWeightName="genEventSumw"
-incl_2016_comp    : + ; years="2016",   IncludeMca="twttbar-run2UL/differential/mca/mca-2016-twttbar_sep.txt"   , genSumWeightName="genEventSumw"
-incl_2017_comp    : + ; years="2017",   IncludeMca="twttbar-run2UL/differential/mca/mca-2017-twttbar_sep.txt"   , genSumWeightName="genEventSumw"
-incl_2018_comp    : + ; years="2018",   IncludeMca="twttbar-run2UL/differential/mca/mca-2018-twttbar_sep.txt"   , genSumWeightName="genEventSumw"

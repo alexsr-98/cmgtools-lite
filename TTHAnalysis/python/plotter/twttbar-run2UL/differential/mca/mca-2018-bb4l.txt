@@ -1,5 +1,9 @@
 #bb4l+ : b_bbar_4l_TuneCP5_13TeV_powheg_pythia8_gridpackfix* : 63.932 ; Label="bb4l", FillColor=883
-bb4l+ : BBLLNuNu_TuneCP5_13TeV_powheg_pythia8* : 92.176 ; Label="bb4l", FillColor=883
+bb4l+ : BBLLNuNu_TuneCP5_13TeV_powheg_pythia8* : 96.372 ; Label="bb4l", FillColor=883
 #bb4l+ : ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8* + ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV_PDFWeights_powheg_pythia8* : xsec : (Origchannel == 4 || Origchannel == 5 || Origchannel == 9) ; Label="bb4l", FillColor=883
 #bb4l+ : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*     + ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_PDFWeights_powheg_pythia8*     : xsec : (Origchannel == 4 || Origchannel == 5 || Origchannel == 9) ; Label="bb4l", FillColor=883
 #bb4l+ : TTTo2L2Nu_TuneCP5_13TeV_powheg_pythia8* : xsec : (Origchannel == 4 || Origchannel == 5 || Origchannel == 9) ; Label="bb4l", FillColor=883
+
+## test
+#bb4ltw : BBLLNuNu_TuneCP5_13TeV_powheg_pythia8* : 96.372 : (Top1_pt > 0 && Top2_pt == -99) ; Label="bb4l tW", FillColor=ROOT.TColor.GetColor(248\,156\,32)
+#bb4l+ : BBLLNuNu_TuneCP5_13TeV_powheg_pythia8* : 96.372 : (Top2_pt > 0) ; Label="bb4l ttbar", FillColor=ROOT.TColor.GetColor(228\,37\,54)

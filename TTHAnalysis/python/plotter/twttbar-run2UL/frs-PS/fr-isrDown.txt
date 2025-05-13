@@ -1,0 +1,2 @@
+#weight   : Alt$(PSWeight[6],PSWeight[0])
+weight   : Alt$(PSWeight[6],Alt$(PSWeight[0],1))

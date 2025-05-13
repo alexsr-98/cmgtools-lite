@@ -1,4 +1,5 @@
 change: \bbTagWeight\b:                  bTagWeight_jesAbsoluteUp
+change: \bjetPUidWeight\b:               jetPUidWeight_jesAbsoluteUp
 
 change: \[iJetSel30_Recl\[:              [iJetSel30_jesAbsoluteUp_Recl[
 change: \bnJetSel30_Recl\b:              nJetSel30_jesAbsoluteUp_Recl

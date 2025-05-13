@@ -828,7 +828,7 @@ class Unfolder():
         #if "Fiducial" not in self.var:
         #    fullcovnom = deepcopy(self.helpers['FullCov'].tunfolder.GetEmatrixTotal("FullCovMat"))
         
-        scaleval = 1/thelumi/1000
+        scaleval = 1/thelumi/1000 if vl.doxsec else 1
         for key in allHistos:
             allHistos[key].Scale(scaleval)
         
@@ -870,14 +870,15 @@ class Unfolder():
         allHistos[""].SetMarkerSize(1)
         allHistos[""].GetXaxis().SetNdivisions(505, True)
         allHistos[""].SetLineWidth(0)
+        #allHistos[""].SetMarkerSize(0)
 
-        nominal_withErrors[0].SetFillColorAlpha(r.kOrange, 1.0)
+        nominal_withErrors[0].SetFillColorAlpha(r.kOrange, 1.0) #* 0)
         nominal_withErrors[0].SetLineColor(0)
         nominal_withErrors[0].SetLineWidth(0)
         nominal_withErrors[0].SetFillStyle(1001)
         
         statOnlyList = [deepcopy(allHistos[""]),  deepcopy(allHistos[""])]
-        statOnlyList[0].SetFillColorAlpha(r.kGray + 1, 1.0)
+        statOnlyList[0].SetFillColorAlpha(r.kGray + 1, 1.0) #* 0)
         statOnlyList[0].SetLineColor(0)
         statOnlyList[0].SetFillStyle(1001)
 
@@ -901,8 +902,8 @@ class Unfolder():
         #print "\n"
         ##############################
         
-        #if self.var != "Fiducial":
-        #tex.saveLaTeXfromhisto(allHistos[""], self.var, path = self.tablespath, errhisto = nominal_withErrors[0], ty = "particle")
+        if self.var != "Fiducial":
+            tex.saveLaTeXfromhisto(allHistos[""], self.var, path = self.tablespath, errhisto = nominal_withErrors[0], ty = "particle")
         if   "legpos_particle"   in vl.varList[self.var] and not self.wearedoingasimov:
             legloc = vl.varList[self.var]["legpos_particle"]
         elif "legpos_particleas" in vl.varList[self.var] and     self.wearedoingasimov:
@@ -925,6 +926,7 @@ class Unfolder():
         twttbaramc_ds_runningBW    = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_runningBW",    scaleval, self.var, part = True)
         #twttbaramc_ds_is           = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is",           scaleval, self.var, part = True)
         #twttbaramc_ds_is_runningBW = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is_runningBW", scaleval, self.var, part = True)
+        bb4lv1                      = vl.giveMeOneComparison(tmptfile, "bb4lv1", scaleval, self.var, part = True)
 
         tmptfile.Close()
 
@@ -961,10 +963,11 @@ class Unfolder():
         plot.addHisto(twttbardr,               'P,same', 'tW DR + t#bar{t} PH + P8',       'P', 'mc')
         plot.addHisto(twttbards,               'P,same', 'tW DS + t#bar{t} PH + P8',       'P', 'mc')
         #plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
-        plot.addHisto(twttbaramc_dr,           'P,same', 'tW DR + t#bar{t} aMC + P8',      'P', 'mc')
-        plot.addHisto(twttbaramc_dr2,          'P,same', 'tW DR2 + t#bar{t} aMC + P8',     'P', 'mc')
-        plot.addHisto(twttbaramc_ds,           'P,same', 'tW DS + t#bar{t} aMC + P8',      'P', 'mc')
-        plot.addHisto(twttbaramc_ds_runningBW, 'P,same', 'tW DS dyn. + t#bar{t} aMC + P8', 'P', 'mc')
+        #plot.addHisto(twttbaramc_dr,           'P,same', 'tW DR + t#bar{t} aMC + P8',      'P', 'mc')
+        #plot.addHisto(twttbaramc_dr2,          'P,same', 'tW DR2 + t#bar{t} aMC + P8',     'P', 'mc')
+        #plot.addHisto(twttbaramc_ds,           'P,same', 'tW DS + t#bar{t} aMC + P8',      'P', 'mc')
+        #plot.addHisto(twttbaramc_ds_runningBW, 'P,same', 'tW DS dyn. + t#bar{t} aMC + P8', 'P', 'mc')
+        #plot.addHisto(bb4lv1, 'P,same', 'b#bar{b}l^{+}#nu l^{-}#nu PH + P8 (v1)', 'P', 'mc')
 
         plot.addHisto(allHistos[""],           'P,E,same{s}'.format(s = ",X0" if "equalbinsunf" in vl.varList[self.var] else ""),  vl.labellegend,                   'PE', 'data')
 

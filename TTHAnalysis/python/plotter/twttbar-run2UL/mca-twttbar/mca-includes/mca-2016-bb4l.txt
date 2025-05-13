@@ -28,4 +28,11 @@
 #bb4l_fix_norm : ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_powheg_pythia8*     + ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV_PDFWeights_powheg_pythia8*     : xsec : (Origchannel == 4 || Origchannel == 5 || Origchannel == 9) ; Label="bb4l fix (NNLO+aNNLO)", FillColor=46
 #bb4l_fix_norm : TTTo2L2Nu_TuneCP5_13TeV_powheg_pythia8* : xsec : (Origchannel == 4 || Origchannel == 5 || Origchannel == 9) ; Label="bb4l fix (NNLO+aNNLO)", FillColor=46
 
-bb4l+ : BBLLNuNu_TuneCP5_13TeV_powheg_pythia8* : 92.176 ; Label="bb4l", FillColor=ROOT.TColor.GetColor(122\,33\,221)
+# New sample
+bb4l+ : BBLLNuNu_TuneCP5_13TeV_powheg_pythia8* : 96.372 ; Label="bb4l", FillColor=ROOT.TColor.GetColor(122\,33\,221)
+
+#bb4lt : BBLLNuNu_TuneCP5_13TeV_powheg_pythia8* : 96.372 : (Top1_pt > 0 && Top2_pt == -99) ; Label="bb4l tW", FillColor=ROOT.TColor.GetColor(248\,156\,32)
+#bb4l+ : BBLLNuNu_TuneCP5_13TeV_powheg_pythia8* : 96.372 : (Top2_pt > 0) ; Label="bb4l ttbar", FillColor=ROOT.TColor.GetColor(228\,37\,54)
+
+# old sample
+#bb4l+ : BBLLNuNu_v1_TuneCP5_13TeV_powheg_pythia8* : 96.372 ; Label="bb4lv1", FillColor=ROOT.TColor.GetColor(122\,33\,221)

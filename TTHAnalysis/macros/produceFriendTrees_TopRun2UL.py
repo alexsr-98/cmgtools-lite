@@ -29,6 +29,7 @@ friendfolders = {0 : "0_jecs", ## applied with old CMSSW_10 release
                  2 : "2_cleaning",
                  3 : "3_varstrigger",
                  4 : "4_scalefactors",
+                 5 : "5_isHF",
                  "btageffvars" : "x_btageff",
 }
 
@@ -37,6 +38,7 @@ chunksizes    = {0 : 200000,
                  2 : 200000,
                  3 : 200000,
                  4 : 200000,
+                 5 : 200000,
                  "btageffvars" : 200000,
 }
 minchunkbytes = 1000
@@ -78,6 +80,7 @@ sampledict["2016apv"] = {
     #"bb4l"      : "b_bbar_4l_TuneCP5_13TeV_powheg_pythia8",
     #"bb4l_fix"  : "b_bbar_4l_TuneCP5_13TeV_powheg_pythia8_gridpackfix",
     "BBLLNuNu"  : "BBLLNuNu_TuneCP5_13TeV_powheg_pythia8",
+    "BBLLNuNuv1"  : "BBLLNuNu_v1_TuneCP5_13TeV_powheg_pythia8",
 
 
     ###### tW
@@ -260,7 +263,7 @@ sampledict["2016"] = {
     #              "b_bbar_4l_TuneCP5_13TeV_powheg_pythia8_3",],
     #"bb4l_fix" : "b_bbar_4l_TuneCP5_13TeV_powheg_pythia8_gridpackfix",
     "BBLLNuNu"  : "BBLLNuNu_TuneCP5_13TeV_powheg_pythia8",
-    
+    "BBLLNuNuv1"  : "BBLLNuNu_v1_TuneCP5_13TeV_powheg_pythia8",
     ##### tW
     ## Inclusive
     #"tW"         : "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8",
@@ -439,7 +442,7 @@ sampledict["2017"] = {
     #"bb4l"     : "b_bbar_4l_TuneCP5_13TeV_powheg_pythia8",
     #"bb4l_fix" : "b_bbar_4l_TuneCP5_13TeV_powheg_pythia8_gridpackfix",
     "BBLLNuNu"  : "BBLLNuNu_TuneCP5_13TeV_powheg_pythia8",
-
+    "BBLLNuNuv1"  : "BBLLNuNu_v1_TuneCP5_13TeV_powheg_pythia8",
     ##### tW
     ### inclusiva
     #"tW"    : "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8",
@@ -643,7 +646,7 @@ sampledict["2018"] = {
     #"bb4l"      : "b_bbar_4l_TuneCP5_13TeV_powheg_pythia8",
     #"bb4l_fix"  : "b_bbar_4l_TuneCP5_13TeV_powheg_pythia8_gridpackfix",
     "BBLLNuNu"  : "BBLLNuNu_TuneCP5_13TeV_powheg_pythia8",
-
+    "BBLLNuNuv1"  : "BBLLNuNu_v1_TuneCP5_13TeV_powheg_pythia8",
     #### W Jets
     #### LO
     #"WJetsToLNu_LO" : "WJetsToLNu_TuneCP5_13TeV_madgraphMLM_pythia8",
@@ -887,6 +890,9 @@ def SendDatasetJobs(task):
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 1) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 2) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 3) + friendsuff
+
+    elif step == 5 and not isData:
+        module_  = "tagIsHF"
 
     elif step == "btageffvars":
         module_ = "btagEffFtree_{y}".format(y  = year)

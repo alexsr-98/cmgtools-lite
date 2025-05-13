@@ -2,9 +2,9 @@ alwaystrue: 1
 
 #lumijson:   $DATA{(isThisInTheJSON == 1)} $MC{(1)}
 trigger:           pass_trigger
-metfilters: $DATA{Flag_eeBadScFilter && Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_ecalBadCalibFilter} $MC{Flag_eeBadScFilter && Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_ecalBadCalibFilter}
+#metfilters: $DATA{Flag_eeBadScFilter && Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_ecalBadCalibFilter} $MC{Flag_eeBadScFilter && Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_ecalBadCalibFilter}
 mm:               channel == 2
 
-dilep:             (nLepGood >= 2) && (LepGood_pt_corrAll[0] > 25) && (LepGood_pt_corrAll[1] > 20) && isSS == 0 && (minMllAFAS > 20)
+dilep:             (nLepGood == 2) && (LepGood_pt_corrAll[0] > 25) && (LepGood_pt_corrAll[1] > 20) && isSS == 0 && (minMllAFAS > 20)
 
 #unprefirable: $DATA{(L1_UnprefireableEvent == 1)} $MC{(1)}

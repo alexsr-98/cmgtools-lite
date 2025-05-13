@@ -1,10 +1,10 @@
 from copy import deepcopy
 import os, sys, argparse
 
-sys.path.append('{cmsswpath}/src/CMGTools/TTHAnalysis/python/plotter/tw-run2/differential/'.format(cmsswpath = os.environ['CMSSW_BASE']))
-from . import beautifulUnfoldingPlots as bp
-from . import errorPropagator as ep
-from . import varList as vl
+sys.path.append('{cmsswpath}/src/CMGTools/TTHAnalysis/python/plotter/twttbar-run2/differential/'.format(cmsswpath = os.environ['CMSSW_BASE']))
+import beautifulUnfoldingPlots as bp
+import errorPropagator as ep
+import varList as vl
 from multiprocessing import Pool
 
 #basecommand = 'combineTool.py -M MultiDimFit {algosettings} --setParameters {setpars} --rMin 0 --rMax 2 --floatOtherPOIs=1 -m 125 --split-points 1 --saveInactivePOI 1 {parallel} {queue} {extra} --robustFit 1 --cminDefaultMinimizerStrategy 0 --X-rtd MINIMIZER_analytic --X-rtd MINIMIZER_MaxCalls=5000000'
@@ -15,7 +15,7 @@ from multiprocessing import Pool
 #basecommand = 'combine -M FitDiagnostics -m 125 --setParameters {setpars} --saveWorkspace --saveShapes --saveWithUncertainties --robustFit 1 --cminDefaultMinimizerStrategy 0 --X-rtd MINIMIZER_analytic --X-rtd MINIMIZER_MaxCalls=5000000 {extra}'
 basecommand = 'combine -M FitDiagnostics -m 125 --setParameters {setpars} --saveWorkspace --saveShapes --saveWithUncertainties --robustFit 1 --cminDefaultMinimizerStrategy 0 --X-rtd MINIMIZER_analytic --X-rtd MINIMIZER_MaxCalls=5000000 --robustHesse 1 {extra}'
 
-userstorage = "/pool/phedex/userstorage/vrbouza/proyectos/tw_run2/misc/"
+userstorage = "/pool/phedex/userstorage/asoto/Proyectos/twttbar_run2/misc/"
 
 individual_scaff = {
     #### Statistical
@@ -26,37 +26,55 @@ individual_scaff = {
     'jes': [
 #        "jes",
         "jes_HF",
+        #"jes_HF_2016apv",
         "jes_HF_2016",
         "jes_HF_2017",
         "jes_HF_2018",
         "jes_BBEC1",
+        #"jes_BBEC1_2016apv",
         "jes_BBEC1_2016",
         "jes_BBEC1_2017",
         "jes_BBEC1_2018",
         "jes_FlavorQCD",
+        #"jes_RelativeSample_2016apv",
         "jes_RelativeSample_2016",
         "jes_RelativeSample_2017",
         "jes_RelativeSample_2018",
         "jes_EC2",
+        #"jes_EC2_2016apv",
         "jes_EC2_2016",
         "jes_EC2_2017",
         "jes_EC2_2018",
         "jes_RelativeBal",
         "jes_Absolute",
+        #"jes_Absolute_2016apv",
         "jes_Absolute_2016",
         "jes_Absolute_2017",
         "jes_Absolute_2018",
         "unclenergy",
     ],
     'jer': [
+        #"jer_2016apv",
         "jer_2016",
         "jer_2017",
         "jer_2018",
     ],
+    'jetpuid': [
+        "jetpuid_2016apv",
+        "jetpuid_2016",
+        "jetpuid_2017",
+        "jetpuid_2018",
+    ],
     'trigger': [
+        "triggereff_2016apv",
         "triggereff_2016",
         "triggereff_2017",
         "triggereff_2018",
+    ],
+    'muonen': [
+        "muonen_2016",
+        "muonen_2017",
+        "muonen_2018",
     ],
     'pileup': [
         "pileup",
@@ -65,26 +83,33 @@ individual_scaff = {
         "elecidsf",
         "elecrecosf",
     ],
+    'elecsigma': [
+        "elecsigma",
+    ],
     'muon': [
         #"muonen_2016",
-        "muonen_2017",
-        "muonen_2018",
+        #"muonen_2017",
+        #"muonen_2018",
+        "muonidsf_stat_2016apv",
         "muonidsf_stat_2016",
         "muonidsf_stat_2017",
         "muonidsf_stat_2018",
         "muonidsf_syst",
+        "muonisosf_stat_2016apv",
         "muonisosf_stat_2016",
         "muonisosf_stat_2017",
         "muonisosf_stat_2018",
         "muonisosf_syst",
     ],
     'btag': [
+        "btagging_2016apv",
         "btagging_2016",
         "btagging_2017",
         "btagging_2018",
         "btagging_corr",
     ],
     'mistag': [
+        "mistagging_2016apv",
         "mistagging_2016",
         "mistagging_2017",
         "mistagging_2018",
@@ -101,11 +126,14 @@ individual_scaff = {
         "prefiring_2016",
         "prefiring_2017",
     ],
+    'unclenergy' : [
+        "unclenergy",
+    ],
 
     # Normalisation
-    'ttbar_norm' : [
-        "ttbar_norm",
-    ],
+    #'ttbar_norm' : [
+    #    "ttbar_norm",
+    #],
     'nonworz_norm' : [
         "nonworz_norm",
     ],
@@ -120,40 +148,161 @@ individual_scaff = {
     'pdf' : [
         "pdfhessian",
     ],
-    'matching' : [
-        "ttbar_matching",
+    #'matching' : [
+    #    "ttbar_matching",
+    #],
+    'scales' : [
+        "scales_muR",
+        "scales_muF",
     ],
-    'ttbar_scales' : [
-        "ttbar_scales",
-    ],
-    'tw_scales' : [
-        "tw_scales",
-    ],
+    #'tw_scales' : [
+    #    "tw_scales",
+    #],
     'isr' : [
-        "isr_ttbar",
-        "isr_tw",
+        "isr",
     ],
     'fsr' : [
         "fsr",
     ],
-    'colour' : [
-        "colour_rec_erdon",
-        "colour_rec_cr1",
-        "colour_rec_cr2",
-    ],
-    'ue' : [
-        "ue",
-    ],
-    'toppt' : [
-        "topptrew",
-    ],
-    'mtop' : [
-        "mtop",
-    ],
-    'ds' : [
-        "ds",
-    ],
+    #'colour' : [
+    #    "colour_rec_erdon",
+    #    "colour_rec_cr1",
+    #    "colour_rec_cr2",
+    #],
+    #'ue' : [
+    #    "ue",
+    #],
+    #'toppt' : [
+    #    "topptrew",
+    #],
+    #'mtop' : [
+    #    "mtop",
+    #],
+    #'ds' : [
+    #    "ds",
+    #],
 }
+
+
+individual_scaff = {
+    #### Statistical
+    'mc_stat' : [],
+
+    #### Systematic
+    # Experimental
+    'experimental': [
+#        "jes",
+        "jes_HF",
+        #"jes_HF_2016apv",
+        "jes_HF_2016",
+        "jes_HF_2017",
+        "jes_HF_2018",
+        "jes_BBEC1",
+        #"jes_BBEC1_2016apv",
+        "jes_BBEC1_2016",
+        "jes_BBEC1_2017",
+        "jes_BBEC1_2018",
+        "jes_FlavorQCD",
+        #"jes_RelativeSample_2016apv",
+        "jes_RelativeSample_2016",
+        "jes_RelativeSample_2017",
+        "jes_RelativeSample_2018",
+        "jes_EC2",
+        #"jes_EC2_2016apv",
+        "jes_EC2_2016",
+        "jes_EC2_2017",
+        "jes_EC2_2018",
+        "jes_RelativeBal",
+        "jes_Absolute",
+        #"jes_Absolute_2016apv",
+        "jes_Absolute_2016",
+        "jes_Absolute_2017",
+        "jes_Absolute_2018",
+        "unclenergy",
+        #"jer_2016apv",
+        "jer_2016",
+        "jer_2017",
+        "jer_2018",
+        "jetpuid_2016apv",
+        "jetpuid_2016",
+        "jetpuid_2017",
+        "jetpuid_2018",
+        "triggereff_2016apv",
+        "triggereff_2016",
+        "triggereff_2017",
+        "triggereff_2018",
+        "muonen_2016",
+        "muonen_2017",
+        "muonen_2018",
+        "pileup",
+        "elecidsf",
+        "elecrecosf",
+        "elecsigma",
+        #"muonidsf_stat_2016apv",
+        "muonidsf_stat_2016",
+        "muonidsf_stat_2017",
+        "muonidsf_stat_2018",
+        "muonidsf_syst",
+        "muonisosf_stat_2016apv",
+        "muonisosf_stat_2016",
+        "muonisosf_stat_2017",
+        "muonisosf_stat_2018",
+        "muonisosf_syst",
+        "btagging_2016apv",
+        "btagging_2016",
+        "btagging_2017",
+        "btagging_2018",
+        "btagging_corr",
+        "mistagging_2016apv",
+        "mistagging_2016",
+        "mistagging_2017",
+        "mistagging_2018",
+        "mistagging_corr",
+        "lumi_2016",
+        "lumi_2017",
+        "lumi_2018",
+        "lumi_corr",
+        "lumi_corr1718",
+        "prefiring_2016",
+        "prefiring_2017",
+        #"unclenergy",
+    ],
+
+    'normalisation' : [
+        "nonworz_norm",
+        "dy_norm",
+        "vvttv_norm",
+    ],
+
+    # Modelling
+    'modelling' : [
+        "pdfhessian",
+    #    "ttbar_matching",
+        "scales_muR",
+        "scales_muF",
+        "isr",
+        "fsr",
+    ],
+
+    #'colour' : [
+    #    "colour_rec_erdon",
+    #    "colour_rec_cr1",
+    #    "colour_rec_cr2",
+    #],
+    #'ue' : [
+    #    "ue",
+    #],
+    #'toppt' : [
+    #    "topptrew",
+    #],
+    #'mtop' : [
+    #    "mtop",
+    #],
+    #'ds' : [
+    #    "ds",
+    #],
+}
+
 
 
 global_scaff = {
@@ -182,52 +331,60 @@ global_scaff = {
         "jer_2016",
         "jer_2017",
         "jer_2018",
-        "unclenergy",
+        "jetpuid_2016apv",
+        "jetpuid_2016",
+        "jetpuid_2017",
+        "jetpuid_2018",
+        #"unclenergy",
+        "muonen_2016",
+        "muonen_2017",
+        "muonen_2018",
+        "triggereff_2016apv",
         "triggereff_2016",
         "triggereff_2017",
         "triggereff_2018",
         "pileup",
         "elecidsf",
         "elecrecosf",
-        #"muonen_2016",
-        "muonen_2017",
-        "muonen_2018",
+        #"muonidsf_stat_2016apv",
         "muonidsf_stat_2016",
         "muonidsf_stat_2017",
         "muonidsf_stat_2018",
         "muonidsf_syst",
+        "muonisosf_stat_2016apv",
         "muonisosf_stat_2016",
         "muonisosf_stat_2017",
         "muonisosf_stat_2018",
         "muonisosf_syst",
+        "btagging_2016apv",
         "btagging_2016",
         "btagging_2017",
         "btagging_2018",
         "btagging_corr",
+        "mistagging_2016apv",
         "mistagging_2016",
         "mistagging_2017",
         "mistagging_2018",
         "mistagging_corr",
         "prefiring_2016",
         "prefiring_2017",
-        "ttbar_norm",
+        "elecsigma",
         "nonworz_norm",
         "dy_norm",
         "vvttv_norm",
         "pdfhessian",
-        "ttbar_matching",
-        "ttbar_scales",
-        "tw_scales",
-        "isr_ttbar",
-        "isr_tw",
+        #"ttbar_matching",
+        "scales_muR",
+        "scales_muF",
+        "isr",
         "fsr",
-        "colour_rec_erdon",
-        "colour_rec_cr1",
-        "colour_rec_cr2",
-        "ue",
-        "topptrew",
-        "mtop",
-        "ds",
+        #"colour_rec_erdon",
+        #"colour_rec_cr1",
+        #"colour_rec_cr2",
+        #"ue",
+        #"topptrew",
+        #"mtop",
+        #"ds",
         "lumi_2016",
         "lumi_2017",
         "lumi_2018",
@@ -299,7 +456,7 @@ def calculateRelativeUncertainties(task):
     #sys.exit()
 
     #thecard = "../../fit_output.root"
-    POIs    = ["r_tW_{iB}".format(iB = i) for i in range(nparticlebins)]
+    POIs    = ["r_bb4l_{iB}".format(iB = i) for i in range(nparticlebins)]
     indGroup = deepcopy(individual_scaff)
     gloGroup = deepcopy(global_scaff)
 
@@ -402,6 +559,8 @@ if __name__ == "__main__":
     theyears = []
     presentyears = next(os.walk(inpath))[1]
 
+    if "2016apv" in presentyears:
+        theyears.append("2016apv")
     if "2016" in presentyears:
         theyears.append("2016")
     if "2017" in presentyears:
@@ -426,6 +585,8 @@ if __name__ == "__main__":
 
         theyears = []
         presentyears = next(os.walk(inpath))[1]
+        if "2016apv" in presentyears:
+            theyears.append("2016apv")
         if "2016" in presentyears:
             theyears.append("2016")
         if "2017" in presentyears:

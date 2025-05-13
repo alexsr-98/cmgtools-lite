@@ -6,12 +6,12 @@ from copy  import deepcopy
 from multiprocessing import Pool
 
 
-sys.path.append('{cmsswpath}/src/CMGTools/TTHAnalysis/python/plotter/tw-run2/differential/'.format(cmsswpath = os.environ['CMSSW_BASE']))
-from . import varList as vl
-from . import beautifulUnfoldingPlots as bp
-from . import tdrstyle, CMS_lumi
-from . import getLaTeXtable as tex
-from . import errorPropagator as ep
+sys.path.append('{cmsswpath}/src/CMGTools/TTHAnalysis/python/plotter/twttbar-run2UL/differential/'.format(cmsswpath = os.environ['CMSSW_BASE']))
+import varList as vl
+import beautifulUnfoldingPlots as bp
+import tdrstyle, CMS_lumi
+import getLaTeXtable as tex
+import errorPropagator as ep
 
 
 #### AGREGAR --cminDefaultMinimizerStrategy 0   ?????????? y quitar robusthesse
@@ -162,7 +162,7 @@ def drawPreAndPostFit(thedict, inpath, iY, iV, typ):
 
         outStack = r.THStack("outStack", "")
         c.cd(1)
-        theprocs = ["ttbar", "tw", "nonworz", "vvttv", "dy"]
+        theprocs = ["bb4l", "nonworz", "vvttv", "dy"]
         presentprocs = ["data"]
         for p in theprocs:
             if p in thedict[iB]:
@@ -400,7 +400,7 @@ def drawParticleResultsv3(theres, theuncs, thecov, outdir, year, var, pretend):
     
     tmptfile = r.TFile.Open(folderpath + '/particle.root')
 
-    tru                = giveMeOneComparison(tmptfile.Get('x_twttbardr'),                  "tru",                scaleval, var)
+    #tru                = giveMeOneComparison(tmptfile.Get('x_twttbardr'),                  "tru",                scaleval, var)
     #tru_DS             = giveMeOneComparison(tmptfile.Get('x_twttbards'),                  "tru_DS",             scaleval, var)
     #tru_herwig         = giveMeOneComparison(tmptfile.Get('x_twttbarherwig'),              "tru_herwig",         scaleval, var)
     #tru_aMC_dr         = giveMeOneComparison(tmptfile.Get('x_twttbaramc_dr'),              "tru_aMC_dr",         scaleval, var)
@@ -410,22 +410,49 @@ def drawParticleResultsv3(theres, theuncs, thecov, outdir, year, var, pretend):
     #tru_aMC_ds_IS      = giveMeOneComparison(tmptfile.Get('x_twttbaramc_ds_is'),           "tru_aMC_ds_IS",      scaleval, var)
     #tru_aMC_ds_IS_runn = giveMeOneComparison(tmptfile.Get('x_twttbaramc_ds_is_runningBW'), "tru_aMC_ds_IS_runn", scaleval, var)
 
+    tru                        = vl.giveMeOneComparison(tmptfile, "bb4l",                       scaleval, var, part = True)
+    twttbardr                  = vl.giveMeOneComparison(tmptfile, "twttbardr",                  scaleval, var, part = True)
+    twttbards                  = vl.giveMeOneComparison(tmptfile, "twttbards",                  scaleval, var, part = True)
+    #twttbarherwig              = vl.giveMeOneComparison(tmptfile, "twttbarherwig",              scaleval, var, part = True)
+    twttbaramc_dr              = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr",              scaleval, var, part = True)
+    twttbaramc_dr2             = vl.giveMeOneComparison(tmptfile, "twttbaramc_dr2",             scaleval, var, part = True)
+    twttbaramc_ds              = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds",              scaleval, var, part = True)
+    twttbaramc_ds_runningBW    = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_runningBW",    scaleval, var, part = True)
+    #twttbaramc_ds_is           = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is",           scaleval, var, part = True)
+    #twttbaramc_ds_is_runningBW = vl.giveMeOneComparison(tmptfile, "twttbaramc_ds_is_runningBW", scaleval, var, part = True)
+    bb4lv1                      = vl.giveMeOneComparison(tmptfile, "bb4lv1", scaleval, var, part = True)
+
+
     tmptfile.Close()
 
     #for iH in [tru_aMC_dr, tru_aMC_dr2, tru_aMC_ds, tru_aMC_ds_runn, tru_aMC_ds_IS, tru_aMC_ds_IS_runn]:
         #iH.Scale(0.20054)
 
-    plot.addHisto(nominal_withErrors, 'A2',     'Total unc.',             'F', 'total')
-    plot.addHisto(statOnlyList,       '2,same', 'Stat unc.',              'F', 'stat')
-    plot.addHisto(tru,                'P,same', 'tW PH DR + P8',          'P', 'mc')
-    #plot.addHisto(tru_DS,             'P,same', 'tW PH DS + P8',          'P', 'mc')
-    #plot.addHisto(tru_herwig,         'P,same', 'tW PH DR + H7',          'P', 'mc')
-    #plot.addHisto(tru_aMC_dr,         'P,same', 'tW aMC DR + P8',         'P', 'mc')
-    #plot.addHisto(tru_aMC_dr2,        'P,same', 'tW aMC DR2 + P8',        'P', 'mc')
-    #plot.addHisto(tru_aMC_ds,         'P,same', 'tW aMC DS + P8',         'P', 'mc')
-    #plot.addHisto(tru_aMC_ds_runn,    'P,same', 'tW aMC DS dyn. + P8',    'P', 'mc')
-    # plot.addHisto(tru_aMC_ds_IS,      'P,same', 'tW aMC DS IS + P8',      'P', 'mc')
-    # plot.addHisto(tru_aMC_ds_IS_runn, 'P,same', 'tW aMC DS IS dyn. + P8', 'P', 'mc')
+
+    #plot.addHisto(nominal_withErrors, 'A2',     'Total unc.',             'F', 'total')
+    #plot.addHisto(statOnlyList,       '2,same', 'Stat unc.',              'F', 'stat')
+    #plot.addHisto(tru,                'P,same', 'tW PH DR + P8',          'P', 'mc')
+    ##plot.addHisto(tru_DS,             'P,same', 'tW PH DS + P8',          'P', 'mc')
+    ##plot.addHisto(tru_herwig,         'P,same', 'tW PH DR + H7',          'P', 'mc')
+    ##plot.addHisto(tru_aMC_dr,         'P,same', 'tW aMC DR + P8',         'P', 'mc')
+    ##plot.addHisto(tru_aMC_dr2,        'P,same', 'tW aMC DR2 + P8',        'P', 'mc')
+    ##plot.addHisto(tru_aMC_ds,         'P,same', 'tW aMC DS + P8',         'P', 'mc')
+    ##plot.addHisto(tru_aMC_ds_runn,    'P,same', 'tW aMC DS dyn. + P8',    'P', 'mc')
+    ## plot.addHisto(tru_aMC_ds_IS,      'P,same', 'tW aMC DS IS + P8',      'P', 'mc')
+    ## plot.addHisto(tru_aMC_ds_IS_runn, 'P,same', 'tW aMC DS IS dyn. + P8', 'P', 'mc')
+
+
+    plot.addHisto(nominal_withErrors,      'A2',     'Total unc.',                     'F', 'total')
+    plot.addHisto(statOnlyList,            '2,same',      'Stat unc.',                      'F', "stat")
+    plot.addHisto(tru,                     'P,same', 'b#bar{b}l^{+}#nu l^{-}#nu PH + P8','P', 'mc')
+    plot.addHisto(twttbardr,               'P,same', 'tW DR + t#bar{t} PH + P8',       'P', 'mc')
+    plot.addHisto(twttbards,               'P,same', 'tW DS + t#bar{t} PH + P8',       'P', 'mc')
+    #plot.addHisto(twttbarherwig,           'P,same', 'tW DR + t#bar{t} PH + H7',       'P', 'mc')
+    #plot.addHisto(twttbaramc_dr,           'P,same', 'tW DR + t#bar{t} aMC + P8',      'P', 'mc')
+    #plot.addHisto(twttbaramc_dr2,          'P,same', 'tW DR2 + t#bar{t} aMC + P8',     'P', 'mc')
+    #plot.addHisto(twttbaramc_ds,           'P,same', 'tW DS + t#bar{t} aMC + P8',      'P', 'mc')
+    #plot.addHisto(twttbaramc_ds_runningBW, 'P,same', 'tW DS dyn. + t#bar{t} aMC + P8', 'P', 'mc')
+    #plot.addHisto(bb4lv1, 'P,same', 'b#bar{b}l^{+}#nu l^{-}#nu PH + P8 (v1)', 'P', 'mc')
 
     plot.addHisto(theres,
                   'P,same{s}'.format(s = ",X0" if "equalbinsunf" in vl.varList[var] else ""),
@@ -470,7 +497,7 @@ def drawParticleResultsv3(theres, theuncs, thecov, outdir, year, var, pretend):
     del plot2
     return
 
-
+"""
 def drawParticleResults(theres, theuncs, thecov, outdir, year, var, pretend):
     thelumi    = vl.TotalLumi if year == "run2" else vl.LumiDict[year]
     scaleval   = 1/thelumi/1000 if vl.doxsec else 1
@@ -618,7 +645,7 @@ def drawParticleResults(theres, theuncs, thecov, outdir, year, var, pretend):
     plot2.saveCanvas(unclegpos)
     del plot2
     return
-
+"""
 
 def makeFit(task):
     inpath, year, varName, pretend, doControl, noPlots, useData = task

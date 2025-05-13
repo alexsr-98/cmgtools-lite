@@ -11,3 +11,5 @@ zveto:      (channel == 1) || (abs(Mll - 91) > 15)
 1btag:      nBJetSelMedium30_Recl == 1;
 
 #bdtcut:     getBDtWOther6binsDYtrain(tmvaBDT_2j1b) >= 2;
+
+#nvertex: (PV_npvsGood <= 7)

@@ -102,7 +102,7 @@ def CardsCommand(prod, year, var, isAsimov, nthreads, outpath, region, noUnc, us
 
     extra_ = extra
     if region not in ["detector", "particle"]:
-        extra_ += " --xp twttbardr,twttbards,twttbarherwig,twttbaramc_dr,twttbaramc_dr2,twttbaramc_ds,twttbaramc_ds_is,twttbaramc_ds_runningBW,twttbaramc_ds_is_runningBW,ttbar,ttbarherwig,ttbaramc,twdr,twds,twherwig,twamc_dr,twamc_ds,twamc_dr2,twamc_ds_is,twamc_ds_is_runningBW,twamc_ds_runningBW"
+        extra_ += " --xp twttbardr,twttbards,twttbarherwig,twttbaramc_dr,twttbaramc_dr2,twttbaramc_ds,twttbaramc_ds_is,twttbaramc_ds_runningBW,twttbaramc_ds_is_runningBW,ttbar,ttbarherwig,ttbaramc,twdr,twds,twherwig,twamc_dr,twamc_ds,twamc_dr2,twamc_ds_is,twamc_ds_is_runningBW,twamc_ds_runningBW,bb4lv1"
 
     comm = commandscaff.format(outpath      = outpath_,
                                friends      = friends_,
