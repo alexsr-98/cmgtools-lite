@@ -39,6 +39,7 @@ class beautifulUnfPlot:
         self.doSupplementary= False
         self.displayedLumi  = vl.TotalLumi
         self.yaxisuplimit   = 0
+        self.yaxislowlimit   = 0
         # self.yaxis_unclabel = 'Relative uncertainty (adim.)'
         self.yaxis_unclabel = 'Relative uncertainty'
         self.yaxistitleoffset = 1.5
@@ -156,7 +157,7 @@ class beautifulUnfPlot:
                 asymhisto.GetXaxis().SetLabelSize(0)
                 asymhisto.GetXaxis().SetTitle(' ')
                 
-            if self.yaxisuplimit != 0: asymhisto.GetYaxis().SetRangeUser(0, self.yaxisuplimit)
+            if self.yaxisuplimit != 0: asymhisto.GetYaxis().SetRangeUser(self.yaxislowlimit, self.yaxisuplimit)
             print('> Drawing an asym.-unc. histogram with the following options:', options)
             asymhisto.Draw(options)
             self.objectsInLeg.append( (asymhisto, name, legOptions, idname) )

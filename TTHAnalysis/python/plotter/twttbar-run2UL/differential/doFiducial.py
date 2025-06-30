@@ -317,6 +317,9 @@ def PlotParticleFidBinLevelResults(thedict, inpath, iY, varName, covmatnorm):
 
     if "yaxismax_particlefidbin" in vl.varList[varName]:
         plot.yaxisuplimit = vl.varList[varName]["yaxismax_particlefidbin"]
+    
+    if "yaxismin_particlefidbin" in vl.varList[varName]:
+        plot.yaxislowlimit = vl.varList[varName]["yaxismin_particlefidbin"]
 
     #tex.saveLaTeXfromhisto(thedict[""], varName, path = vl.tablespath, errhisto = nominal_withErrors[0], ty = "unfolded_binnorm")
 
@@ -376,7 +379,7 @@ def PlotParticleFidBinLevelResults(thedict, inpath, iY, varName, covmatnorm):
     #####for iB in range(1, thedict[""].GetNbinsX() + 1):
     #####    thedict[""].SetBinError(iB, 0.)
 
-    plot.addHisto(nominal_withErrors,      'A2',     'Total unc.',                     'F', 'total')
+    plot.addHisto(nominal_withErrors,      'A2,nomin',     'Total unc.',                     'F', 'total')
     plot.addHisto(statOnlyList,            '2,same',      'Stat unc.',                      'F', "stat")
     plot.addHisto(tru,                     'P,same', 'b#bar{b}l^{+}#nu l^{-}#nu PH + P8','P', 'mc')
     plot.addHisto(twttbardr,               'P,same', 'tW DR + t#bar{t} PH + P8',       'P', 'mc')

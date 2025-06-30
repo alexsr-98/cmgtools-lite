@@ -325,28 +325,52 @@ lepsuncsAndParticle_data = [addLepUncsVars_data]
 
 
 #### EVENT VARIABLES ### FTREE 3
+btagpath = os.environ['CMSSW_BASE'] + "/src/CMGTools/TTHAnalysis/data/TopRun2UL/btagging/"
 from CMGTools.TTHAnalysis.tools.eventVars_TopRun2UL import EventVars_TopRun2UL
+eventVars_mc_2016apv   = lambda : EventVars_TopRun2UL('', 'Recl',
+                                              jecvars = ['jesTotal', 'jer'] + ['jes%s'%v.format(year = 2016) for v in jecGroups] + ["jer%i"%i for i in range(6)] + ["unclustEn", "jesHEMIssue"],
+                                              lepvars = ['mu', "elsigma"], 
+                                              json=btagpath  + "btagging_2016ULpreVFP.json", algo = 'deepJet', wp = "M", year = "2016apv")
 eventVars_mc_2016   = lambda : EventVars_TopRun2UL('', 'Recl',
                                               jecvars = ['jesTotal', 'jer'] + ['jes%s'%v.format(year = 2016) for v in jecGroups] + ["jer%i"%i for i in range(6)] + ["unclustEn", "jesHEMIssue"],
-                                              lepvars = ['mu', "elsigma"])
+                                              lepvars = ['mu', "elsigma"], 
+                                              json=btagpath  + "btagging_2016ULpostVFP.json", algo = 'deepJet', wp = "M", year = "2016")
 eventVars_mc_2017   = lambda : EventVars_TopRun2UL('', 'Recl',
                                               jecvars = ['jesTotal', 'jer'] + ['jes%s'%v.format(year = 2017) for v in jecGroups] + ["jer%i"%i for i in range(6)] + ["unclustEn", "jesHEMIssue"],
-                                              lepvars = ['mu', "elsigma"])
+                                              lepvars = ['mu', "elsigma"],
+                                              json=btagpath  + "btagging_2017UL.json", algo = 'deepJet', wp = "M", year = "2017")
 eventVars_mc_2018   = lambda : EventVars_TopRun2UL('', 'Recl',
                                               jecvars = ['jesTotal', 'jer'] + ['jes%s'%v.format(year = 2018) for v in jecGroups] + ["jer%i"%i for i in range(6)] + ["unclustEn", "jesHEMIssue"],
-                                              lepvars = ['mu', "elsigma"])
-eventVars_data = lambda : EventVars_TopRun2UL('', 'Recl', isMC = False,
+                                              lepvars = ['mu', "elsigma"],
+                                              json=btagpath  + "btagging_2018UL.json", algo = 'deepJet', wp = "M", year = "2018")
+eventVars_data_2016apv = lambda : EventVars_TopRun2UL('', 'Recl', isMC = False,
                                               jecvars = [],
-                                              lepvars = ["elscale"])
+                                              lepvars = ["elscale"],
+                                              json=btagpath  + "btagging_2016ULpreVFP.json", algo = 'deepJet', wp = "M", year = "2016apv")
+eventVars_data_2016 = lambda : EventVars_TopRun2UL('', 'Recl', isMC = False,
+                                              jecvars = [],
+                                              lepvars = ["elscale"],
+                                              json=btagpath  + "btagging_2016ULpostVFP.json", algo = 'deepJet', wp = "M", year = "2016")
+eventVars_data_2017 = lambda : EventVars_TopRun2UL('', 'Recl', isMC = False,
+                                              jecvars = [],
+                                              lepvars = ["elscale"],
+                                              json=btagpath  + "btagging_2017UL.json", algo = 'deepJet', wp = "M", year = "2017")                                          
+eventVars_data_2018 = lambda : EventVars_TopRun2UL('', 'Recl', isMC = False,
+                                              jecvars = [],
+                                              lepvars = ["elscale"],
+                                              json=btagpath  + "btagging_2018UL.json", algo = 'deepJet', wp = "M", year = "2018")
 
 from CMGTools.TTHAnalysis.tools.particleAndPartonVars_TopRun2UL import particleAndPartonVars_TopRun2UL
 theDressAndPartVars = lambda : particleAndPartonVars_TopRun2UL()
 
-varstrigger_mc_2016apv = [eventVars_mc_2016, theDressAndPartVars] + triggerSeq
+varstrigger_mc_2016apv = [eventVars_mc_2016apv, theDressAndPartVars] + triggerSeq
 varstrigger_mc_2016    = [eventVars_mc_2016, theDressAndPartVars] + triggerSeq
 varstrigger_mc_2017    = [eventVars_mc_2017, theDressAndPartVars] + triggerSeq
 varstrigger_mc_2018    = [eventVars_mc_2018, theDressAndPartVars] + triggerSeq
-varstrigger_data       = [eventVars_data] + triggerSeq
+varstrigger_data_2016apv    = [eventVars_data_2016apv] + triggerSeq
+varstrigger_data_2016       = [eventVars_data_2016] + triggerSeq
+varstrigger_data_2017       = [eventVars_data_2017] + triggerSeq
+varstrigger_data_2018       = [eventVars_data_2018] + triggerSeq
 
 
 ### FTREE 4
@@ -355,7 +379,7 @@ addTopPtWeight = lambda : TopPtWeight()
 
 ## b-tagging
 from CMGTools.TTHAnalysis.tools.nanoAOD.btag_weighterTopRun2UL import btag_weighterUL
-btagpath = os.environ['CMSSW_BASE'] + "/src/CMGTools/TTHAnalysis/data/TopRun2UL/btagging/"
+
 btagWeights_2016apv = lambda : btag_weighterUL(json = btagpath  + "btagging_2016ULpreVFP.json",
                                             eff = btagpath + "btagEffs_2024_09_08_btagEff.root",
                                             algo = 'deepJet',

@@ -34,6 +34,8 @@ class particleAndPartonVars_TopRun2UL(Module):
                          "DressLep1Lep2Jet1MET_Pt",
                          "DressLep1Lep2Jet1MET_M",
                          "DressLep1Lep2Jet1MET_Mt",
+                         "DressLep1Lep2BJet1BJet2_Pt",
+                         "DressLep1Lep2BJet1BJet2_M",
                          "DressLep1Lep2Jet1_Pt",
                          "DressLep1Lep2Jet1_M",
                          "DressLep1Lep2Jet1_E",
@@ -104,6 +106,13 @@ class particleAndPartonVars_TopRun2UL(Module):
                         for j in range(min([getattr(event, 'nDressSelLooseJet'), 5]))]
         loosejets_4m = [j.p4() for j in loosejets]
 
+        ### b jets
+        isbjet = [j.hadronFlavour == 5 for j in jets]
+        jetsb_4m = []
+        for i,ijet_4m in enumerate(jets_4m):
+            if isbjet[i]:
+                jetsb_4m.append(ijet_4m)
+
 
         allret["Dresschannel"]            = ch.NoChan
         allret["DressEXTchannel"]         = ch.NoChan
@@ -141,6 +150,8 @@ class particleAndPartonVars_TopRun2UL(Module):
         allret["DressLep1Jet2_M"]         = -99
         allret["DressLep2Jet2_M"]         = -99
         allret["Dressminimax"]            = -99
+        allret["DressLep1Lep2BJet1BJet2_Pt"] = -99
+        allret["DressLep1Lep2BJet1BJet2_M"]  = -99
         allret["DressLep1Lep2Jet1Jet2MET_M"] = -99
         allret["GenWWbb_M"]               = -99
 
@@ -268,6 +279,9 @@ class particleAndPartonVars_TopRun2UL(Module):
                                                       max(allret["DressLep2Jet1_M"],
                                                         allret["DressLep1Jet2_M"])])
                         allret["DressLep1Lep2Jet1Jet2MET_M"] = (leps_4m[0] + leps_4m[1] + jets_4m[0] + jets_4m[1] + met_4m).M()
+                        if len(jetsb_4m) > 1:
+                            allret["DressLep1Lep2BJet1BJet2_Pt"] = (leps_4m[0] + leps_4m[1] + jetsb_4m[0] + jetsb_4m[1]).Pt()
+                            allret["DressLep1Lep2BJet1BJet2_M"]  = (leps_4m[0] + leps_4m[1] + jetsb_4m[0] + jetsb_4m[1]).M() 
 
         thesample = ""
         for i in range(event.nDatasetName):

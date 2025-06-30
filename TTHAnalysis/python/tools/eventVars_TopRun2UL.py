@@ -12,16 +12,20 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
 from CMGTools.TTHAnalysis.tools.nanoAOD.TopRun2UL_modules import ch, tags, emass
 
+import correctionlib._core as core
+
 mresta_ = 172.5 ** 2 - 80.379 ** 2
 
 
 class EventVars_TopRun2UL(Module):
     def __init__(self, label = "", recllabel = 'Recl', isMC = True,
-                 jecvars = ["jesTotal", "jer"], lepvars = ["mu"]):
+                 jecvars = ["jesTotal", "jer"], lepvars = ["mu"], json=None, algo = 'deepJet', wp = "M", year = "2016"):
 
         self.jecbranches = ["Lep1Lep2Jet1MET_Pt",
                             "Lep1Lep2Jet1MET_M",
                             "Lep1Lep2Jet1MET_Mt",
+                            "Lep1Lep2BJet1BJet2_Pt",
+                            "Lep1Lep2BJet1BJet2_M",
                             "Lep1Lep2Jet1MET_PtOverHTtot",
                             "Lep1_PtLep2_PtOverHTtot",
                             "Lep1Lep2Jet1_Pt",
@@ -76,6 +80,8 @@ class EventVars_TopRun2UL(Module):
                               "Lep1Lep2Jet1MET_Pt",
                               "Lep1Lep2Jet1MET_M",
                               "Lep1Lep2Jet1MET_Mt",
+                              "Lep1Lep2BJet1BJet2_Pt",
+                              "Lep1Lep2BJet1BJet2_M",
                               "Lep1Lep2Jet1MET_PtOverHTtot",
                               "Lep1_PtLep2_PtOverHTtot",
                               "Lep1Lep2Jet1_Pt",
@@ -141,6 +147,23 @@ class EventVars_TopRun2UL(Module):
         self.systsLepEn = {}
         self.isMC       = isMC
         self.nominaljecscaff = "_nom"
+        ### b tagging
+        self.wp = wp
+        self.year = year
+        self.algo = algo
+        self.algodict = {"deepJet" : "DeepFlav",
+                         }    
+        self.branchbtag = "btag" + self.algodict[self.algo] + "B"
+
+        self.btvjson = core.CorrectionSet.from_file(json)
+        self.btaggingWPsEvaluator = self.btvjson[self.algo + "_wp_values"]
+        self.btagWPs = {}
+        for _wp_ in ["L", "M", "T"]:
+            self.btagWPs[self.algodict[self.algo] + "_{y}_{wp}".format(y = self.year, wp = _wp_)] = self.btaggingWPsEvaluator.evaluate(_wp_)
+        
+        
+        self.cutVal  = self.btagWPs[ self.algodict[self.algo] + "_" + self.year + "_" + self.wp ]
+        
         if not self.isMC:
             jecvars = []
             self.nominaljecscaff = ""
@@ -348,6 +371,14 @@ class EventVars_TopRun2UL(Module):
                 allret["METgood_pt"  + sys] = met_4m.Pt()
                 allret["METgood_phi" + sys] = met_4m.Phi()
 
+
+                ### b jets
+                istag = [getattr(j, self.branchbtag) > self.cutVal for j in jets]
+                jetsb_4m = []
+                for i,ijet_4m in enumerate(jets_4m):
+                    if istag[i]:
+                        jetsb_4m.append(ijet_4m)
+
                 if getattr(event, 'nJetSel30{v}_Recl'.format(v = sys if "unclustEn" not in sys else "")) > 0:
                     allret["Lep1Lep2Jet1MET_Pt"          + sys] = (leps_4m[0] + leps_4m[1] + jets_4m[0] + met_4m).Pt()
                     allret["Lep1Lep2Jet1MET_M"           + sys] = (leps_4m[0] + leps_4m[1] + jets_4m[0] + met_4m).M()
@@ -394,6 +425,9 @@ class EventVars_TopRun2UL(Module):
                                                                      allret["Lep2Jet2_M" + sys]]),
                                                                 max( allret["Lep2Jet1_M" + sys],
                                                                      allret["Lep1Jet2_M" + sys])])
+                        if len(jetsb_4m) > 1:
+                            allret["Lep1Lep2BJet1BJet2_Pt"       + sys] = (leps_4m[0] + leps_4m[1] + jetsb_4m[0] + jetsb_4m[1]).Pt()
+                            allret["Lep1Lep2BJet1BJet2_M"        + sys] = (leps_4m[0] + leps_4m[1] + jetsb_4m[0] + jetsb_4m[1]).M()  
 
 
 
@@ -434,7 +468,14 @@ class EventVars_TopRun2UL(Module):
                 for i in range(len(jets_4m)):
                     jets_4m[i].SetPtEtaPhiM(getattr(jets[i], "pt" + jetjecsysscaff), jets_4m[i].Eta(),
                                             jets_4m[i].Phi(), getattr(jets[i], "mass" + jetjecsysscaff))
-
+                
+                ### b jets
+                istag = [getattr(j, self.branchbtag) > self.cutVal for j in jets]
+                jetsb_4m = []
+                for i,ijet_4m in enumerate(jets_4m):
+                    if istag[i]:
+                        jetsb_4m.append(ijet_4m)
+                
                 ### loose jets
                 loosejets = [all_jets[getattr(event, 'iJetSel20{v}_Recl'.format(v = sys))[j]]
                            for j in range(min([getattr(event, 'nJetSel20{v}_Recl'.format(v = sys)), 5]))]
@@ -515,4 +556,7 @@ class EventVars_TopRun2UL(Module):
                                                                      allret["Lep2Jet2_M" + sys]]),
                                                                 max( allret["Lep2Jet1_M" + sys],
                                                                      allret["Lep1Jet2_M" + sys])])
+                        if len(jetsb_4m) > 1:
+                            allret["Lep1Lep2BJet1BJet2_Pt"       + sys] = (leps_4m[0] + leps_4m[1] + jetsb_4m[0] + jetsb_4m[1]).Pt()
+                            allret["Lep1Lep2BJet1BJet2_M"        + sys] = (leps_4m[0] + leps_4m[1] + jetsb_4m[0] + jetsb_4m[1]).M()
         return allret

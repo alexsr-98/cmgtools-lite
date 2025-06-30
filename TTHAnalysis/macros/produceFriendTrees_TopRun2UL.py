@@ -877,7 +877,8 @@ def SendDatasetJobs(task):
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 1) + friendsuff
 
     elif step == 3:
-        module_  = "varstrigger_" + (("mc_" + year) if not isData else "data")
+        #module_  = "varstrigger_" + (("mc_" + year) if not isData else "data")
+        module_  = "varstrigger_{ty}_{y}".format(ty = "data" if isData else "mc", y  = year)
         if not isData:
             friends_ +=       friendpref + getFriendsFolder(dataset, friendsbasepath, 0) + friendsuff
         friends_ += " " + friendpref + getFriendsFolder(dataset, friendsbasepath, 1) + friendsuff

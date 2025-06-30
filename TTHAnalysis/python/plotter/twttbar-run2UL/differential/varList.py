@@ -518,7 +518,7 @@ varList['Names'] = {
 }
 
 
-varList['minimax_ATLAS'] = {
+varList['minimax_CMS'] = {
     'xaxis'         : 'm^{minimax} (GeV)',
     'yaxis_particle': 'd#sigma/d(m^{minimax}) (pb)',
     'yaxisbin'      : '(1/#sigma_{fid.})d#sigma/d(m^{minimax}) (pb/GeV)',
@@ -534,7 +534,7 @@ varList['minimax_ATLAS'] = {
                        270., 310., 380., 420.],
     'var_detector': 'min(max(1.,minimax), 419.)',
     'name'        : 'minimax',
-    'var_response': 'minimax_ATLAS',
+    'var_response': 'minimax_CMS',
     'var_particle': 'min(max(1.,Dressminimax), 419.)',
     "yaxismax_ratio_fidbin" : 1.5,
     "yaxismax_ratio_particle" : 1.5,
@@ -547,6 +547,64 @@ varList['minimax_ATLAS'] = {
     'legpos_particlefidbin': (.47, .88, .74, .43),
 }
 
+varList['minimax_ATLAS'] = { # https://indico.cern.ch/event/1504894/contributions/6547845/attachments/3082034/5455860/lhctopwg2025.pdf
+    'xaxis'         : 'm^{minimax} (GeV)',
+    'yaxis_particle': 'd#sigma/d(m^{minimax}) (pb)',
+    'yaxisbin'      : '(1/#sigma_{fid.})d#sigma/d(m^{minimax}) (pb/GeV)',
+    'yaxisfidbin'   : '(1/#sigma_{fid.})d#sigma/d(m^{minimax}) (1/GeV)',
+    'printname'     : "\\minimax (\GeV)",
+    'mathprintname':  "\\minimax",
+    'bins_particle' : [0., 40., 60., 80., 100., 120., 180., 220., 270., 340., 800.],
+    #'bins_detector' : [0., 40., 60., 80., 100., 120., 140., 160., 180., 200., 220., 240.,
+                       #270., 310., 380., 420.], #DO NOT CHANGE THESE BECAUSE THEY ARE ATLAS' ONES
+    'bins_detector' : [0., 40., 50., 60., 70., 80., 85., 90., 95., 100., 105., 110., 120., 130.,
+                       140., 150., 160., 170., 180., 190., 200., 210., 220., 230., 240., 255.,
+                       270., 310., 340., 800.],
+    'var_detector': 'min(max(1.,minimax), 799.)',
+    'name'        : 'minimax',
+    'var_response': 'minimax_ATLAS',
+    'var_particle': 'min(max(1.,Dressminimax), 799.)',
+    "yaxismax_ratio_fidbin" : 1.5,
+    "yaxismax_ratio_particle" : 1.5,
+    "yaxismax_particlefidbin": 3.,
+    "yaxismin_particlefidbin" : 10e-7,
+    "yaxismax_particlefidbinunc" : 0.5,
+    "logy_particlefidbin": True,
+    "yaxismax_ratio_bin"        : 3.5,
+    "yaxismax_particlebin"      : 0.10,
+    "yaxismax_particlebinunc"   : 0.5,
+    'legpos_particlefidbin': (.47, .88, .74, .43),
+}
+
+
+varList['Lep1Lep2BJet1BJet2_Pt_ATLAS'] = { # https://indico.cern.ch/event/1504894/contributions/6547845/attachments/3082034/5455860/lhctopwg2025.pdf
+    'xaxis'         : '#it{p}_{T}(#it{e}^{#pm}, #it{#mu}^{#mp}, #it{b}_{1}, #it{b}_{2}) (GeV)',
+    'yaxis_particle': 'd#sigma/d(#it{p}_{T}(#it{e}^{#pm}, #it{#mu}^{#mp}, #it{b}_{1}, #it{b}_{2})) (pb)',
+    'yaxisbin'      : '(1/#sigma_{fid.})d#sigma/d(#it{p}_{T}(#it{e}^{#pm}, #it{#mu}^{#mp}, #it{b}_{1}, #it{b}_{2})) (pb/GeV)',
+    'yaxisfidbin'   : '(1/#sigma_{fid.})d#sigma/d(#it{p}_{T}(#it{e}^{#pm}, #it{#mu}^{#mp}, #it{b}_{1}, #it{b}_{2})) (1/GeV)',
+    'printname'     : "\\ptllbb (\GeV)",
+    'mathprintname':  "\\ptllbb",
+    'bins_particle' : [0., 30., 55., 85., 115., 150., 200., 250., 320., 400., 500., 800.],
+    #'bins_detector' : [0., 40., 60., 80., 100., 120., 140., 160., 180., 200., 220., 240.,
+                       #270., 310., 380., 420.], #DO NOT CHANGE THESE BECAUSE THEY ARE ATLAS' ONES
+    'bins_detector' : [0., 30., 55., 60., 70., 85., 95., 100., 105., 115., 120., 130.,
+                       140., 150., 160., 170., 180., 190., 200., 210., 220., 230., 240., 250.,
+                       270., 320., 340., 400., 450., 500., 600., 700., 800.],
+    'var_detector': 'min(max(1.,Lep1Lep2BJet1BJet2_Pt), 799.)',
+    'name'        : 'ptllbb',
+    'var_response': 'Lep1Lep2BJet1BJet2_Pt_ATLAS',
+    'var_particle': 'min(max(1.,DressLep1Lep2BJet1BJet2_Pt), 799.)',
+    "yaxismax_ratio_fidbin" : 1.25,
+    "yaxismax_ratio_particle" : 1.5,
+    "yaxismax_particlefidbin": 3.,
+    "yaxismin_particlefidbin" : 10e-7,
+    "yaxismax_particlefidbinunc" : 0.5,
+    "logy_particlefidbin": True,
+    "yaxismax_ratio_bin"        : 3.5,
+    "yaxismax_particlebin"      : 0.10,
+    "yaxismax_particlebinunc"   : 0.5,
+    'legpos_particlefidbin': (.47, .88, .74, .43),
+}
 
 varList['miniavg'] = {
     'xaxis'         : 'm^{minimax} (GeV)',
@@ -1103,7 +1161,7 @@ varList['Lep1_Pt'] = {
     #"yaxisuplimitunf": 0.2,
     "yaxismax_particlefidbin": 0.03,
     "yaxismax_particlefid" : 1.1,
-    "yaxismax_particlefidbinunc" : 1.3,
+    "yaxismax_particlefidbinunc" : 0.2,
     #"yaxismax_particlefidbinunc" : 0.5,
     "yaxismax_unf" : 2.0,
     "yaxismax_particlebin": 0.0085,
@@ -1111,6 +1169,95 @@ varList['Lep1_Pt'] = {
 #    "yaxismax_ratio_fidbin" : 2.5,
     "yaxismax_ratio_fidbin" : 1.08,
 }
+
+varList['Lep1_Pt_ATLAS'] = {
+    #'xaxis'       : 'p_{T}(\\ell_{1}) (GeV)',
+    'printname'      : 'Leading lepton \\pt (\\GeV)',
+    'printnamenodim' : 'Leading lepton \\pt',
+    'mathprintname'  :'\\text{Leading lepton }\\pt',
+    'xaxis'          : 'Leading lepton #it{p}_{T} (GeV)',
+    'yaxis_particle' : 'd#sigma/d(leading lepton #it{p}_{T}) (pb)' if doxsec else 'Events',
+    # 'yaxisfid'       : '(1/#sigma_{fid.})d#sigma/d(leading lepton #it{p}_{T}) (adim.)',
+    'yaxisfid'       : '(1/#sigma_{fid.})d#sigma/d(leading lepton #it{p}_{T})',
+    'yaxisfidbin'    : '(1/#sigma_{fid.})d#sigma/d(leading lepton #it{p}_{T}) (1/GeV)',
+    'yaxisbin'       : 'd#sigma/d(leading lepton #it{p}_{T}) (pb/GeV)',
+    # 'yaxis_unc'      : 'Relative uncertainty (adim.)',
+    'yaxis_unc'      : 'Relative uncertainty',
+
+    #### TOP-19-003 8 bines
+    #'bins_particle' : [25., 50., 60., 70., 80., 90., 105., 125., 150.],
+    #'bins_detector' : [25., 35., 50., 55., 60., 65.,  70.,  75.,  80., 85., 90., 95., 100., 105., 115., 125., 150.],
+    #'bins_particle' : [25., 50., 60., 70., 80., 90., 105., 150.],
+    #'bins_detector' : [25., 35., 50., 55., 60., 65.,  70.,  75.,  80., 85., 90., 95., 100., 105., 115., 125., 150.],
+
+    ### dev reluncs
+    # 'bins_particle' : [25., 50., 60., 70., 80., 90., 100., 150.],
+    # 'bins_detector' : [25., 35., 50., 55., 60., 65.,  70.,  75.,  80., 85., 90., 95., 100., 105., 115., 125., 150.],
+
+    #'bins_particle' : [25., 40., 50., 60., 70., 80., 90., 100., 250.],
+    #'bins_detector' : [25., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 105., 115., 125., 135., 150., 175., 200., 225., 250.],
+
+
+    ### ATLAS binning https://indico.cern.ch/event/1504894/contributions/6547845/attachments/3082034/5455860/lhctopwg2025.pdf
+    'bins_particle' : [25., 35., 40., 45., 52., 60., 70., 82., 98., 115., 135., 160., 190., 222., 270., 340., 400.],
+    'bins_detector' : [25., 30., 35., 40., 45., 52., 60., 65., 70., 75., 82., 98., 105., 115., 120., 135., 150., 160., 175., 190., 210., 222., 240., 270., 340., 400.],
+
+    ### Nuevo intento 2022-02-24
+    #'bins_particle' : [25., 35., 45., 55., 65., 75., 85., 125., 150.],
+    #'bins_detector' : [25., 35., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 105., 115., 125., 150.],
+
+    ### Nuevo intento 2022-02-24v2
+    #'bins_particle' : [25., 45., 55., 65., 75., 80., 125., 150.],
+    #'bins_detector' : [25., 35., 45., 50., 55., 60., 65.,  70.,  75.,  80., 90., 100., 125., 150.],
+
+    ### Prueba
+#    'bins_particle' : [25., 35., 45., 55., 65., 75., 85., 95., 150.],
+#    'bins_detector' : [25., 35., 45., 55., 65., 75., 85., 95., 150.],
+
+    #'descbinning' : [10., 150.],   ### TOP-19-003 8 bines
+    #'descbinning' : [10., 250.],
+    #'ndescbins'   : 15,
+    'legpos'      : (0.7, 0.55, 0.90, 0.93),
+    'legposdesc'  : (0.7, 0.55, 0.90, 0.93),
+    #"maxdesc"     : 3300,
+    "var_detector": 'min(max(LepGood_pt_corrAll[0], 26.), 399.)',   ### TOP-19-003 8 bines
+    #"var_detector": 'min(max(LepGood_pt_corrAll[0], 26.), 249.)',
+    'var_response': 'Lep1_Pt_ATLAS',
+    'var_particle': 'min(max(GenDressedLepton_pt[iDressSelLep[0]], 26.), 399.)',   ### TOP-19-003 8 bines
+    #'var_particle': 'min(max(GenDressedLepton_pt[iDressSelLep[0]], 26.), 249.)',
+    'legpos_detectorunc' : "TL",
+    'legpos_particlefidunc'  : "TL",
+    #"legpos_particle"   : (.18, .3, .32, .05),
+    "legpos_particle"      : "TC",
+    #'legpos_particlefidbin': "TC",
+    #'legpos_particlefidbin': (.18, .3, .32, .05),
+    # 'legpos_particlefidbin': (.66, .9, .8, .6),
+#    'legpos_particlefidbin': (.63, .88, .78, .53),
+#    'legpos_particlefidbin': (.51, .88, .78, .43),
+    'legpos_particlefidbin': (.46, .88, .73, .43),
+    'legpos_particleunc'   : "TL",
+    'legpos_particlefidbinunc': "TL",
+    "legpos_particleas"   : (.4, .45, .6, .05),
+    'resptxtsize'  : 1.5,
+    'txtsize_covdetector': 1.2,
+    'txtsize_covparticle': 1.35,
+    'txtangle_covparticle': 42.50,
+    "txtsize_covparticlefidbin": 1.2,
+    "txtangle_covparticlefidbin": 35,
+    #"yaxisuplimitunf": 0.2,
+    "yaxismax_particlefidbin": 2,
+    "yaxismax_particlefid" : 1.1,
+    "yaxismax_particlefidbinunc" : 0.2,
+    #"yaxismax_particlefidbinunc" : 0.5,
+    "yaxismax_unf" : 2.0,
+    "yaxismax_particlebin": 0.0085,
+    "legpos_particlebinunc" : "TL",
+#    "yaxismax_ratio_fidbin" : 2.5,
+    "yaxismax_ratio_fidbin" : 1.08,
+    "logy_particlefidbin": True,
+    "yaxismin_particlefidbin" : 10e-6,
+}
+
 
 
 varList['Lep2_Pt'] = {

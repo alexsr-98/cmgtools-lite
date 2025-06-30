@@ -1,0 +1,13 @@
+alwaystrue : 1
+
+# PARTICLE
+
+dressemu    : Dresschannel == 1
+dressdilep  : (nDressSelLep == 2) && (DressLep1_Pt > 25) && (DressLep2_Pt > 20) && DressisSS == 0 && (DressminMllAFAS > 20)
+dress2jet   : nDressSelJet >= 2
+dress2btag  : nDressBSelJet >= 2
+
+
+#dresssf        : (Dresschannel == 1) || (Dresschannel == 2) || (Dresschannel == 3)
+#dresszveto:      (Dresschannel == 1) || (abs(DressMll - 91.2) > 15)
+#dressmetgood:    (Dresschannel == 1) || (MET_fiducialGenPt > 50)
