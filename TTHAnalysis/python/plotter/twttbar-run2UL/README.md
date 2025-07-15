@@ -45,7 +45,7 @@ We have created a helper to automatise the friend tree creation process. You sho
 
 ## bb4l differential cross section measurement (bkg. substraction)
 
- * Create the cards:
+ * Create the cards (you need to always run the `Fiducial` variable to later normalise the distributions):
    ```bash
     python twttbar-run2UL/differential/cardsForDifferentialStudies.py -P 2024-09-03 -y run2 -q batch -j 16 -o ./temp_Run2_cards_diff/2024-09-12_bb4l -v all -a
    ```
