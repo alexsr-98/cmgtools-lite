@@ -7,8 +7,8 @@ from multiprocessing import Pool
 import CombineHarvester.CombineTools.plotting as plot
 import CombineHarvester.CombineTools.combine.rounding as rounding
 
-sys.path.append('{cmsswpath}/src/CMGTools/TTHAnalysis/python/plotter/tw-run2/differential/'.format(cmsswpath = os.environ['CMSSW_BASE']))
-from . import varList as vl
+sys.path.append('{cmsswpath}/src/CMGTools/TTHAnalysis/python/plotter/twttbar-run2UL/differential/'.format(cmsswpath = os.environ['CMSSW_BASE']))
+import varList as vl
 
 r.PyConfig.IgnoreCommandLineOptions = True
 r.TH1.AddDirectory(0)
@@ -323,9 +323,9 @@ def plotImpacts(inputjson, outputname, outputpath, npois, doBlind):
         s_nom_list = []; s_hi_list = []; s_lo_list = []
         
         for iP in range(npois):
-            s_nom, s_hi, s_lo = GetRounded(poiDict["r_tW_" + str(iP)]["fit"][1], 
-                                           poiDict["r_tW_" + str(iP)]["fit"][2] - poiDict["r_tW_" + str(iP)]["fit"][1], 
-                                           poiDict["r_tW_" + str(iP)]["fit"][1] - poiDict["r_tW_" + str(iP)]["fit"][0])
+            s_nom, s_hi, s_lo = GetRounded(poiDict["r_bb4l_" + str(iP)]["fit"][1], 
+                                           poiDict["r_bb4l_" + str(iP)]["fit"][2] - poiDict["r_bb4l_" + str(iP)]["fit"][1], 
+                                           poiDict["r_bb4l_" + str(iP)]["fit"][1] - poiDict["r_bb4l_" + str(iP)]["fit"][0])
             s_nom_list.append(s_nom); s_hi_list.append(s_hi); s_lo_list.append(s_lo);
             
         if not doBlind:
@@ -352,14 +352,14 @@ def makeImpacts(task):
     bins_particle = vl.varList[varName]['bins_particle']
     nparticlebins   = len(bins_particle) - 1
 
-    thepois = ",".join( ["r_tW_" + str(i) for i in range(nparticlebins)] )
+    thepois = ",".join( ["r_bb4l_" + str(i) for i in range(nparticlebins)] )
 
     impactsoutpath = inpath + "/" + year + "/" + varName + "/sigextr_fit_combine/{o}Impacts/".format(o = "Obs" if doObs else "")
 
     asimov_ = "--setParameters "
     for idx in range(nparticlebins - 1):
-        asimov_ += "r_tW_{iBp}=1,".format(iBp = idx)
-    asimov_ += "r_tW_{iBp}=1".format(iBp = nparticlebins - 1)
+        asimov_ += "r_bb4l_{iBp}=1,".format(iBp = idx)
+    asimov_ += "r_bb4l_{iBp}=1".format(iBp = nparticlebins - 1)
     if not doobs:
         asimov_ +=  " -t -1 "
 

@@ -101,3 +101,7 @@ We need the cards created by the bkg. substraction scripts also.
    ```bash
    python twttbar-run2UL/differential/doFiducial_WithCombine.py -i ./temp_Run2_cards_diff/2025-03-04_combine/ -y run2 -v Lep1Lep2_DPhi
    ```
+ * Produce the impacts plot:
+   ```bash
+   python twttbar-run2UL/differential/getImpacts.py -i ./temp_Run2_cards_diff/2025-03-04_combine/ -y run2 -v Jet1_Pt
+   ```  
